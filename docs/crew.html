@@ -1,0 +1,646 @@
+<title>Four Laptops, One Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root {
+    --ground: #f5f5f9;
+    --surface: #ffffff;
+    --surface-sunk: #ecebf2;
+    --ink: #272736;
+    --ink-soft: #55556e;
+    --muted: #70708c;
+    --line: #e0dfea;
+    --line-strong: #cbc9db;
+    --accent: #6f3fd4;
+    --accent-soft: #ece4fc;
+    --ok: #2d8550;
+    --ok-soft: #dff0e4;
+    --warn: #a86a05;
+    --warn-soft: #f8ecd6;
+    --stop: #b62e46;
+    --stop-soft: #fae1e6;
+
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #15151d;
+      --surface: #1d1d27;
+      --surface-sunk: #232330;
+      --ink: #d9d9e8;
+      --ink-soft: #aaaac4;
+      --muted: #8b8ba6;
+      --line: #2d2d3c;
+      --line-strong: #3d3d50;
+      --accent: #b495f7;
+      --accent-soft: #2a2340;
+      --ok: #84cf92;
+      --ok-soft: #1d2e22;
+      --warn: #e2b461;
+      --warn-soft: #302718;
+      --stop: #f08098;
+      --stop-soft: #351d25;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #15151d;
+    --surface: #1d1d27;
+    --surface-sunk: #232330;
+    --ink: #d9d9e8;
+    --ink-soft: #aaaac4;
+    --muted: #8b8ba6;
+    --line: #2d2d3c;
+    --line-strong: #3d3d50;
+    --accent: #b495f7;
+    --accent-soft: #2a2340;
+    --ok: #84cf92;
+    --ok-soft: #1d2e22;
+    --warn: #e2b461;
+    --warn-soft: #302718;
+    --stop: #f08098;
+    --stop-soft: #351d25;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 44px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--cond); text-wrap: balance; margin: 0; }
+  p { margin: 0; max-width: 66ch; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  header.top { display: flex; flex-direction: column; gap: 16px; }
+  header.top h1 { font-size: clamp(34px, 7vw, 48px); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+  header.top .lede { font-size: 18px; color: var(--ink-soft); max-width: 60ch; }
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+  section > h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--line-strong);
+  }
+  section > h3 { font-size: 19px; font-weight: 600; margin-top: 6px; }
+
+  /* ---- the ask ---- */
+  .ask {
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    background: var(--accent-soft);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .ask h2 { font-size: 24px; font-weight: 700; border: none; padding: 0; }
+  .ask > p { color: var(--ink-soft); }
+  ol.ask-list { margin: 0; padding: 0; list-style: none; counter-reset: a; display: flex; flex-direction: column; gap: 14px; }
+  ol.ask-list > li {
+    counter-increment: a;
+    position: relative;
+    padding-left: 38px;
+  }
+  ol.ask-list > li::before {
+    content: counter(a);
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--surface);
+    background: var(--accent);
+    border-radius: 3px;
+  }
+  ol.ask-list .what { font-weight: 600; }
+  ol.ask-list .how { display: block; margin-top: 3px; color: var(--ink-soft); font-size: 14px; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.87em;
+    background: var(--surface-sunk);
+    padding: 1.5px 5px;
+    border-radius: 2px;
+    word-break: break-word;
+  }
+  pre {
+    margin: 0;
+    overflow-x: auto;
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 14px 16px;
+  }
+  pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
+
+  /* ---- figures ---- */
+  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .fig-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: 18px 16px;
+  }
+  .fig-scroll svg { display: block; max-width: 100%; height: auto; min-width: 580px; }
+  figcaption { font-size: 13.5px; color: var(--muted); max-width: 70ch; }
+
+  .di-box { fill: none; stroke: currentColor; stroke-width: 1.25; }
+  .di-box-sunk { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .di-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+  .di-stop { fill: none; stroke: var(--stop); stroke-width: 1.25; }
+  .di-line { stroke: currentColor; stroke-width: 1.25; fill: none; }
+  .di-line-dash { stroke: currentColor; stroke-width: 1.25; fill: none; stroke-dasharray: 5 4; }
+  .di-t { fill: currentColor; font-family: "IBM Plex Sans", sans-serif; font-size: 13px; font-weight: 600; }
+  .di-s { fill: currentColor; font-family: "IBM Plex Mono", monospace; font-size: 11px; opacity: 0.72; }
+  .di-l { fill: currentColor; font-family: "IBM Plex Mono", monospace; font-size: 10.5px; opacity: 0.6; }
+  .di-t-accent { fill: var(--accent); font-family: "IBM Plex Sans", sans-serif; font-size: 13px; font-weight: 600; }
+  .di-t-stop { fill: var(--stop); font-family: "IBM Plex Sans", sans-serif; font-size: 13px; font-weight: 600; }
+  .di-s-stop { fill: var(--stop); font-family: "IBM Plex Mono", monospace; font-size: 11px; }
+  .di-head { fill: currentColor; }
+  .di-head-accent { fill: var(--accent); }
+
+  /* ---- tool grid ---- */
+  .kit { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .kit-cell { background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 7px; }
+  .kit-cell h4 { font-size: 17px; font-weight: 600; }
+  .kit-cell p { font-size: 14px; color: var(--ink-soft); max-width: none; }
+  .kit-cell .tools { font-family: var(--mono); font-size: 11.5px; color: var(--muted); line-height: 1.55; }
+
+  /* ---- tiers ---- */
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; }
+  .tier { border: 1px solid var(--line); border-radius: 4px; background: var(--surface); padding: 20px; display: flex; flex-direction: column; gap: 11px; }
+  .tier.blitsol { border-color: var(--accent); border-width: 2px; }
+  .tier h4 { font-size: 20px; font-weight: 600; }
+  .tier .who { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; color: var(--muted); }
+  .tier ul { margin: 0; padding-left: 19px; display: flex; flex-direction: column; gap: 5px; }
+  .tier li { font-size: 14px; color: var(--ink-soft); }
+
+  /* ---- stores table ---- */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 600px; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--surface-sunk); }
+  tbody tr:last-child td { border-bottom: none; }
+  td.store { font-weight: 600; white-space: nowrap; }
+  td.decay { font-family: var(--mono); font-size: 12px; }
+
+  .callout {
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    padding: 15px 18px;
+    border-radius: 0 3px 3px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .callout .eyebrow { color: var(--warn); }
+  .callout p { font-size: 14.5px; color: var(--ink-soft); }
+
+  .deny { display: flex; flex-wrap: wrap; gap: 8px; }
+  .deny span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--stop);
+    background: var(--stop-soft);
+    border: 1px solid color-mix(in srgb, var(--stop) 28%, transparent);
+    padding: 3px 9px;
+    border-radius: 2px;
+  }
+
+  ol.steps-plain { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 9px; }
+  ol.steps-plain li { font-size: 15px; color: var(--ink-soft); max-width: 64ch; }
+  ol.steps-plain li strong { color: var(--ink); font-weight: 600; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 24px; display: flex; flex-direction: column; gap: 8px; }
+  footer p { font-family: var(--mono); font-size: 12px; color: var(--muted); max-width: none; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">For Almar, Ryan and Kish · updated 15 November 2026</p>
+    <h1>Four laptops, one setup</h1>
+    <p class="lede">I'm turning my Claude Code environment into something all four of us run — the same tools, the same guardrails, the same shared knowledge, installed with one line in your NixOS config. Here's what it is, what you get, and the four things I need from you.</p>
+  </header>
+
+  <div class="ask">
+    <h2>What I need from you</h2>
+    <p><strong>Thanks — keys, GitHub handles and emails are in for all three of you, and hardware for Ryan and Kish.</strong> All three keys verified clean. What's still open is small, plus one new thing: each of you has three research items waiting.</p>
+    <ol class="ask-list">
+      <li>
+        <span class="what">Research: done — thank you, Kish</span>
+        <span class="how">Kish ran all nine crew items in Claude web and I checked them against my machine; mine were done here. All sixteen are answered on the research page. For you two things changed: Léon moves to NixOS 26.05 to match you, and the <code>claude-mode</code> window layouts only work in Kitty, so on Konsole they will be an opt-in you can ignore.</span>
+      </li>
+      <li>
+        <span class="what">Almar: your <code>fastfetch</code></span>
+        <span class="how">Plus <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>. The inventory currently says "GTX 1650 Ti or 1660 Ti" and nothing else about your machine.</span>
+      </li>
+      <li>
+        <span class="what">All three: is the email you sent the one on your Atlassian account?</span>
+        <span class="how">A yes, or a different address. A mismatch here looks like "the Jira invite never arrived" three days later.</span>
+      </li>
+    </ol>
+    <details style="margin-top: 4px;">
+      <summary style="cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--accent);">The original four asks, for reference</summary>
+    <ol class="ask-list" style="margin-top: 12px;">
+      <li>
+        <span class="what">Your SSH public key</span>
+        <span class="how">Run <code>cat ~/.ssh/id_ed25519.pub</code> — if that errors, make one with <code>ssh-keygen -t ed25519</code> first. Send the whole single line, starting <code>ssh-ed25519</code>. This is a <em>public</em> key, safe to paste. If anything you send starts with <code>-----BEGIN OPENSSH PRIVATE KEY-----</code>, stop — that's the wrong one.</span>
+      </li>
+      <li>
+        <span class="what">Your GitHub username</span>
+        <span class="how">So I can add you to the repos.</span>
+      </li>
+      <li>
+        <span class="what">The email on your Jira account</span>
+        <span class="how">So you land on our shared board. This is the one everyone forgets.</span>
+      </li>
+      <li>
+        <span class="what">Your hardware</span>
+        <span class="how">Run <code>fastfetch</code>, then <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>. If the second one prints nothing useful, that's a fine answer — it means no NVIDIA card. I need this to work out who can host the shared ranking model, who can run local models, and whether Roblox Studio under Wine is realistic on your machine.</span>
+      </li>
+    </ol>
+    </details>
+  </div>
+
+  <section>
+    <h2>What your hardware told us</h2>
+    <p>Two things that change the plan, both found in the inventory you sent.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">Léon</th><th scope="col">Ryan</th><th scope="col">Kish</th><th scope="col">Almar</th></tr></thead>
+        <tbody>
+          <tr><td class="store">GPU</td><td>none — Arc iGPU</td><td>RTX 2060, 6 GB</td><td>GTX 1650, 4 GB</td><td>1650 Ti or 1660 Ti — ?</td></tr>
+          <tr><td class="store">RAM</td><td>32 GB</td><td>16 GB</td><td>16 GB</td><td>?</td></tr>
+          <tr><td class="store">NixOS</td><td>25.05</td><td>26.05</td><td>26.05</td><td>?</td></tr>
+          <tr><td class="store">Desktop</td><td>Hyprland</td><td>KDE Plasma</td><td>KDE Plasma</td><td>?</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>CLM is parked.</strong> Its encoder needs a 24 GB NVIDIA card — the 16 GB in the README is the weight size, not a card — and the biggest card among us is 6 GB. My and Almar's spare machines are weeks away, so we skip CLM until one of them is real. The idea-overlap check uses a small embedding model that runs on any of our CPUs (about a tenth of a second per idea, measured on mine) plus Laya for the yes/no. Same pipeline shape, smaller ranker; the diagram below still reads correctly if you swap "CLM" for "the small model".</p>
+    <p><strong>We run two NixOS releases and two desktops.</strong> I'm on 25.05 with Hyprland; two of you are on 26.05 with KDE Plasma. My config was never tested against either, so the module now has to work on both — and I'll probably upgrade to match you, once Léon's research item confirms what that costs. Kish's item <code>desktop-neutral-module</code> is the KDE checklist.</p>
+  </section>
+
+  <section>
+    <h2>How it gets to your laptop</h2>
+    <p>It isn't a folder of dotfiles you copy and then slowly drift away from. It's a flake. You add one input and one import to your own NixOS config, rebuild, and you have the whole environment. When I improve something, you run <code>nix flake update</code> and you have it too.</p>
+
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 740 400" role="img" aria-label="Two repositories feed into your NixOS configuration, which imports a home-manager module carrying the tools and a NixOS module carrying the security guard. The private secrets repository only applies when your tier is set to blitsol.">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" class="di-head"></path>
+            </marker>
+            <marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" class="di-head-accent"></path>
+            </marker>
+          </defs>
+
+          <rect class="di-box" x="20" y="16" width="290" height="62" rx="3"></rect>
+          <text class="di-t" x="36" y="41">claude-env</text>
+          <text class="di-s" x="36" y="62">public flake · no secrets in it</text>
+
+          <rect class="di-box-sunk" x="420" y="16" width="300" height="62" rx="3"></rect>
+          <text class="di-t" x="436" y="41">blitsol-secrets</text>
+          <text class="di-s" x="436" y="62">private · encrypted to your SSH key</text>
+
+          <line class="di-line" x1="165" y1="78" x2="165" y2="158" marker-end="url(#ah)"></line>
+          <text class="di-l" x="175" y="124">flake input</text>
+
+          <line class="di-line-dash" x1="570" y1="78" x2="570" y2="158" marker-end="url(#ah)"></line>
+          <text class="di-l" x="398" y="112">only when</text>
+          <text class="di-l" x="398" y="126">tier = blitsol</text>
+
+          <rect class="di-accent" x="110" y="158" width="520" height="70" rx="3"></rect>
+          <text class="di-t-accent" x="130" y="185">your configuration.nix</text>
+          <text class="di-s" x="130" y="207">one input, one import, and claude-env.tier = base | blitsol</text>
+
+          <line class="di-line" x1="230" y1="228" x2="230" y2="300" marker-end="url(#ah)"></line>
+          <text class="di-l" x="240" y="268">imports</text>
+          <line class="di-line" x1="520" y1="228" x2="520" y2="300" marker-end="url(#ah)"></line>
+          <text class="di-l" x="530" y="268">imports</text>
+
+          <rect class="di-box" x="20" y="300" width="380" height="84" rx="3"></rect>
+          <text class="di-t" x="38" y="326">home-manager module</text>
+          <text class="di-s" x="38" y="347">the tools — skills, agents, MCP servers,</text>
+          <text class="di-s" x="38" y="365">your CLAUDE.md, the status line</text>
+
+          <rect class="di-box" x="420" y="300" width="300" height="84" rx="3"></rect>
+          <text class="di-t" x="438" y="326">NixOS module</text>
+          <text class="di-s" x="438" y="347">the guard — deny rules that</text>
+          <text class="di-s" x="438" y="365">no project can override</text>
+        </svg>
+      </div>
+      <figcaption>Import both modules, not just the first. The home-manager module is the tools; the NixOS module is the brakes. The dashed path is the private secrets repo, which only applies to the four of us on the Blitsol tier.</figcaption>
+    </figure>
+
+    <p>What you'll actually add, once I've pushed it:</p>
+    <pre><code>inputs.claude-env.url = "github:MrBlueStudios/claude-env";
+
+# then, in your config
+imports = [ inputs.claude-env.nixosModules.default ];
+home-manager.users.&lt;you&gt;.imports = [ inputs.claude-env.homeManagerModules.default ];
+claude-env.tier = "blitsol";   # "base" is the default</code></pre>
+  </section>
+
+  <section>
+    <h2>What's in it</h2>
+    <p>Right now my setup has 36 skills, 12 agents and a pile of MCP servers — and part of this project is cutting that down, because every tool loaded costs tokens in every session whether you use it or not. What survives, by the work we actually do:</p>
+
+    <div class="kit">
+      <div class="kit-cell">
+        <h4>Websites</h4>
+        <p>The whole SvelteKit 5 + Tailwind v4 + shadcn-svelte path, with a browser Claude can actually look at the page through.</p>
+        <p class="tools">web-design-playbook · design · design-review · svelte MCP · playwright · lighthouse · a11y</p>
+      </div>
+      <div class="kit-cell">
+        <h4>Roblox</h4>
+        <p>Studio under Wine, two-way file sync, linting, formatting and types for Luau, plus a doctor that tells you which of seven things is broken. Opt-in, so nobody who builds websites has to install Wine.</p>
+        <p class="tools">rojo · selene · stylua · luau-lsp · roblox-doctor · Roblox Studio MCP</p>
+      </div>
+      <div class="kit-cell">
+        <h4>Trading</h4>
+        <p>Strategy research, backtesting and signal design. I'm adding a safety rule first: paper trading by default, live mode behind an explicit flag.</p>
+        <p class="tools">trading-strategy-researcher · backend agent · laya</p>
+      </div>
+      <div class="kit-cell">
+        <h4>Design and video</h4>
+        <p>Real design review, diagrams, data visualisation, and a full video pipeline for launch clips. The video half is opt-in — it's six skills on its own.</p>
+        <p class="tools">frontend-design · dataviz · figma · hyperframes · media-use</p>
+      </div>
+      <div class="kit-cell">
+        <h4>Legal and compliance</h4>
+        <p>GDPR and cookie checks, accessibility, EU VAT validation. This matters more than it sounds for client sites — a booking system stores real people's phone numbers.</p>
+        <p class="tools">legal-audit · compliance-scan · vies-vat · web-design-guidelines</p>
+      </div>
+      <div class="kit-cell">
+        <h4>Review and security</h4>
+        <p>Security-focused code review, dependency and secret scanning, and a read-only reviewer that can't change your code while it critiques it.</p>
+        <p class="tools">security-audit · reviewer agent · thermo-nuclear-review · code-review</p>
+      </div>
+    </div>
+
+    <h3>Two tiers</h3>
+    <div class="tiers">
+      <div class="tier">
+        <h4>Base</h4>
+        <p class="who">the default · anyone who joins later</p>
+        <ul>
+          <li>Every skill, agent and guardrail above</li>
+          <li>GitHub, Jira and our shared board</li>
+          <li>Library docs, browser, the decision models</li>
+          <li>No access to anything of Blitsol's</li>
+        </ul>
+      </div>
+      <div class="tier blitsol">
+        <h4>Blitsol</h4>
+        <p class="who">you three and me</p>
+        <ul>
+          <li>Everything in base, plus</li>
+          <li>HubSpot, Cloudflare, Stripe, Moneybird</li>
+          <li>The shared encrypted secrets</li>
+          <li>You'll get real invites to each account — I'm not copying credentials around</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The guardrails, so nothing surprises you</h2>
+    <p>Claude Code in this setup runs behind a guard that sits <em>above</em> project settings — meaning a repo you clone cannot switch it off. It will refuse some things. That's deliberate, and it's the part I most want you to have, because we're going to point these agents at client sites and real money.</p>
+
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 740 320" role="img" aria-label="A request passes through the guard before reaching any tool. The guard blocks reads of environment files, encrypted secrets and SSH keys, plus destructive commands; everything else proceeds to the toolkit.">
+          <defs>
+            <marker id="bh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" class="di-head"></path>
+            </marker>
+            <marker id="bhs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#b62e46"></path>
+            </marker>
+          </defs>
+
+          <rect class="di-box" x="16" y="128" width="146" height="60" rx="3"></rect>
+          <text class="di-t" x="32" y="153">you ask</text>
+          <text class="di-s" x="32" y="173">for anything</text>
+
+          <line class="di-line" x1="162" y1="158" x2="232" y2="158" marker-end="url(#bh)"></line>
+
+          <rect class="di-accent" x="232" y="118" width="170" height="80" rx="3"></rect>
+          <text class="di-t-accent" x="250" y="146">the guard</text>
+          <text class="di-s" x="250" y="166">runs before every</text>
+          <text class="di-s" x="250" y="183">single tool call</text>
+
+          <path class="di-stop" d="M 402 140 L 470 140 L 470 68" marker-end="url(#bhs)"></path>
+          <text class="di-s-stop" x="420" y="108">refused</text>
+
+          <rect class="di-stop" x="470" y="16" width="252" height="52" rx="3"></rect>
+          <text class="di-t-stop" x="486" y="38">blocked, always</text>
+          <text class="di-s" x="486" y="57">.env · secrets · SSH keys · rm -rf</text>
+
+          <path class="di-line" d="M 402 176 L 470 176 L 470 246" marker-end="url(#bh)"></path>
+          <text class="di-l" x="420" y="216">allowed</text>
+
+          <rect class="di-box" x="470" y="246" width="252" height="60" rx="3"></rect>
+          <text class="di-t" x="486" y="270">the toolkit</text>
+          <text class="di-s" x="486" y="290">skills · agents · MCP servers · files</text>
+
+          <text class="di-l" x="16" y="238">a cloned repo cannot</text>
+          <text class="di-l" x="16" y="254">turn the guard off —</text>
+          <text class="di-l" x="16" y="270">it is a system-level</text>
+          <text class="di-l" x="16" y="286">setting, not a project one</text>
+        </svg>
+      </div>
+      <figcaption>The guard is a pre-tool hook installed as a managed setting, so its deny rules outrank anything a project or a user config asks for.</figcaption>
+    </figure>
+
+    <p>What it refuses outright:</p>
+    <div class="deny">
+      <span>reading any .env</span>
+      <span>/run/agenix/**</span>
+      <span>~/.ssh/id_*</span>
+      <span>destructive shell commands</span>
+    </div>
+    <div class="callout">
+      <p class="eyebrow">If it blocks something you genuinely need</p>
+      <p>Don't fight it and don't let Claude find a way around it — that's the one behaviour that makes a guard worthless. Tell me, and I'll either widen the rule or tell you why it's there.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The shared memory — the part I'm most excited about</h2>
+    <p>Jira and GitHub record what we <em>did</em>. They don't record what we <strong>tried</strong>, what we <strong>want to build</strong>, or where we're <strong>stuck</strong> — and that's exactly the knowledge that disappears. Kish burns two days on an approach Almar already found was a dead end, and nothing in either tool would have said so.</p>
+    <p>So: a shared Obsidian vault that each of our Claudes can read. Four separate stores, because these things rot at completely different speeds and lying to you confidently is worse than telling you nothing.</p>
+
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 740 330" role="img" aria-label="Four memory stores. Attempts are written automatically by Claude and never expire. Ideas and current state are written by the person, with state expiring quickly. Components are derived from the repositories.">
+          <defs>
+            <marker id="ch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" class="di-head"></path>
+            </marker>
+          </defs>
+
+          <rect class="di-box" x="16" y="16" width="150" height="52" rx="3"></rect>
+          <text class="di-t" x="32" y="40">Claude</text>
+          <text class="di-s" x="32" y="58">at session end</text>
+
+          <rect class="di-box" x="16" y="112" width="150" height="52" rx="3"></rect>
+          <text class="di-t" x="32" y="136">you</text>
+          <text class="di-s" x="32" y="154">when it occurs to you</text>
+
+          <rect class="di-box" x="16" y="244" width="150" height="52" rx="3"></rect>
+          <text class="di-t" x="32" y="268">your repos</text>
+          <text class="di-s" x="32" y="286">scanned, not typed</text>
+
+          <line class="di-line" x1="166" y1="42" x2="306" y2="42" marker-end="url(#ch)"></line>
+          <text class="di-l" x="188" y="32">appends</text>
+
+          <line class="di-line" x1="166" y1="132" x2="306" y2="112" marker-end="url(#ch)"></line>
+          <line class="di-line" x1="166" y1="144" x2="306" y2="186" marker-end="url(#ch)"></line>
+          <line class="di-line" x1="166" y1="270" x2="306" y2="262" marker-end="url(#ch)"></line>
+          <text class="di-l" x="188" y="252">derived</text>
+
+          <rect class="di-accent" x="306" y="16" width="418" height="52" rx="3"></rect>
+          <text class="di-t-accent" x="324" y="40">Attempts</text>
+          <text class="di-s" x="324" y="58">what we tried and why it failed · never expires</text>
+
+          <rect class="di-box" x="306" y="88" width="418" height="52" rx="3"></rect>
+          <text class="di-t" x="324" y="112">Ideas</text>
+          <text class="di-s" x="324" y="130">what you want to build, however half-formed · slow</text>
+
+          <rect class="di-box" x="306" y="160" width="418" height="52" rx="3"></rect>
+          <text class="di-t" x="324" y="184">State</text>
+          <text class="di-s" x="324" y="202">current focus, goals, blockers · expires fast, on purpose</text>
+
+          <rect class="di-box" x="306" y="236" width="418" height="52" rx="3"></rect>
+          <text class="di-t" x="324" y="260">Components</text>
+          <text class="di-s" x="324" y="278">things one of us already built that others could reuse</text>
+        </svg>
+      </div>
+      <figcaption>Attempts is the store that only works if nobody has to maintain it, so Claude writes it as a byproduct of working — conclusions only, not transcripts. State expires deliberately; stale context gets acted on, which makes it worse than an empty store.</figcaption>
+    </figure>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">Store</th><th scope="col">Answers</th><th scope="col">Decay</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="store">Attempts</td><td>What have we already tried on this?</td><td class="decay">never</td></tr>
+          <tr><td class="store">Ideas</td><td>Is someone else already thinking about this?</td><td class="decay">slow</td></tr>
+          <tr><td class="store">Components</td><td>Has one of us already built this piece?</td><td class="decay">slow</td></tr>
+          <tr><td class="store">State</td><td>What is everyone on, and who needs help?</td><td class="decay">fast — expires</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Catching the duplicate idea before someone builds it twice</h3>
+    <p>This is the bit that needs a real model rather than a text search. When one of us writes down a new idea, it gets ranked against every idea and project all four of us have recorded, and then checked properly for whether it's actually the same thing.</p>
+
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 740 180" role="img" aria-label="A new idea is ranked by CLM against every recorded idea from all four people, then Laya judges whether the top match is genuinely a duplicate, producing a notification that someone else already wrote something similar.">
+          <defs>
+            <marker id="dh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" class="di-head"></path>
+            </marker>
+          </defs>
+
+          <rect class="di-box" x="12" y="52" width="136" height="64" rx="3"></rect>
+          <text class="di-t" x="28" y="78">your new idea</text>
+          <text class="di-s" x="28" y="98">one paragraph</text>
+
+          <line class="di-line" x1="148" y1="84" x2="196" y2="84" marker-end="url(#dh)"></line>
+
+          <rect class="di-box" x="196" y="40" width="186" height="88" rx="3"></rect>
+          <text class="di-t" x="212" y="66">CLM ranks it</text>
+          <text class="di-s" x="212" y="86">against every idea</text>
+          <text class="di-s" x="212" y="104">the four of us wrote</text>
+
+          <line class="di-line" x1="382" y1="84" x2="430" y2="84" marker-end="url(#dh)"></line>
+          <text class="di-l" x="386" y="74">top match</text>
+
+          <rect class="di-box" x="430" y="40" width="150" height="88" rx="3"></rect>
+          <text class="di-t" x="446" y="66">Laya judges</text>
+          <text class="di-s" x="446" y="86">is it really the</text>
+          <text class="di-s" x="446" y="104">same thing?</text>
+
+          <line class="di-line" x1="580" y1="84" x2="628" y2="84" marker-end="url(#dh)"></line>
+
+          <rect class="di-accent" x="628" y="52" width="100" height="64" rx="3"></rect>
+          <text class="di-t-accent" x="644" y="78">it tells</text>
+          <text class="di-t-accent" x="644" y="95">you</text>
+
+          <text class="di-l" x="196" y="156">both models run on one machine on our Tailscale network — whoever has the GPU hosts it for everyone</text>
+        </svg>
+      </div>
+      <figcaption>Two models because they do different jobs: CLM ranks a list and always puts something first, so it can't tell you "nothing matches". Laya gives a calibrated yes or no, which is the question that actually matters.</figcaption>
+    </figure>
+
+    <div class="callout">
+      <p class="eyebrow">Decided 16 November</p>
+      <p>No crew laptop has the 24 GB of GPU memory CLM wants, so it is parked until a spare machine is set up. Nothing is lost: the overlap check runs on a small CPU model plus Laya, and the CLM path is written up and ready for the day a box appears.</p>
+    </div>
+
+    <h3>And then a questionnaire</h3>
+    <p>Once the structure is settled I'll send everyone a set of questions — current projects, ideas you haven't started, what you want to get better at, what you're stuck on, what you've built that someone else could reuse. That seeds the whole thing so it's useful on day one instead of empty. It comes <em>after</em> the structure, not before, because the questions are the structure.</p>
+  </section>
+
+  <section>
+    <h2>What happens next</h2>
+    <ol class="steps-plain">
+      <li><strong>You send me the four things.</strong> That unblocks nearly everything else.</li>
+      <li><strong>I cut the tool list down and publish the flake.</strong> Right now some of my tools only work in one specific folder, which is half of why I'm doing this at all.</li>
+      <li><strong>I invite you to HubSpot, Cloudflare, Stripe and Moneybird</strong> properly, and you connect each one from your own Claude. You'll be real users in those accounts, not borrowers of mine.</li>
+      <li><strong>One of you installs it from scratch</strong> while I don't help, and we write down every place it goes wrong. That's the only honest test of whether this works.</li>
+      <li><strong>Then the memory system</strong> and the questionnaire.</li>
+    </ol>
+    <p>There's one open question I'm still checking that might change a decision: whether our shared Jira board needs a paid plan for the integration I want. If it does, we'll do it differently. Everything else in here is free — the only things any of us pay for are our own Claude subscriptions and things we deliberately buy to put something live, like a domain or a server.</p>
+  </section>
+
+  <footer>
+    <p>claude-env · written for Almar, Ryan and Kish · 13 November 2026</p>
+    <p>questions, corrections, or something you want in the toolkit → tell me, this is not finished</p>
+  </footer>
+
+</div>

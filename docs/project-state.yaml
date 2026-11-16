@@ -1,0 +1,790 @@
+project: claude-env
+goal: >-
+  A shareable NixOS flake that gives Léon and his friends the same Claude Code environment —
+  every MCP server, skill, agent and guardrail available in every project folder — with a
+  Blitsol tier for the people who also work on the company.
+non_goals:
+  - Sharing Léon's personal nix-config (hardware, backups, host secrets) with friends
+  - Handing friends Blitsol credentials by copy-paste instead of inviting them into the real accounts
+  - Adding an MCP server where a CLI already does the job better (the CLI-first rule in CLAUDE.md)
+  - Rebuilding the Claude Code config as dotfiles; it is already home-manager and stays that way
+  - >-
+    Building the shared crew memory system or its dashboard — its own project (crew-memory),
+    designed 2026-11-13 at ~/Projects/crew-memory/docs/design.md; claude-env only ships the
+    tools it needs and the CLM host it depends on
+  - >-
+    Building the booking starter or the client legal-document generator — both are real gaps the
+    coverage audit found, and both belong in their own repos
+updated: "2026-11-16T05:10"
+suite:
+  command: just test
+  result: green
+  as_of: 2026-11-16
+  note: >-
+    Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
+    26.05 (tests/eval-*), then runs the 58 guard cases and 17 helper-script tests. Nothing is built
+    or switched.
+artifacts:
+  status: https://claude.ai/code/artifact/71c33b0d-0713-44c6-a94c-bf3312635352
+  todo: https://claude.ai/code/artifact/e3563a45-ca0e-44d9-b157-56b3b202b2f6
+features:
+  - id: mcp-consolidate
+    name: Consolidate the 36 scattered MCP servers
+    status: planned
+    note: >-
+      Servers are split across three local scopes plus user and project scope; 24 of them are
+      reachable only by cd-ing into ~/projects/fastsdcpu or ~, which is why the web-design
+      toolkit is invisible everywhere else.
+    remaining: >-
+      Verdicts are written: docs/mcp-audit.md (16 Nov) — 39 registrations, 23 dropped, 8 dead
+      placeholders of which 2 are fixed via agenix. Apply through mcp-declarative, then run the
+      prune once.
+    paths:
+      - /etc/nixos/modules/home/claude/mcp.nix
+    refs:
+      - "mcp.nix lines 11-15 — the CLI-first policy comment, now confirmed as the truth"
+  - id: mcp-declarative
+    name: Make mcp.nix the single source of truth
+    status: planned
+    note: >-
+      Today mcp.nix ships a setup-claude-mcp.sh that must be run by hand, so user-scope servers
+      drift the moment anyone types `claude mcp add`. That drift is what produced the current mess.
+    remaining: >-
+      Write the mcpServers block of ~/.claude.json from Nix on activation, merging rather than
+      replacing, the same way settings.nix already merges settings.json.
+    paths:
+      - /etc/nixos/modules/home/claude/mcp.nix
+      - /etc/nixos/modules/home/claude/settings.nix
+  - id: extract-flake
+    name: Extract modules/home/claude into its own flake
+    status: done
+    note: >-
+      Done 2026-11-16. ~/Projects/claude-env exports homeManagerModules.default and
+      nixosModules.default (the guard); nix-config consumes it as the claude-env input (a path:
+      URL until the repo is pushed) and the mr-blue system builds from it, with the managed
+      settings byte-identical and CLAUDE.md differing only by the personal lines moving under
+      "This machine". Portability fixes on the way: no `inputs` argument (the playbook comes
+      through claude-env.webDesignPlaybook), prettier and nixfmt resolved per release, claude-mode
+      behind claude-env.modes.enable, the dropped user-scope servers added to mcp.nix's prune list.
+    remaining: >-
+      The switch itself (`nh os switch /etc/nixos`) and making claude-env its own repo — both
+      Léon's (mt-switch-to-flake, mt-repo-init). The old modules/home/claude and
+      claude-code-policy.nix in nix-config are now unused and can be deleted after the switch.
+    paths:
+      - /home/leon-new/Projects/claude-env/flake.nix
+      - /home/leon-new/Projects/claude-env/modules/home/default.nix
+      - /home/leon-new/Projects/claude-env/modules/home/options.nix
+      - /home/leon-new/Projects/claude-env/modules/system/guard.nix
+      - /home/leon-new/Projects/claude-env/tests/eval-25.05/flake.nix
+  - id: tiers
+    name: Base and Blitsol tiers
+    status: planned
+    note: >-
+      One option, claude-env.tier = "base" | "blitsol", decides whether a machine gets the
+      company connectors and secrets on top of the shared toolkit.
+    remaining: >-
+      The option exists (modules/home/options.nix, base by default) but nothing reads it yet:
+      mcp.nix, the secrets and the connector list still ship the same set to everyone. Wire the
+      Blitsol servers from docs/mcp-audit.md behind tier = "blitsol", and add the opt-in modules
+      the audit named (nix, roblox, legal, trading, seo, firecrawl, sentry) plus the HyperFrames
+      suite behind their own enable flags.
+    paths:
+      - /home/leon-new/Projects/claude-env/modules/home/options.nix
+    absent_paths:
+      - /home/leon-new/Projects/claude-env/modules/home/tiers.nix
+  - id: secrets-delivery
+    name: Shared Blitsol secrets via agenix
+    status: planned
+    note: >-
+      agenix is already an input of nix-config and already holds claude-api-key and borg
+      passphrases, so the mechanism exists; what is missing is multi-recipient re-keying.
+    remaining: >-
+      A private blitsol-secrets repo whose secrets.nix lists each client-work friend's SSH public
+      key as a recipient, plus an enrolment runbook for adding and removing a person.
+    paths:
+      - /etc/nixos/secrets/secrets.nix
+    waiting_on: mt-collect-keys — the recipient list is the list of keys
+  - id: connector-invites
+    name: Real account invites for Blitsol-tier friends
+    status: blocked
+    note: >-
+      The claude.ai connectors (HubSpot, Gmail, Calendar, Drive, Clay, QuickBooks, Stripe) bind to
+      a Claude account, not to this machine, so no flake can hand them over.
+    remaining: >-
+      Invite each client-work friend into HubSpot, Cloudflare, Stripe and Moneybird; the flake
+      only records which connectors that tier is expected to have.
+    waiting_on: Léon — these are GUI invites in four separate billing accounts
+  - id: laya-clm-userscope
+    name: Laya available in every project; CLM parked
+    status: planned
+    note: >-
+      Both decision-model servers are project-scope in Laya_And_CLM-MCPs, so they vanish in every
+      other folder. The repo already ships register-decision-mcps.sh to fix exactly this. Laya no
+      longer waits on anything — it is small, calibrated and CPU-fine, so it goes to user scope
+      regardless. CLM is parked: on 2026-11-16 Léon decided to skip it until a machine with a
+      24 GB NVIDIA card or a suitable spare box exists (his and Almar's spare machines are weeks
+      away). The crew-memory dedup pipeline uses bge-small plus Laya instead
+      (research/dedup-without-clm.md); the CLM hosting write-up stays ready for when a box appears.
+    remaining: >-
+      Fold Laya into mcp.nix at user scope with absolute paths. Register CLM only when a tailnet
+      clm-serve host resolves, so a dead tool is never in the list.
+    paths:
+      - /home/leon-new/Projects/Laya_And_CLM-MCPs/register-decision-mcps.sh
+      - /home/leon-new/Projects/Laya_And_CLM-MCPs/.mcp.json
+  - id: coverage-audit
+    name: Domain coverage audit
+    status: done
+    note: >-
+      Ten domains checked on 2026-11-13. Design is over-covered, Roblox is the strongest and
+      least shareable, booking does not exist at all, and the security guard turns out to live
+      outside the module being extracted.
+    paths:
+      - /home/leon-new/Projects/claude-env/docs/coverage.md
+  - id: guard-portability
+    name: The flake must carry the security guard
+    status: planned
+    note: >-
+      Found by the coverage audit. claude-code-policy.nix is a NixOS system module, separate from
+      modules/home/claude/, so extracting only the home module would hand friends every skill,
+      agent and MCP server with none of the deny rules on .env, /run/agenix and SSH keys.
+    remaining: >-
+      Expose a nixosModules.default alongside homeManagerModules.default, carrying the policy and
+      guard.sh, and state plainly in the guide that the home module alone gives tools without
+      brakes.
+    paths:
+      - /etc/nixos/modules/system/claude-code-policy.nix
+      - /etc/nixos/modules/system/claude-code/guard.sh
+  - id: friend-guide
+    name: The guide for friends
+    status: planned
+    note: >-
+      A friend needs to know what exists, when to reach for which skill or agent, and what the
+      guardrails will stop him doing — none of that is discoverable from the flake.
+    remaining: >-
+      Written after the coverage audit, so it documents the toolkit that actually ships rather
+      than the one that exists today.
+    absent_paths:
+      - /home/leon-new/Projects/claude-env/docs/guide.md
+  - id: jira-calendar
+    name: Jira on the shared board, wired to Google Calendar
+    status: planned
+    note: >-
+      The crew shares one Jira board for the websites, but there is no Jira MCP server installed
+      at any scope, and Jira is not yet feeding Léon's calendar.
+    remaining: >-
+      Add the Atlassian remote MCP at base tier, and connect Jira to Google Calendar.
+  - id: nixos-version-matrix
+    name: One module, two NixOS releases
+    status: planned
+    note: >-
+      Found by the hardware inventory. Léon is on 25.05 with home-manager release-25.05; Ryan and
+      Kish are on 26.05. A module that evaluates on one and not the other fails the first friend
+      who installs it.
+    remaining: >-
+      Flake exposes modules only and lets each consumer's inputs supply nixpkgs and home-manager;
+      a check that evaluates the module against both releases before anything is tagged.
+    waiting_on: q-nixos-version and research item nixos-version-matrix
+  - id: desktop-neutral
+    name: The module must not assume Hyprland
+    status: planned
+    note: >-
+      Found by the hardware inventory. Two of four run KDE Plasma 6 on Wayland. Léon's config was
+      built on Hyprland and Kitty. Checked 2026-11-16 against research/desktop-neutral-module.md:
+      no portal, compositor, clipboard or notification-channel assumptions, and the notify-send
+      call passes. The one gap is claude-mode: modes.nix, claude-mode.sh and cmode.py are built on
+      kitten @ remote control (35 references) and cannot work under Konsole, so the modes become
+      an opt-in module gated on Kitty.
+    remaining: >-
+      Run the checklist from research item desktop-neutral-module against the module; guard or
+      strip anything compositor-specific; test on a KDE machine before the onboarding test.
+    paths:
+      - /etc/nixos/modules/home/claude/hooks.nix
+  - id: research-track
+    name: Research track — free-tool verification
+    status: done
+    note: >-
+      Sixteen items that need looking up rather than deciding, each written as a paste-ready
+      prompt so any of the four people's Claudes can take one on any model. Suggested owners per
+      person. The binding constraint on all of them is that the setup stays free apart from Claude
+      subscriptions and things bought deliberately for production, like a domain or a VPS.
+    remaining: >-
+      All sixteen answered and filed under research/ on 2026-11-16. Three by Claude at Léon's
+      (tested on the machine), nine by Kish in Claude web and reviewed here with the checks that
+      needed Léon's machine (module checklist, git merge simulation, embedding timing, official
+      pricing pages), four by Claude here (context-budget measured, memory schema proposed, SRS
+      and trading data). Nothing reopened a settled decision; two things moved: CLM is parked,
+      and the claude-mode layout engine is Kitty-only and must be opt-in.
+    paths:
+      - /home/leon-new/Projects/claude-env/research/PROGRESS.md
+  - id: onboarding-test
+    name: Prove it on a friend's laptop
+    status: planned
+    note: >-
+      The only real test of a shareable environment is a second machine going from zero to working
+      without Léon typing on it.
+    remaining: >-
+      One friend adds the flake input, rebuilds, and works through the guide unaided while we
+      record every place he gets stuck.
+    waiting_on: onboarding-test needs extract-flake, tiers and friend-guide done first
+facts:
+  - key: user_scope_mcps
+    value: 9
+    source: >-
+      jq -r '.mcpServers | keys | length' ~/.claude.json
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      cloudflare, context7, filesystem, github, memory, obsidian, playwright, sentry, vies-vat.
+      Policy settled 2026-11-13 — github, filesystem and memory are to be pruned, playwright stays.
+  - key: local_scope_mcps
+    value: 25
+    source: >-
+      jq '[.projects[].mcpServers // {} | length] | add' ~/.claude.json
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      14 under ~/projects/fastsdcpu (shadcn-svelte, gsap, lighthouse, a11y, eslint, fonts, lottie,
+      inspiration, figma-dev, gsc, stripe, coingecko, todoist, overheid-apis), 10 under ~
+      (mcp-nixos, docker, tailscale, ollama, moneybird, eu-law, firecrawl, elevenlabs, shopify,
+      sequential-thinking), 1 under /etc/nixos (sequential-thinking again). Reachable only from
+      those directories. First count said 24 — it missed the /etc/nixos entry.
+  - key: project_scope_mcps
+    value: 5
+    source: >-
+      fd -H -I -t f '^\.mcp\.json$' ~/Projects ~/projects /etc/nixos
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      Three files, not one. Laya_And_CLM-MCPs (laya-mcp-server, clm-mcp-server),
+      Roblox-Games (Roblox_Studio, correctly scoped), /etc/nixos (nixos, Roblox_Studio).
+      First count said 2 — it missed both other files because fd without -I respects .gitignore
+      and Roblox-Games/.mcp.json is ignored. mcp-nixos is therefore registered twice in two
+      different scopes, as is sequential-thinking.
+  - key: mcp_nix_declared
+    value: 2
+    source: /etc/nixos/modules/home/claude/mcp.nix
+    source_kind: path
+    as_of: 2026-11-13
+    note: >-
+      CONFLICT, code wins on the facts but the module wins on policy. mcp.nix declares only
+      context7 and firecrawl and lists memory, filesystem, github, playwright, svelte and
+      mcp-nixos as legacy — four of those six are live at user scope, and firecrawl is NOT at
+      user scope at all, it is local-scope under ~. Léon confirmed on 2026-11-13 that the
+      module's CLI-first intent is the truth and the live config is the drift.
+  - key: placeholder_token_servers
+    value: 3
+    source: >-
+      rg -c 'YOUR_[A-Z_]*(TOKEN|PAT|KEY)' ~/.claude.json
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      figma-dev (YOUR_FIGMA_PAT) and shopify (YOUR_SHOPIFY_ACCESS_TOKEN) carry literal
+      placeholders and fail on first call; shopify also hardcodes YOUR_STORE.myshopify.com.
+  - key: account_connectors
+    value: 12
+    source: timeout 60 claude mcp list
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      Claude Docs, Clay, Excalidraw, Gmail, Google Calendar, Google Drive, HubSpot and Intuit
+      QuickBooks connect. Stripe, Sentry and Cloudflare Developer Platform authenticated on
+      2026-11-15; Cloudflare Developer Platform is deprecated upstream in favour of
+      mcp.cloudflare.com, which is already the `cloudflare` user-scope server. Indeed still needs
+      auth; GoDaddy times out after 30s. Bound to the Claude account, not to this machine.
+  - key: claude_skills_installed
+    value: 36
+    source: ls -1 ~/.claude/skills | wc -l
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      skills.nix declares about ten by name or source; the rest arrive through enabledPlugins.
+  - key: claude_agents_installed
+    value: 12
+    source: ls -1 ~/.claude/agents | wc -l
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      Eight are home-manager symlinks, the rest are .bak files left by backupFileExtension.
+  - key: clm_backend_up
+    value: false
+    source: ss -ltn | grep 8700
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      Nothing listening on 8700 and CLM_BASE_URL is unset, so every clm_* call fails today.
+      Laya is fine — its model is in ~/.cache/huggingface/hub/models--convaiinnovations--laya.
+  - key: settings_json_mutable_by_design
+    value: true
+    source: /etc/nixos/modules/home/claude/settings.nix
+    source_kind: path
+    as_of: 2026-11-13
+    note: >-
+      settings.json is a real file, not a symlink, because the module merges into it on
+      activation. Claude Code rewrites it at runtime (model, enabledPlugins), so this is correct
+      and the same approach is what mcp-declarative should use for ~/.claude.json.
+  - key: crew_max_vram_gb
+    value: 6
+    source: /home/leon-new/Projects/crew-memory/docs/hardware-inventory.md
+    source_kind: path
+    as_of: 2026-11-15
+    note: >-
+      Ryan RTX 2060 Mobile 6 GB; Kish GTX 1650 Max-Q 4 GB; Léon none (Arc iGPU + NPU); Almar
+      GTX 1650 Ti or 1660 Ti, unconfirmed. CLM-8B bf16 needs ~16 GB per clm-mcp-server/README.md,
+      so no crew laptop can host it.
+  - key: nixos_releases_in_crew
+    value: 2
+    source: /home/leon-new/Projects/crew-memory/docs/hardware-inventory.md
+    source_kind: path
+    as_of: 2026-11-15
+    note: >-
+      Léon 25.05; Ryan and Kish 26.05; Almar unknown. Two desktops too — Hyprland and KDE Plasma 6.
+  - key: leon_nixos_eol
+    value: "nixos-25.05 end-of-life 2025-12-31; Léon's flake lock dated 2025-12-29"
+    source: research/nixos-version-matrix.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      Finding 10. No nixpkgs security updates on the laptop for about ten months. Exact EOL date
+      inferred from the release cadence, flagged UNVERIFIED in the write-up.
+  - key: module_fixes_for_2605
+    value: 3
+    source: research/nixos-version-matrix.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      Findings 1-3 and 6, evaluated not inferred. hooks.nix needs `pkgs.prettier or
+      pkgs.nodePackages.prettier`; keep nixfmt-rfc-style until 25.05 is dropped; skills.nix reads
+      `inputs.claude-web-stack`, which the shared flake must supply itself. The guard NixOS module
+      evaluates unchanged on 25.05 and 26.05.
+  - key: agenix_removal_revokes
+    value: false
+    source: research/agenix-multi-recipient.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      Findings 2-4, reproduced with agenix 0.15.0 / age 1.2.1. Removing a recipient and rekeying
+      only protects future ciphertext; rotate every value the person could read. Any current
+      recipient can rekey; a failed rekey is partial. Use the home-manager agenix module for the
+      user-level Blitsol secrets.
+  - key: arc140t_vulkan_pp_tps
+    value: 64
+    source: research/clm-hosting-reality.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      Finding 3. Qwen3-8B Q4_K_M prompt tokens per second on Léon's laptop via Vulkan with
+      GGML_VK_DISABLE_F16=1; Mesa 25.0.7 hangs the GPU with fp16 shaders. CPU is about 21. The
+      bf16 CLM path needs a 24 GB card; the spare machine is not on the tailnet and is unchecked.
+
+  - key: startup_context_tokens
+    value: 28503
+    source: research/context-budget.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      Measured with one-shot sessions; 22,857 with no MCP at all. MCP servers cost 5,646 in
+      total because tool schemas are deferred; Sentry is the largest at 1,089, most are 60–270.
+      Pruning github+filesystem+memory saves ~520 tokens; HyperFrames ~320. Tier on usefulness
+      and secrets, not tokens.
+  - key: bge_small_ms_per_idea
+    value: 101
+    source: research/dedup-without-clm.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      bge-small-en-v1.5 via fastembed on Léon's CPU: 500 paragraphs in 38.8 s, one new paragraph
+      101 ms, ranking against 500 stored vectors 2.8 ms. This is the dedup design now that CLM is
+      parked.
+  - key: claude_mode_kitty_refs
+    value: 35
+    source: >-
+      rg -c -e 'kitty @|kitten|xterm-kitty|KITTY_' /etc/nixos/modules/home/claude
+    source_kind: command
+    as_of: 2026-11-16
+    note: >-
+      All in modes.nix, scripts/claude-mode.sh and scripts/cmode.py. The rest of the module has
+      zero desktop or terminal assumptions. claude-mode must be opt-in for KDE/Konsole users.
+  - key: calcom_closed_source_date
+    value: "2026-04-15"
+    source: research/booking-stack-licences.md
+    source_kind: path
+    as_of: 2026-11-16
+    note: >-
+      Cal.com's commercial code went private; Cal.diy (MIT) is a single-user relaunch not meant
+      for production. Booking is built in-house (SvelteKit + FastAPI + SQLite); Easy!Appointments
+      (GPL-3.0, PHP) is the fallback for a first salon in a hurry.
+
+  - key: project_folders
+    value: 42
+    source: >-
+      ls -1 ~/projects ~/Projects | wc -l
+    source_kind: command
+    as_of: 2026-11-13
+    note: >-
+      Two roots with different capitalisation. The filesystem MCP is scoped to /home/leon-new and
+      /home/leon-new/projects only, so it cannot see ~/Projects at all — including this repo.
+  - key: eval_matrix
+    value: green
+    source: just test
+    source_kind: command
+    as_of: 2026-11-16
+    note: >-
+      base + blitsol home configurations and the NixOS guard evaluate on nixpkgs/home-manager
+      25.05 and 26.05 from the in-repo test flakes. Recheck: cd ~/Projects/claude-env && just test
+  - key: guard_tests
+    value: 58
+    source: modules/system/claude-code/guard-test.sh
+    source_kind: command
+    as_of: 2026-11-16
+    note: "All pass. Recheck: just test-guard"
+  - key: helper_script_tests
+    value: 17
+    source: modules/home/scripts/tests.sh
+    source_kind: command
+    as_of: 2026-11-16
+    note: "All pass. Recheck: just test-scripts"
+  - key: mr_blue_builds_from_input
+    value: true
+    source: research/nixos-version-matrix.md
+    source_kind: measured
+    as_of: 2026-11-16
+    note: >-
+      nix build /etc/nixos#nixosConfigurations.mr-blue.config.system.build.toplevel succeeded
+      with claude-env as a flake input; not switched. Managed settings md5 identical to the live
+      /etc/claude-code/managed-settings.json.
+  - key: projects_dir_is_git_repo
+    value: true
+    source: git -C ~/Projects rev-parse --is-inside-work-tree
+    source_kind: command
+    as_of: 2026-11-16
+    note: >-
+      ~/Projects is itself a git checkout, so Nix treats claude-env as an untracked subtree:
+      relative flake paths fail and `path:` URLs are needed until claude-env is its own repo.
+claude_todos:
+  - id: ct-coverage
+    text: >-
+      Run the domain coverage audit across web/booking, trading, Roblox, learning apps, security,
+      design/art, legal and accounting
+    status: done
+    closed: 2026-11-13
+    done_when: >-
+      docs/coverage.md names, per domain, what is covered today, what is missing and the one tool
+      or skill that would close the biggest gap
+    paths:
+      - /home/leon-new/Projects/claude-env/docs/coverage.md
+  - id: ct-guard-module
+    text: >-
+      Expose nixosModules.default carrying claude-code-policy.nix and guard.sh, so the flake
+      ships the guardrails and not just the tools
+    status: done
+    note: >-
+      Done with the extraction (2026-11-16): nixosModules.default is modules/system/guard.nix,
+      tests/eval-*/flake.nix evaluates it, and the README says the home module alone gives the
+      tools without the brakes.
+    done_when: >-
+      A friend's machine importing only homeManagerModules.default is documented as unguarded,
+      and one importing both has /etc/claude-code/managed-settings.json with the deny rules
+    paths:
+      - /etc/nixos/modules/system/claude-code-policy.nix
+  - id: ct-audit-table
+    text: >-
+      Produce the keep/drop/tier table for all 36 MCP servers, applying the settled CLI-first rule
+    status: done
+    done_when: >-
+      docs/mcp-audit.md lists every server with a verdict and a one-line reason, and every
+      placeholder-token server is marked dead-or-fix
+    paths:
+      - /home/leon-new/Projects/claude-env/docs/mcp-audit.md
+  - id: ct-extract
+    text: >-
+      Extract modules/home/claude into github.com/MrBlueStudios/claude-env and make nix-config
+      consume it as an input
+    status: done
+    done_when: >-
+      `nh os switch /etc/nixos` succeeds with the module coming from the flake input, and
+      ~/.claude/agents/backend.md is still a symlink into the store
+    note: >-
+      Built 2026-11-16 (not switched; the switch is mt-switch-to-flake). The agents file resolves
+      to a store path in the built generation.
+  - id: ct-tiers
+    text: Add the claude-env.tier option with base as the default
+    status: next
+    done_when: >-
+      A test build with tier = "base" produces no Blitsol connector or secret, and tier =
+      "blitsol" produces both
+  - id: ct-mcp-declarative
+    text: Write the mcpServers block of ~/.claude.json from Nix on activation, merging not replacing
+    status: later
+    done_when: >-
+      `claude mcp list` shows exactly the declared set after a rebuild, and a hand-added server
+      survives the next rebuild only if it was added to the module
+  - id: ct-jira-mcp
+    text: Add the Atlassian remote MCP to the base tier for the shared board
+    status: later
+    done_when: >-
+      `claude mcp list` shows the Atlassian server connected and a test query returns an issue
+      from the shared website board
+  - id: ct-enrolment
+    text: Write the agenix enrolment runbook for adding and removing a Blitsol friend
+    status: later
+    done_when: >-
+      The runbook takes one SSH public key to a re-keyed secret the friend can decrypt, and names
+      the exact steps to revoke it again
+  - id: ct-guide
+    text: Write the friend-facing guide to the environment
+    status: later
+    done_when: >-
+      docs/guide.md covers install, the two tiers, what each MCP and skill is for, the guardrails,
+      and the first-hour walkthrough — and a friend can follow it without asking Léon a question
+    paths:
+      - /home/leon-new/Projects/claude-env/docs/guide.md
+  - id: ct-laya-clm
+    text: >-
+      Fold Laya into the module at user scope, with CLM registered only when a tailnet host
+      resolves
+    status: later
+    done_when: >-
+      `claude mcp list` run from ~/projects/testing shows Laya connected, and CLM is absent by
+      construction rather than present and broken
+  - id: ct-research-track
+    text: >-
+      Work the research/PROGRESS.md items, filing each result as research/<slug>.md and ticking
+      its box
+    status: next
+    done_when: >-
+      Every one of the sixteen items in research/PROGRESS.md is ticked with a filed write-up in the
+      deliverable format, and the crew-memory items have moved to that project's own board
+    paths:
+      - /home/leon-new/Projects/claude-env/research/PROGRESS.md
+my_todos:
+  - id: mt-mcp-philosophy
+    text: >-
+      Decide whether the CLI-first rule wins over the MCP servers that are actually installed
+    owner: leon
+    why_yours: a decision that changes what everyone gets
+    guide: claude-env-mcp-philosophy
+    status: done
+    added: 2026-11-13
+    closed: 2026-11-13
+  - id: mt-repo-decision
+    text: Decide the repo name and whether it is public or private
+    owner: leon
+    why_yours: a decision, and it is your name on it
+    guide: claude-env-repo-decision
+    status: done
+    added: 2026-11-13
+    closed: 2026-11-13
+  - id: mt-collect-keys
+    text: >-
+      Collect each friend's SSH public key, GitHub username, Jira email and hardware specs
+    owner: leon
+    why_yours: other people's data, only you can ask them
+    guide: claude-env-collect-friend-keys
+    status: done
+    added: 2026-11-13
+    closed: 2026-11-15
+    note: >-
+      Ryan, Almar and Kish sent SSH keys (all verified ED25519), GitHub handles and emails;
+      fastfetch for Ryan and Kish, Almar partial. Recorded privately in
+      ~/Projects/crew-memory/docs/crew.md. The remainder is mt-almar-specs.
+  - id: mt-invites
+    text: Invite the Blitsol-tier friends into HubSpot, Cloudflare, Stripe and Moneybird
+    owner: leon
+    why_yours: GUI invites in four billing accounts
+    guide: claude-env-blitsol-invites
+    status: open
+    added: 2026-11-13
+  - id: mt-connector-auth
+    text: Authenticate the Sentry, Stripe and Cloudflare Developer Platform connectors
+    owner: leon
+    why_yours: an OAuth click-through only you can complete
+    guide: claude-env-connector-auth
+    status: done
+    added: 2026-11-13
+    closed: 2026-11-15
+    note: >-
+      Sentry, Stripe and Cloudflare Developer Platform authenticated 2026-11-15. The Cloudflare
+      Developer Platform server now announces itself as deprecated in favour of mcp.cloudflare.com,
+      which is the `cloudflare` server already at user scope — so it should be removed, not kept.
+  - id: mt-jira-calendar
+    text: Connect Jira to Google Calendar
+    owner: leon
+    why_yours: a click path through two GUIs you own
+    guide: claude-env-jira-calendar
+    status: open
+    added: 2026-11-13
+  - id: mt-clm-call
+    text: Decide whether CLM gets a running backend or is parked until there is a GPU
+    owner: leon
+    why_yours: a decision about hardware and your time
+    guide: claude-env-clm-call
+    status: paused
+    added: 2026-11-13
+    note: >-
+      Paused rather than open, on purpose. Léon's own machine settles half of it — a Core Ultra 9
+      285H with an Arc iGPU and an NPU but no discrete GPU cannot run an 8B encoder at System One
+      speed, so a local clm-serve is off. The other half turns on whether Almar, Ryan or Kish has
+      a real GPU, which the hardware survey in mt-collect-keys answers. Recommended shape: one
+      shared clm-serve on whoever's GPU machine, bound to the tailnet, with CLM_BASE_URL pointing
+      at it and the MCP server registered only when that host resolves. Léon said on 2026-11-13
+      that a spare laptop or PC might host it, unconfirmed. crew-memory's idea-collision detection
+      is the use case that justifies standing one up at all. Hardware survey 2026-11-15: no crew
+      laptop qualifies — bf16 needs ~16 GB VRAM, the largest card is Ryan's RTX 2060 at 6 GB,
+      Kish's GTX 1650 has 4 GB, Almar's is unconfirmed. Only the spare box can host it, and only
+      if its GPU is confirmed. Research item dedup-without-clm asks whether a small CPU embedding
+      model makes CLM unnecessary at four-person scale.
+  - id: mt-almar-specs
+    text: Get Almar's fastfetch output and confirm everyone's Jira account email
+    owner: leon
+    why_yours: other people's data, only you can ask them
+    guide: claude-env-almar-specs
+    status: open
+    added: 2026-11-15
+  - id: mt-rovo-extra-usage
+    text: Turn Rovo extra usage off in Atlassian Administration before 3 December 2026
+    owner: leon
+    why_yours: org-admin setting on the Blitsol Atlassian site
+    guide: claude-env-rovo-extra-usage
+    status: open
+    added: 2026-11-16
+  - id: mt-atlassian-test
+    text: Connect the Atlassian MCP server once from Claude Code and read one issue from the shared board
+    owner: leon
+    why_yours: needs your Atlassian login in a browser
+    guide: claude-env-atlassian-test
+    status: open
+    added: 2026-11-16
+  - id: mt-switch-to-flake
+    text: Switch mr-blue to the claude-env flake input and check ~/.claude still looks the same
+    owner: leon
+    why_yours: a system switch on your own laptop; built and compared, not switched
+    guide: claude-env-switch-to-flake
+    status: open
+    added: 2026-11-16
+  - id: mt-repo-init
+    text: Make ~/Projects/claude-env its own jj/git repo and push it to MrBlueStudios/claude-env
+    owner: leon
+    why_yours: ~/Projects is already a git repo with claude-env files staged in it; nesting a repo there is your call
+    guide: claude-env-repo-init
+    status: open
+    added: 2026-11-16
+  - id: mt-spare-machines
+    text: When the spare machines are set up, run the GPU check from research/clm-hosting-reality.md on each
+    owner: leon
+    why_yours: the machines are yours and Almar's, weeks away
+    guide: claude-env-clm-call
+    status: paused
+    added: 2026-11-16
+
+questions:
+  - id: q-mcp-philosophy
+    question: >-
+      mcp.nix says CLI-first and lists github, filesystem, memory and playwright as legacy to be
+      pruned, but all four are live at user scope. Which one is the truth?
+    options:
+      - Enforce CLI-first — prune github, filesystem and memory, keep playwright for the design skill
+      - Keep what is installed and rewrite mcp.nix to match reality
+      - Tier it — a lean base set, with the rest opt-in per friend
+    recommendation: >-
+      The first. gh --json --jq beats the GitHub MCP on token cost and the built-in file tools beat
+      the filesystem MCP, which cannot even see ~/Projects. Keep playwright, because the design and
+      web-design-playbook skills drive a browser. The memory MCP is the one real loss and it
+      overlaps your file-based memory anyway, so drop it and keep one memory system.
+    blocks: []
+    blocks_note: >-
+      Settled before any server list was written into Nix, which was the point of asking first.
+    answer: >-
+      Enforce CLI-first. Prune github, filesystem and memory; keep playwright. Léon accepted the
+      recommendation on 2026-11-13.
+  - id: q-repo-name
+    question: What is the repo called, and is it public?
+    options:
+      - Public github.com/MrBlueStudios/claude-env, zero secrets in it
+      - Private repo, friends added as collaborators
+      - Public flake plus a private sibling repo for Blitsol bits
+    recommendation: >-
+      The third. The flake itself holds no secrets, so public costs nothing and lets friends pin it
+      with a plain URL; anything Blitsol-shaped lives in a private sibling that only the Blitsol
+      tier needs access to.
+    blocks: []
+    blocks_note: >-
+      Settled before the URL could be baked into anyone's config, which is what made it urgent.
+    answer: >-
+      Public flake plus a private sibling. Léon accepted the recommendation on 2026-11-13; the two
+      names are Claude's call — github.com/MrBlueStudios/claude-env (public) and
+      github.com/MrBlueStudios/blitsol-secrets (private) — and he can override either.
+  - id: q-secrets-repo
+    question: Where do the shared Blitsol secrets live, and who can decrypt them?
+    options:
+      - A private blitsol-secrets repo with agenix, each friend's SSH key as a recipient
+      - Each friend keeps his own copy in his own nix-config
+      - A shared Bitwarden collection, pasted in by hand when needed
+    recommendation: >-
+      The first. It is the only one where revoking a person is a single re-key and a push, and you
+      already run agenix so there is nothing new to learn.
+    blocks: []
+    blocks_note: >-
+      Settled; the enrolment runbook can now be written against a known mechanism.
+    answer: >-
+      A private blitsol-secrets repo with agenix, each client-work friend's SSH key as a recipient.
+      Léon accepted the recommendation on 2026-11-13.
+  - id: q-jira-mcp
+    question: >-
+      There is no Jira MCP at any scope. Does the crew get one, or stay on the browser?
+    options:
+      - Atlassian's official remote MCP at base tier
+      - A CLI wrapper, consistent with the CLI-first rule
+      - Nothing — Jira stays a browser tab
+    recommendation: >-
+      The Atlassian remote MCP at base tier. You share one board across the website work, so
+      reading and filing issues from inside Claude Code is the difference between the board being
+      current and being fiction. It is also the one tool every friend touches on day one.
+    blocks: []
+    blocks_note: >-
+      Settled; the base tier's server list can now be finalised before extraction.
+    answer: >-
+      Atlassian's official remote MCP at base tier. Léon accepted the recommendation on 2026-11-13.
+      This is the one deliberate exception to the CLI-first rule, because every friend uses the
+      shared board daily.
+  - id: q-nixos-version
+    question: >-
+      Léon runs NixOS 25.05, Ryan and Kish run 26.05. Does the flake support both, does Léon
+      upgrade, or does everyone pin one release?
+    options:
+      - The flake supports both releases and Léon also upgrades to 26.05
+      - The flake supports both releases, Léon stays on 25.05
+      - Everyone pins 25.05 to match the maintainer
+    recommendation: >-
+      The first, now with evidence. Research item nixos-version-matrix evaluated the actual Claude
+      modules on both releases: the NixOS guard module passes unchanged, the home-manager module
+      needs one release-guarded attribute (prettier), so both-release support is cheap. The
+      upgrade cost is three branch bumps (nixpkgs, home-manager, stylix) plus a dry run; and the
+      nixos-25.05 branch has been end-of-life since 2025-12-31, so Léon's laptop has had no
+      security updates for ten months. Upgrade this week; the only step before touching
+      /etc/nixos is the dry-run command in research/nixos-version-matrix.md.
+    blocks: []
+    blocks_note: >-
+      Answered 2026-11-16; extract-flake is no longer gated on it.
+    answer: >-
+      The flake supports both releases and Léon upgrades to 26.05. Léon confirmed on 2026-11-16,
+      after research/nixos-version-matrix.md showed the modules evaluate on both releases with one
+      guarded fix and that the 25.05 branch is end-of-life.
+    blocks_note: >-
+      The flake's input structure (module-only versus pinned home-manager) is decided by this,
+      and that structure is the first line of flake.nix.
+    answer: null
+  - id: q-blitsol-friends
+    question: Which friends get the Blitsol tier?
+    options:
+      - Only those already working on Blitsol client work
+      - Everyone in the crew, on the grounds that they will all touch it eventually
+    recommendation: >-
+      Only those on client work. The tier is cheap to grant later and expensive to revoke, since
+      revoking means re-keying secrets and removing four account invites.
+    blocks: []
+    blocks_note: >-
+      Settled in principle; naming the actual people is now part of mt-collect-keys.
+    answer: >-
+      Only those already working on Blitsol client work, which is all four of the current crew —
+      Almar, Ryan, Kish and Léon. Named 2026-11-13. Friends added later get the base tier only,
+      with no Blitsol access, so the tier split earns its keep from the first new person.

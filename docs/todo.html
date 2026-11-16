@@ -1,0 +1,576 @@
+<title>claude-env Queue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root {
+    --ground: #f5f5f9;
+    --surface: #ffffff;
+    --surface-sunk: #ecebf2;
+    --ink: #272736;
+    --ink-soft: #55556e;
+    --muted: #70708c;
+    --line: #e0dfea;
+    --line-strong: #cbc9db;
+    --accent: #6f3fd4;
+    --accent-soft: #ece4fc;
+    --ok: #2d8550;
+    --warn: #a86a05;
+    --warn-soft: #f8ecd6;
+    --stop: #b62e46;
+    --stop-soft: #fae1e6;
+    --go: #2259bd;
+    --go-soft: #dfe8fa;
+
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #15151d;
+      --surface: #1d1d27;
+      --surface-sunk: #232330;
+      --ink: #d9d9e8;
+      --ink-soft: #aaaac4;
+      --muted: #8b8ba6;
+      --line: #2d2d3c;
+      --line-strong: #3d3d50;
+      --accent: #b495f7;
+      --accent-soft: #2a2340;
+      --ok: #84cf92;
+      --warn: #e2b461;
+      --warn-soft: #302718;
+      --stop: #f08098;
+      --stop-soft: #351d25;
+      --go: #83abf2;
+      --go-soft: #1c2437;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #15151d;
+    --surface: #1d1d27;
+    --surface-sunk: #232330;
+    --ink: #d9d9e8;
+    --ink-soft: #aaaac4;
+    --muted: #8b8ba6;
+    --line: #2d2d3c;
+    --line-strong: #3d3d50;
+    --accent: #b495f7;
+    --accent-soft: #2a2340;
+    --ok: #84cf92;
+    --warn: #e2b461;
+    --warn-soft: #302718;
+    --stop: #f08098;
+    --stop-soft: #351d25;
+    --go: #83abf2;
+    --go-soft: #1c2437;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--cond); text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .masthead { display: flex; flex-direction: column; gap: 18px; }
+  .masthead h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.015em; }
+
+  .vitals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .vital { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; }
+  .vital .figure { font-family: var(--cond); font-size: 26px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .vital.mine .figure { color: var(--accent); }
+  .vital .sub { font-size: 13px; color: var(--muted); }
+
+  .next-up {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 14px 18px;
+    border-radius: 0 3px 3px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  section { display: flex; flex-direction: column; gap: 18px; }
+  section > h2 {
+    font-size: 13px;
+    font-family: var(--mono);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  section > h2 .tally { color: var(--ink-soft); font-weight: 400; letter-spacing: 0.04em; }
+
+  /* ---- Léon's items: the main event ---- */
+  .task {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: 0 0 3px 3px;
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .task-head { display: flex; flex-direction: column; gap: 7px; }
+  .task-head h3 { font-size: 22px; font-weight: 600; line-height: 1.25; }
+  .why {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    padding: 3px 9px;
+    border-radius: 2px;
+  }
+  .why.both { color: var(--warn); background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
+  .rationale { color: var(--ink-soft); font-size: 14.5px; max-width: 70ch; }
+
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px; }
+  ol.steps > li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 34px;
+    font-size: 14.5px;
+    max-width: 72ch;
+  }
+  ol.steps > li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 1px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--surface-sunk);
+    border-radius: 2px;
+  }
+  .done-when {
+    display: block;
+    margin-top: 4px;
+    padding-left: 11px;
+    border-left: 2px solid var(--ok);
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+  .done-when b { color: var(--ok); font-weight: 600; }
+
+  .trap {
+    border-top: 1px dashed var(--line);
+    padding-top: 11px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 72ch;
+  }
+  .trap b { color: var(--warn); font-weight: 600; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.87em;
+    background: var(--surface-sunk);
+    padding: 1px 5px;
+    border-radius: 2px;
+    word-break: break-word;
+  }
+
+  /* ---- Claude's queue ---- */
+  .rows { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+  .row { background: var(--surface); padding: 13px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .row-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 11px; }
+  .row-top .txt { font-weight: 500; font-size: 15px; }
+  .pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    flex: none;
+  }
+  .pill.next { color: var(--go); background: var(--go-soft); }
+  .pill.later { color: var(--muted); background: var(--surface-sunk); }
+  .pill.blocked { color: var(--stop); background: var(--stop-soft); }
+  .pill.settled { color: var(--ok); background: var(--surface-sunk); }
+  .row.is-done .txt { color: var(--ink-soft); }
+  .row .dw { font-size: 13.5px; color: var(--ink-soft); max-width: 74ch; }
+  .row .dw b { color: var(--ok); font-weight: 600; }
+  .row .gate { font-family: var(--mono); font-size: 11.5px; color: var(--stop); }
+
+  /* ---- questions ---- */
+  .q {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warn);
+    border-radius: 0 3px 3px 0;
+    padding: 17px 19px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .q h3 { font-size: 19px; font-weight: 600; line-height: 1.3; }
+  .q .qid { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  ul.opts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  ul.opts li {
+    position: relative;
+    padding-left: 24px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    max-width: 72ch;
+  }
+  ul.opts li::before {
+    content: "○";
+    position: absolute;
+    left: 4px;
+    color: var(--line-strong);
+  }
+  ul.opts li.rec { color: var(--ink); }
+  ul.opts li.rec::before { content: "●"; color: var(--accent); }
+  .rec-why {
+    background: var(--accent-soft);
+    border-radius: 3px;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 74ch;
+  }
+  .rec-why b { color: var(--accent); font-weight: 600; }
+  .blocks { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+  .blocks b { color: var(--stop); font-weight: 500; }
+
+  footer { display: flex; flex-direction: column; gap: 9px; border-top: 1px solid var(--line); padding-top: 22px; }
+  footer p { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  @media (max-width: 560px) {
+    .masthead h1 { font-size: 31px; }
+    .task { padding: 16px 15px 18px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">claude-env · queue · 16 Nov 2026 · Almar · Ryan · Kish · Léon</p>
+    <h1>What's on you, what's on me</h1>
+
+    <div class="vitals">
+      <div class="vital mine">
+        <span class="figure">5</span>
+        <span class="sub">yours — 7 open, 2 paused, 4 closed</span>
+      </div>
+      <div class="vital">
+        <span class="figure">10</span>
+        <span class="sub">mine — 2 ready, 8 queued</span>
+      </div>
+      <div class="vital">
+        <span class="figure">0</span>
+        <span class="sub">open questions — NixOS release answered 16 Nov</span>
+      </div>
+    </div>
+
+    <div class="next-up">
+      <p class="eyebrow">Cheapest thing first</p>
+      <p><strong>Switch mr-blue to the flake input</strong> — one <code>nh os switch</code>, the closure is already built and compared. Then give claude-env its own repo so the input can point at GitHub. The crew message (Almar's <code>fastfetch</code>, everyone's Jira email) is still waiting too.</p>
+    </div>
+  </header>
+
+  <section>
+    <h2>Your queue <span class="tally">— 7 open, 2 paused</span></h2>
+    <p class="rationale">Paused with the CLM decision: the spare-machine GPU check (yours and Almar's) waits until those machines exist; the one-liner is in <code>research/clm-hosting-reality.md</code>.</p>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Switch mr-blue to the claude-env flake input</h3>
+        <span class="why">a system switch on your own laptop</span>
+      </div>
+      <p class="rationale">The new system closure is built from the flake input and compared with the running one: managed settings byte-identical, <code>CLAUDE.md</code> only restructured. Three files in <code>/etc/nixos</code> are changed and uncommitted (<code>flake.nix</code>, <code>users/leon-new.nix</code>, <code>hosts/mr-blue/default.nix</code>). Guide: <code>Guides/claude-env-switch-to-flake</code>.</p>
+      <ol class="steps">
+        <li><code>cd /etc/nixos && git diff</code>, then <code>nh os switch /etc/nixos</code>.
+          <span class="done-when"><b>Done when</b> <code>readlink ~/.claude/agents/backend.md</code> is a store path and <code>head -1 ~/.claude/CLAUDE.md</code> reads "Léon — crew conventions".</span></li>
+        <li>Commit the three files; later delete the dead copies <code>modules/home/claude/</code> and <code>claude-code-policy.nix</code>.
+          <span class="done-when"><b>Done when</b> nix-config has no second copy of the module.</span></li>
+      </ol>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Make ~/Projects/claude-env its own repo and push it</h3>
+        <span class="why">~/Projects is already a git repo with claude-env files staged in it</span>
+      </div>
+      <p class="rationale">Nix treats claude-env as an untracked subtree of <code>~/Projects</code>, so the input is a local <code>path:</code> for now and every eval warns about a dirty tree. Nesting a repo there, or unstaging those files from the parent, is your call. Guide: <code>Guides/claude-env-repo-init</code>.</p>
+      <ol class="steps">
+        <li><code>git -C ~/Projects restore --staged claude-env</code>, then <code>jj git init --colocate</code> in claude-env and a first commit.
+          <span class="done-when"><b>Done when</b> <code>just test</code> runs without the dirty-tree warning.</span></li>
+        <li><code>gh repo create MrBlueStudios/claude-env --public --source . --push</code>, then change the input in <code>/etc/nixos/flake.nix</code> to <code>github:MrBlueStudios/claude-env</code>.
+          <span class="done-when"><b>Done when</b> <code>nix flake update claude-env</code> in nix-config pulls from GitHub.</span></li>
+      </ol>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Turn Rovo extra usage off in Atlassian Administration before 3 December</h3>
+        <span class="why">org-admin setting on the Blitsol Atlassian site</span>
+      </div>
+      <p class="rationale">Kish's Atlassian research: the MCP server's plain Jira tools are free, but its "enriched" search tools burn Rovo credits, and Atlassian's usage-based billing for those starts on 3 December 2026, reported as on by default. Whether a Free site with no card can be billed is unverified. Switching it off removes the question before it matters.</p>
+      <ol class="steps">
+        <li>Open <code>admin.atlassian.com</code>, pick the Blitsol organisation, go to Rovo (or Billing → Rovo usage).
+          <span class="done-when"><b>Done when</b> extra usage reads off, or is capped at 0 if only a cap is offered.</span></li>
+        <li>Tell me the exact menu path, so the runbook can say it.
+          <span class="done-when"><b>Done when</b> the sentence is in the friend guide.</span></li>
+      </ol>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Connect the Atlassian MCP server once and read one issue from the shared board</h3>
+        <span class="why">your Atlassian login, in a browser</span>
+      </div>
+      <p class="rationale">Nobody has connected to the real board yet. The URL, the command and the tool list are confirmed from Atlassian's own pages; "works on Free" and the hourly limit are only quoted through third parties. Ten minutes turns that into fact and tells the friend guide whether an admin approval step exists.</p>
+      <ol class="steps">
+        <li><code>claude mcp add --transport http --scope user atlassian https://mcp.atlassian.com/v2/mcp</code>, then <code>/mcp</code> → atlassian → sign in.
+          <span class="done-when"><b>Done when</b> one issue and the board's sprints come back without a plan prompt.</span></li>
+        <li>Ask Claude to comment on a test issue. If it writes without asking, add <code>"ask": ["mcp__atlassian__*"]</code> to your permissions.
+          <span class="done-when"><b>Done when</b> one write succeeded and you know whether an admin had to approve anything.</span></li>
+      </ol>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Get Almar's fastfetch output and confirm everyone's Jira account email</h3>
+        <span class="why">other people's data — only you can ask</span>
+      </div>
+      <p class="rationale">Three of four laptops are in the inventory; Almar's says "Lenovo Legion, GTX 1650 Ti or 1660 Ti" and nothing else. And the emails came in under "github accounts" — nobody has said they are also the Jira ones, and the Jira email is how a person lands on the shared board.</p>
+      <ol class="steps">
+        <li>Ask Almar for one paste — <code>fastfetch</code>, then <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>.
+          <span class="done-when"><b>Done when</b> the inventory can name his CPU, RAM, NixOS release, desktop, and which of the two GPUs it is. It matters for nothing today, but the inventory should stop saying "or".</span></li>
+        <li>Ask all three whether the email they sent is the one on their Atlassian account.
+          <span class="done-when"><b>Done when</b> you have a yes or a different address from each. A mismatch here looks like "the invite never arrived" three days later.</span></li>
+        <li>Hand the answers to me to fold into the crew file and the inventory.
+          <span class="done-when"><b>Done when</b> <code>rg -c 'unconfirmed|not yet confirmed' ~/Projects/crew-memory/docs/crew.md</code> prints 0.</span></li>
+      </ol>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Invite the Blitsol-tier friends into HubSpot, Cloudflare, Stripe and Moneybird</h3>
+        <span class="why">GUI invites in four billing accounts</span>
+      </div>
+      <p class="rationale">No flake can ever do this: the claude.ai connectors bind to a person's Claude account, not to a machine. A friend gets HubSpot inside Claude Code by being a real user in HubSpot — not by copying anything off your laptop.</p>
+      <ol class="steps">
+        <li>Decide the per-tool role first. HubSpot and Moneybird see customer and financial data; Cloudflare and Stripe can take a site down or move money.
+          <span class="done-when"><b>Done when</b> you have one role per person per tool, and none says Admin unless you meant it.</span></li>
+        <li>HubSpot — Settings → Users &amp; Teams → Create user, invite by email, assign the role.
+          <span class="done-when"><b>Done when</b> the row shows Pending and he confirms the email arrived.</span></li>
+        <li>Cloudflare — Manage Account → Members → Invite, scoped to the Blitsol account and, where the UI allows, to specific zones.
+          <span class="done-when"><b>Done when</b> the member list shows your chosen scope, not Super Administrator.</span></li>
+        <li>Stripe — Settings → Team and security → Team members → New member. Read-only Analyst is enough for anyone not handling refunds.
+          <span class="done-when"><b>Done when</b> the invite is pending and the role column is not Administrator.</span></li>
+        <li>Moneybird — Settings → Users → Invite, with the limited role if he only needs to read invoices.
+          <span class="done-when"><b>Done when</b> the user appears in the administration you meant — Moneybird scopes users per administration and it is easy to pick the wrong one.</span></li>
+        <li>Have each friend connect the tool in his own Claude Code.
+          <span class="done-when"><b>Done when</b> he runs <code>claude mcp list</code> and that connector reads Connected, not Needs authentication.</span></li>
+      </ol>
+      <p class="trap"><b>Looks like success, isn't:</b> an invite can sit Pending for days unnoticed, because Claude Code reports the connector as needing authentication either way. Ask for the <code>claude mcp list</code> line as proof instead of asking whether it worked.</p>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Connect Jira to Google Calendar</h3>
+        <span class="why">a click path through two GUIs you own</span>
+      </div>
+      <p class="rationale">You mentioned this yourself. It decides what lands in the calendar you actually plan your days around.</p>
+      <ol class="steps">
+        <li>Decide what should appear <em>before</em> connecting: every issue with a due date, only sprint boundaries, or only issues assigned to you.
+          <span class="done-when"><b>Done when</b> you can say it in one sentence. Connecting first and filtering later is how a calendar gets abandoned.</span></li>
+        <li>In Jira, open the board → three-dot menu → the subscription or calendar option, which yields an iCal feed URL.
+          <span class="done-when"><b>Done when</b> you have a URL ending <code>.ics</code>. Treat it as a secret — anyone holding it can read the board with no login.</span></li>
+        <li>Google Calendar → Other calendars → + → From URL, paste it, and name it after the board.
+          <span class="done-when"><b>Done when</b> at least one Jira issue with a due date shows on the right day.</span></li>
+        <li>Give it a colour you will read as "the board's, not mine".
+          <span class="done-when"><b>Done when</b> you can tell at a glance which blocks came from Jira.</span></li>
+        <li>Check it again a day later.
+          <span class="done-when"><b>Done when</b> an issue whose due date you changed in Jira has moved in the calendar.</span></li>
+      </ol>
+      <p class="trap"><b>Looks like success, isn't:</b> Google refreshes subscribed iCal feeds on its own schedule, often hours behind and sometimes a full day. That is normal — but it means the feed is wrong for anything same-day, and if the crew starts relying on it, the answer is the Atlassian MCP plus a real sync, not a faster refresh.</p>
+    </article>
+
+    <h3 style="font-family: var(--cond); font-size: 17px; font-weight: 600; margin-top: 10px;">Paused by you</h3>
+
+    <article class="task" style="border-top-color: var(--warn);">
+      <div class="task-head">
+        <h3>Decide whether CLM gets a running backend or is parked until there is a GPU</h3>
+        <span class="why both">paused — half of it is answered, half waits on the hardware survey</span>
+      </div>
+      <p class="rationale">Your own machine settles half of this. A Core Ultra 9 285H with an Arc iGPU and the Intel NPU but no discrete GPU cannot run an 8B encoder at System One speed — and a decision model that takes seconds is not a decision model, it is a slow LLM call with fewer options. So no local <code>clm-serve</code>.</p>
+      <p class="rationale">The other half is the good question you asked: if Almar, Ryan or Kish has a real GPU, the right shape is not four backends. It is <strong>one</strong> <code>clm-serve</code> on that machine, bound to the tailnet, with everyone's <code>CLM_BASE_URL</code> pointing at it. You already run Tailscale, so this costs nothing and never opens a public port.</p>
+      <ol class="steps">
+        <li>Nothing to do here until the hardware replies land — the survey is part of the message you are already sending.
+          <span class="done-when"><b>Unpauses when</b> you know whether any of the three has a discrete GPU with enough VRAM for an 8B encoder, roughly 8&nbsp;GB and up.</span></li>
+        <li>If someone does: that machine hosts it, and CLM becomes an opt-in the module registers only when the tailnet host resolves.
+          <span class="done-when"><b>Done when</b> <code>claude mcp list</code> on a second laptop shows CLM connected against the shared host.</span></li>
+        <li>If nobody does: Laya goes to user scope alone, and CLM stays in its repo, unregistered, until the hardware changes.
+          <span class="done-when"><b>Done when</b> no <code>clm_*</code> tool appears in any session, rather than appearing and failing.</span></li>
+      </ol>
+      <p class="trap"><b>Worth knowing either way:</b> Laya covers more than you have been using it for. A calibrated yes/no in 0.1–0.3&nbsp;s on CPU is exactly the shape of a trading signal gate and of grading a language-app answer against fixed outcomes. CLM only wins when you need to rank hundreds of candidates — which, across your current projects, is nothing yet.</p>
+    </article>
+  </section>
+
+  <section>
+    <h2>My queue <span class="tally">— 1 ready, 6 queued, 4 done</span></h2>
+    <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">Research track — all 16 answered and filed</span></div>
+        <p class="dw">Léon's three are answered and filed under <code>research/</code> (16 Nov): the modules were evaluated on both releases rather than read about, every agenix claim was reproduced in a scratch repo, and the Arc 140T was benchmarked. Still mine: <code>context-budget</code> and <code>memory-schema-prior-art</code>, both local. <b>Done when</b> every item is ticked with a write-up in the deliverable format. Four can reopen settled decisions: <code>atlassian-mcp-auth</code>, <code>booking-stack-licences</code>, <code>nixos-version-matrix</code>, <code>dedup-without-clm</code>.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">Keep / drop / tier table for every MCP server and connector</span></div>
+        <p class="dw"><code>docs/mcp-audit.md</code>, 16 Nov: 39 registrations, 12 connectors and the Svelte plugin each with a verdict and a reason. Base keeps context7, playwright, svelte, atlassian, laya and vies-vat; Blitsol adds cloudflare, moneybird and the HubSpot/Stripe connectors; seven groups become opt-in modules; 23 are dropped.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">NixOS module carrying the security guard, not just the home-manager module</span></div>
+        <p class="dw"><code>nixosModules.default</code> is <code>modules/system/guard.nix</code>; the test flakes evaluate it on both releases and the README says the home module alone gives the tools without the brakes.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">Extract modules/home/claude into claude-env, consumed by nix-config as an input</span></div>
+        <p class="dw">Built on 16 Nov from the flake input and compared with the running system; the agents file resolves to a store path in the built generation. The switch itself is yours (top of your queue).</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Wire the claude-env.tier option (declared, base by default) to the Blitsol servers and secrets</span></div>
+        <p class="dw"><b>Done when</b> a test build with <code>tier = "base"</code> produces no Blitsol connector or secret, and <code>tier = "blitsol"</code> produces both.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Write the mcpServers block of ~/.claude.json from Nix on activation, merging not replacing</span></div>
+        <p class="dw">This is the fix that stops the drift recurring. <b>Done when</b> <code>claude mcp list</code> shows exactly the declared set after a rebuild, and a hand-added server survives the next rebuild only if it was added to the module.</p>
+        <p class="gate">after the audit table</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Add the Atlassian remote MCP to the base tier</span></div>
+        <p class="dw"><b>Done when</b> <code>claude mcp list</code> shows the Atlassian server connected and a test query returns an issue from the shared website board.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Write the agenix enrolment runbook for adding and removing a Blitsol friend</span></div>
+        <p class="dw"><b>Done when</b> the runbook takes one SSH public key to a re-keyed secret the friend can decrypt, and names the exact steps to revoke it again.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Write the friend-facing guide to the environment</span></div>
+        <p class="dw"><b>Done when</b> <code>docs/guide.md</code> covers install, the two tiers, what each MCP and skill is for, the guardrails and a first-hour walkthrough — and a friend can follow it without asking you a question.</p>
+        <p class="gate">after the coverage audit, so it documents what ships rather than what exists</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Fold Laya into the module at user scope, CLM only if a tailnet host resolves</span></div>
+        <p class="dw">Laya waits on nothing now. <b>Done when</b> <code>claude mcp list</code> run from <code>~/projects/testing</code> shows Laya connected, and CLM is absent by construction rather than present and broken.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Settled <span class="tally">— 4 of yours closed, 5 decisions, 1 audit</span></h2>
+    <div class="rows">
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed 15 Nov</span><span class="txt">Collect each friend's SSH public key, GitHub username, Jira email and hardware specs</span></div>
+        <p class="dw">Ryan, Almar and Kish all delivered. Three valid ED25519 keys, three GitHub handles, three emails, two full <code>fastfetch</code> reports and one partial. Recorded privately in <code>crew-memory/docs/crew.md</code>, never in the public repo. The remainder is the Almar item above.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed 15 Nov</span><span class="txt">Authenticate the Sentry, Stripe and Cloudflare Developer Platform connectors</span></div>
+        <p class="dw">All three connected. One wrinkle: Cloudflare Developer Platform now announces itself as <em>deprecated</em> in favour of <code>mcp.cloudflare.com</code> — which is the <code>cloudflare</code> server already at user scope. It should come out, not stay.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">Domain coverage audit — ten domains</span></div>
+        <p class="dw">In <code>docs/coverage.md</code>. Design is over-covered, Roblox is the strongest domain and the least shareable, booking does not exist at all, and the security guard turned out to live outside the module we were about to extract.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed</span><span class="txt">Decide whether the CLI-first rule wins over the MCP servers actually installed</span></div>
+        <p class="dw">CLI-first wins. <code>github</code>, <code>filesystem</code> and <code>memory</code> are pruned; <code>playwright</code> stays, because the design skills drive a real browser. One memory system, not two.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed</span><span class="txt">Decide the repo name and whether it is public or private</span></div>
+        <p class="dw">Public <code>github.com/MrBlueStudios/claude-env</code> with a private <code>blitsol-secrets</code> sibling. The two names are my call — say the word if you want different ones, but say it before the URL is in anyone's config.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Decided</span><span class="txt">Where the shared Blitsol secrets live</span></div>
+        <p class="dw">agenix in the private sibling repo, each client-work friend's SSH key as a recipient. Revoking a person is one re-key and a push.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Decided</span><span class="txt">Jira gets Atlassian's official remote MCP, at base tier</span></div>
+        <p class="dw">The one deliberate exception to the CLI-first rule, because every friend touches the shared board daily.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Decided</span><span class="txt">Who gets the Blitsol tier</span></div>
+        <p class="dw">Only friends already on Blitsol client work. Cheap to grant later, expensive to revoke. Naming the actual people is now part of collecting their keys.</p>
+      </div>
+    </div>
+    <p style="font-size: 13.5px; color: var(--ink-soft); max-width: 72ch;">Your two checkboxes for these are still unticked in <code>My Todos.md</code> — I never touch the boxes, since their state is yours. Tick them next time you are in there.</p>
+  </section>
+
+  <section>
+    <h2>Answered 16 Nov <span class="tally">— 1</span></h2>
+    <article class="q">
+      <h3>You run NixOS 25.05; Ryan and Kish run 26.05. Does the flake support both, do you upgrade, or does everyone pin one release?</h3>
+      <p class="qid">q-nixos-version · found by the hardware inventory</p>
+      <ul class="opts">
+        <li class="rec">The flake supports both releases, and you also upgrade to 26.05</li>
+        <li>The flake supports both releases, you stay on 25.05</li>
+        <li>Everyone pins 25.05 to match the maintainer</li>
+      </ul>
+      <p class="rec-why"><b>My recommendation:</b> the first. A shared module that only evaluates on one release is a trap for the next friend who installs it, so supporting both is non-negotiable. And a maintainer should run what the majority runs — two of three friends are already on 26.05. The cost of your upgrade is now known: three branch bumps plus two guarded package attributes, and your Claude modules already evaluate on 26.05 in a scratch flake. What tipped it from "nice" to "soon": the 25.05 branch you are on has been end-of-life since 31 December 2025, so the laptop has had no security updates for ten months. Run the dry-run command in <code>research/nixos-version-matrix.md</code>, then upgrade.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered:</b> the first. You confirmed on 16 Nov; extract-flake is unblocked and your upgrade is on the queue.</p>
+    </article>
+  </section>
+
+  <footer>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml</p>
+    <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
+    <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
+    <p>next project · crew-memory — design written to ~/Projects/crew-memory/docs/design.md, not started</p>
+    <p>todos · 10 checkboxes under ## claude-env; 65 pre-existing checkboxes left untouched, none ticked by me</p>
+  </footer>
+
+</div>

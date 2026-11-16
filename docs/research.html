@@ -1,0 +1,365 @@
+<title>Crew Research Agenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root {
+    --ground: #f5f5f9; --surface: #ffffff; --surface-sunk: #ecebf2;
+    --ink: #272736; --ink-soft: #55556e; --muted: #70708c;
+    --line: #e0dfea; --line-strong: #cbc9db;
+    --accent: #6f3fd4; --accent-soft: #ece4fc;
+    --ok: #2d8550; --warn: #a86a05; --warn-soft: #f8ecd6; --stop: #b62e46;
+    --p-leon: #6f3fd4; --p-ryan: #2259bd; --p-kish: #2d8550; --p-almar: #a86a05; --p-claude: #70708c;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #15151d; --surface: #1d1d27; --surface-sunk: #232330;
+      --ink: #d9d9e8; --ink-soft: #aaaac4; --muted: #8b8ba6;
+      --line: #2d2d3c; --line-strong: #3d3d50;
+      --accent: #b495f7; --accent-soft: #2a2340;
+      --ok: #84cf92; --warn: #e2b461; --warn-soft: #302718; --stop: #f08098;
+      --p-leon: #b495f7; --p-ryan: #83abf2; --p-kish: #84cf92; --p-almar: #e2b461; --p-claude: #8b8ba6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #15151d; --surface: #1d1d27; --surface-sunk: #232330;
+    --ink: #d9d9e8; --ink-soft: #aaaac4; --muted: #8b8ba6;
+    --line: #2d2d3c; --line-strong: #3d3d50;
+    --accent: #b495f7; --accent-soft: #2a2340;
+    --ok: #84cf92; --warn: #e2b461; --warn-soft: #302718; --stop: #f08098;
+    --p-leon: #b495f7; --p-ryan: #83abf2; --p-kish: #84cf92; --p-almar: #e2b461; --p-claude: #8b8ba6;
+  }
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 15.5px; line-height: 1.62; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 860px; margin: 0 auto; padding-inline: 20px; padding-block: 44px 80px; display: flex; flex-direction: column; gap: 44px; }
+  h1, h2, h3 { font-family: var(--cond); text-wrap: balance; margin: 0; }
+  p { margin: 0; max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  header.top { display: flex; flex-direction: column; gap: 14px; }
+  header.top h1 { font-size: clamp(32px, 6.5vw, 46px); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+  header.top .lede { font-size: 17.5px; color: var(--ink-soft); max-width: 62ch; }
+  .constraint { border-left: 3px solid var(--warn); background: var(--warn-soft); padding: 14px 18px; border-radius: 0 3px 3px 0; display: flex; flex-direction: column; gap: 5px; }
+  .constraint .eyebrow { color: var(--warn); }
+  .constraint p { font-size: 14.5px; color: var(--ink-soft); }
+
+  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .person { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; border-top: 3px solid var(--line-strong); }
+  .person.leon { border-top-color: var(--p-leon); } .person.ryan { border-top-color: var(--p-ryan); }
+  .person.kish { border-top-color: var(--p-kish); } .person.almar { border-top-color: var(--p-almar); }
+  .person.claude { border-top-color: var(--p-claude); } .person.open { border-top-color: var(--line-strong); border-top-style: dashed; }
+  .person h4 { font-family: var(--cond); font-size: 18px; font-weight: 600; margin: 0; }
+  .person ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .person li { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
+  .person li a { color: inherit; text-decoration: none; }
+  .person li a:hover { color: var(--accent); }
+
+  .howto { display: flex; flex-direction: column; gap: 14px; }
+  .howto ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 7px; }
+  .howto li { color: var(--ink-soft); max-width: 66ch; }
+  .howto li strong { color: var(--ink); font-weight: 600; }
+
+  section { display: flex; flex-direction: column; gap: 16px; }
+  section > h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; padding-bottom: 10px; border-bottom: 2px solid var(--line-strong); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .letter { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--surface); background: var(--ink); padding: 2px 8px; border-radius: 2px; }
+  .tally { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--muted); }
+
+  .item { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 9px; }
+  .item-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .item-head h3 { font-size: 18px; font-weight: 600; }
+  .slug { font-family: var(--mono); font-size: 15px; font-weight: 600; background: none; padding: 0; color: var(--ink); }
+  .owner { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 2px; color: var(--surface); background: var(--line-strong); }
+  .owner.leon { background: var(--p-leon); } .owner.ryan { background: var(--p-ryan); }
+  .owner.kish { background: var(--p-kish); } .owner.almar { background: var(--p-almar); }
+  .owner.claude { background: var(--p-claude); } .owner.open { background: none; color: var(--muted); border: 1px dashed var(--line-strong); }
+  .item.is-done { border-left: 3px solid var(--ok, #2d8550); }
+  .badge-done { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 2px; color: var(--ok, #2d8550); border: 1px solid var(--ok, #2d8550); }
+  .answer { font-size: 15px; max-width: 70ch; }
+  .conf { font-size: 13.5px; color: var(--ink-soft); max-width: 70ch; }
+  .conf b { color: var(--ok, #2d8550); font-weight: 600; }
+  ul.change { margin: 0; padding-left: 20px; font-size: 13.5px; color: var(--ink-soft); max-width: 70ch; display: flex; flex-direction: column; gap: 4px; }
+  .filed { font-size: 12.5px; color: var(--muted); }
+  .progress { font-size: 15px; color: var(--ink-soft); }
+  .progress b { color: var(--ok, #2d8550); }
+  .tick { color: var(--ok, #2d8550); font-weight: 600; }
+  .decides { font-size: 14.5px; color: var(--ink); }
+  .decides b { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); margin-right: 6px; font-weight: 600; }
+  .why { font-size: 14px; color: var(--ink-soft); }
+  details { border-top: 1px dashed var(--line); padding-top: 9px; }
+  summary { cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--accent); list-style: none; display: flex; align-items: center; gap: 8px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▸"; font-size: 11px; transition: transform 120ms; }
+  details[open] summary::before { transform: rotate(90deg); }
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  pre { margin: 10px 0 0; overflow-x: auto; background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 3px; padding: 14px 16px; }
+  pre code { font-family: var(--mono); font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+  code { font-family: var(--mono); font-size: 0.87em; background: var(--surface-sunk); padding: 1.5px 5px; border-radius: 2px; }
+  @media (prefers-reduced-motion: reduce) { summary::before { transition: none; } }
+  footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; flex-direction: column; gap: 7px; }
+  footer p { font-family: var(--mono); font-size: 12px; color: var(--muted); max-width: none; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">For Almar, Ryan, Kish and Léon · updated 16 November 2026</p>
+    <h1>Sixteen things to find out</h1>
+    <p class="progress"><b>16 of 16 answered</b> · 16 November 2026. Three were tested on Léon's machine, nine were run by Kish in Claude web and then checked here, four were done here. Each card shows the conclusion; the full write-ups with sources are in <code>research/</code>.</p>
+    <p class="lede">Sixteen questions that needed looking up, not deciding. All answered. What changed: CLM is parked until a real GPU box exists, the claude-mode layouts become opt-in because they only work in Kitty, and Léon upgrades to NixOS 26.05. Nothing reopened a settled decision.</p>
+  </header>
+
+  <div class="constraint">
+    <p class="eyebrow">The constraint on every item</p>
+    <p><strong>Free to use.</strong> The only things we pay for are our Claude subscriptions and things bought deliberately to put something live — a domain, a VPS. A free tier that quietly turns paid at four people is a finding, not a footnote. Everyone is on NixOS; two of us on 26.05 with KDE Plasma, Léon on 25.05 with Hyprland.</p>
+  </div>
+
+  <div class="people">
+    <div class="person leon"><h4>Léon</h4><ul><li><a href="#nixos-version-matrix">nixos-version-matrix</a> <span class="tick">✓</span></li><li><a href="#agenix-multi-recipient">agenix-multi-recipient</a> <span class="tick">✓</span></li><li><a href="#clm-hosting-reality">clm-hosting-reality</a> <span class="tick">✓</span></li></ul></div>
+    <div class="person ryan"><h4>Ryan</h4><ul><li><a href="#flake-pinning-strategy">flake-pinning-strategy</a> <span class="tick">✓</span></li><li><a href="#dedup-without-clm">dedup-without-clm</a> <span class="tick">✓</span></li><li><a href="#roblox-on-nvidia-kde">roblox-on-nvidia-kde</a> <span class="tick">✓</span></li></ul></div>
+    <div class="person kish"><h4>Kish</h4><ul><li><a href="#desktop-neutral-module">desktop-neutral-module</a> <span class="tick">✓</span></li><li><a href="#mcp-free-tiers">mcp-free-tiers</a> <span class="tick">✓</span></li><li><a href="#obsidian-multi-person-sync">obsidian-multi-person-sync</a> <span class="tick">✓</span></li></ul></div>
+    <div class="person almar"><h4>Almar</h4><ul><li><a href="#atlassian-mcp-auth">atlassian-mcp-auth</a> <span class="tick">✓</span></li><li><a href="#booking-stack-licences">booking-stack-licences</a> <span class="tick">✓</span></li><li><a href="#memory-dashboard-options">memory-dashboard-options</a> <span class="tick">✓</span></li></ul></div>
+    <div class="person claude"><h4>Claude, at Léon's</h4><ul><li><a href="#context-budget">context-budget</a> <span class="tick">✓</span></li><li><a href="#memory-schema-prior-art">memory-schema-prior-art</a> <span class="tick">✓</span></li></ul></div>
+    <div class="person open"><h4>Unassigned</h4><ul><li><a href="#trading-free-data">trading-free-data</a> <span class="tick">✓</span></li><li><a href="#srs-algorithms">srs-algorithms</a> <span class="tick">✓</span></li></ul></div>
+  </div>
+
+  <section class="howto">
+    <h2>How to run one</h2>
+    <ol>
+      <li><strong>Open the item, copy the whole prompt.</strong> It already carries the context and the output format — add nothing.</li>
+      <li><strong>Paste it into your Claude.</strong> If it can search the web, good. If it can't, it should say what it could not check rather than guess.</li>
+      <li><strong>Insist on the format.</strong> Question, three-sentence answer, confidence, what would change our decision, numbered findings with sources, a "not checked" list. That shape is what lets sixteen answers from four people get merged without re-reading sixteen essays.</li>
+      <li><strong>Save it as <code>&lt;slug&gt;.md</code> and send it to Léon.</strong> Once the repo exists, it lands in <code>research/</code> and the item gets ticked.</li>
+    </ol>
+    <p>Anything your Claude marks <code>UNVERIFIED</code> is more useful than something it states confidently and wrongly. Ask it to be honest about what it couldn't reach.</p>
+  </section>
+  
+    <section>
+      <h2><span class="letter">A</span> Blocks the flake — do these first <span class="tally">— 7</span></h2>
+      
+      <article class="item is-done" id="nixos-version-matrix">
+        <div class="item-head">
+          <h3><code class="slug">nixos-version-matrix</code></h3>
+          <span class="owner leon">Léon</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> whether the flake can ship one module for everyone, and whether Léon upgrades.</p><p class="why">Found by: the inventory. Léon is on NixOS 25.05, Ryan and Kish on 26.05.</p>
+        <p class="answer">Yes, and it was tested rather than read: Léon&#x27;s actual Claude home-manager module and the guard NixOS module were evaluated against both releases. The NixOS module passes on both unchanged; the home-manager module passes on 25.05 and fails on 26.05 on exactly one line (`pkgs.nodePackages.prettier`, removed in nixpkgs 26.05), and the fix must be release-guarded because `pkgs.prettier` does not exist on 25.05. The shared flake should expose modules only and never pin home-manager; Léon&#x27;s own upgrade is a branch bump for three inputs plus two package-attribute fixes, with `stateVersion` left alone — and it is overdue, because the 25.05 branch he is on stopped receiving updates at the end of 2025.</p>
+        <p class="conf"><b>Confidence</b> high for module compatibility (evaluated, not inferred); medium for the upgrade cost (only the Claude modules were evaluated on 26.05, not the whole system).</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>A full-system evaluation of `/etc/nixos` on 26.05 (command in finding 9) showing breakage in stylix, nixvim or the AGS widgets beyond a branch bump. Then Léon stays on 25.05 a little longer and the flake simply keeps supporting both, which it must anyway.</li><li>an or Kish moving to nixos-unstable. Then the guard becomes &quot;25.05 or newer&quot;, not &quot;25.05 or 26.05&quot;.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/nixos-version-matrix.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="desktop-neutral-module">
+        <div class="item-head">
+          <h3><code class="slug">desktop-neutral-module</code></h3>
+          <span class="owner kish">Kish</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> which parts of Léon&#x27;s config must be stripped or guarded before the module ships.</p><p class="why">Found by: the inventory. Two of four run KDE Plasma on Wayland, Léon runs Hyprland.</p>
+        <p class="answer">`notify-send` itself should work on Plasma with no extra configuration; the things that break are the ones that leak Léon&#x27;s desktop into the module. The one serious risk is any `xdg.portal` or `wayland.windowManager.hyprland` setting on the home-manager side, which hides the KDE portals that NixOS installs. The smaller risks are `wl-copy` (not present by default on KDE, and version-sensitive on KWin), a Kitty-only notification channel in shared settings, and `notify-send` flags that block a hook.</p>
+        <p class="conf"><b>Confidence</b> medium — the portal and clipboard findings rest on issue trackers and docs, and nothing here was tested on real Plasma hardware.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If Léon&#x27;s module does not touch `xdg.portal`, Hyprland options, the clipboard, or `preferredNotifChannel`, almost nothing needs stripping and the checklist below becomes a five-minute grep.</li><li>NixOS 26.05 ships `wl-clipboard` older than 2.3.0, clipboard *watching* (`wl-paste --watch`) cannot work on Plasma and any tool using it needs a guard or a different mechanism.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/desktop-neutral-module.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="flake-pinning-strategy">
+        <div class="item-head">
+          <h3><code class="slug">flake-pinning-strategy</code></h3>
+          <span class="owner ryan">Ryan</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> how four laptops stay on one revision without drifting, and whether a shared cache is worth it.</p>
+        <p class="answer">Point every consumer at a `stable` branch (or tags) of `claude-env` and let each laptop&#x27;s own `flake.lock` do the pinning; the maintainer moves `stable` only when a revision is ready, and &quot;update now&quot; is simply that branch moving. Do not set up a binary cache yet: a modules-only flake is evaluated against each person&#x27;s own nixpkgs, so there is almost nothing identical to share, and nearly everything already comes from the official cache. Detecting &quot;I am behind&quot; is a two-line comparison of the locked revision against the branch head, which belongs in the status line the module already ships.</p>
+        <p class="conf"><b>Confidence</b> medium — lock-file behaviour and Cachix&#x27;s limits are documented; the claim that a cache would rarely hit is reasoning about how modules are built, not a measurement.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If the flake starts shipping something heavy that is built from source (the Roblox toolchain, `contrastive-lm`, a patched package), a cache becomes worth it — but only if all four also share one nixpkgs revision.</li><li>`claude-env` is a private repository, both the input URL and the cache choice change (finding 7).</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/flake-pinning-strategy.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="agenix-multi-recipient">
+        <div class="item-head">
+          <h3><code class="slug">agenix-multi-recipient</code></h3>
+          <span class="owner leon">Léon</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> the shape of the enrolment runbook, and whether revocation really revokes.</p>
+        <p class="answer">Adding a recipient is one edit to the rules file plus `agenix -r`, run by anyone holding a private key that is in the *current* ciphertext&#x27;s recipient list; every listed `.age` file is decrypted and re-encrypted, there is no per-file shortcut. Removing a recipient the same way only stops them opening *future* ciphertext; anyone who pulled the repo before can decrypt the old files forever, so a departure means rotating the secret values at the provider. Bad keys fail loudly before anything is written, but a rekey that fails mid-list leaves earlier files re-keyed and later files not, so the runbook must check the exit code.</p>
+        <p class="conf"><b>Confidence</b> high — every claim below was reproduced in a throwaway repo with agenix 0.15.0 and age 1.2.1, the exact versions on Léon&#x27;s machine.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>Wanting per-person revocation *without* rotating the secrets. No file-based scheme can do that; it would need a server that checks identity on every read (a self-hosted Vaultwarden, or the providers&#x27; own team features), which is a different design.</li><li>iends keeping their SSH private key behind a passphrase or hardware token. age prompts for the passphrase; hardware keys need `age-plugin-*`. Neither was tested here.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/agenix-multi-recipient.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="atlassian-mcp-auth">
+        <div class="item-head">
+          <h3><code class="slug">atlassian-mcp-auth</code></h3>
+          <span class="owner almar">Almar</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> whether Jira stays an MCP server at base tier, or reopens. This is our one exception to</p><p class="why">a CLI-first rule, so if it needs a paid plan the exception falls.</p>
+        <p class="answer">No paid plan is needed — the official server works on Jira Free, each person signs in with their own account over OAuth, and it can read and write issues, comments, transitions and sprints. The one shared limit is 500 calls an hour for the whole site on Free, which four people will not reach in normal use. The thing to watch is Rovo credits: plain Jira reads and writes are free, but &quot;enriched&quot; search tools cost credits, Free includes none, and paid extra usage starts on 3 December 2026 — so the exception to the CLI-first rule stands, provided someone confirms extra usage is off.</p>
+        <p class="conf"><b>Confidence</b> medium — authentication, tools and setup are from Atlassian&#x27;s own pages; the Free-plan availability and the 500/hour figure are from several third-party pages quoting Atlassian&#x27;s product page, which I did not open directly.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If the Rovo &quot;extra usage&quot; setting can bill a Free site (finding 6), Jira via MCP stops being reliably free until an admin switches it off.</li><li>the crew grows past 10 people, Jira Free itself ends, independent of MCP.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/atlassian-mcp-auth.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="mcp-free-tiers">
+        <div class="item-head">
+          <h3><code class="slug">mcp-free-tiers</code></h3>
+          <span class="owner kish">Kish</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> which servers survive the audit, and which are quietly paid at four people.</p>
+        <p class="answer">Two are effectively paid: Figma (20 tool calls a month on the free plan) and ElevenLabs (the free plan has no commercial licence, so anything for a client needs the $6 plan). Firecrawl and Context7 are free but metered per account at 1,000 a month each, which a heavy user will exhaust in two to three weeks. Search Console, CoinGecko, Playwright and Svelte are free with no realistic ceiling for us.</p>
+        <p class="conf"><b>Confidence</b> medium — Figma, Context7, Google and Svelte figures come from the vendors&#x27; own pages; Firecrawl and ElevenLabs figures come from third-party pages quoting the vendor pricing pages, which I did not open directly.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If nobody actually needs to *read* Figma files through MCP more than a few times a month, Figma&#x27;s 20 calls stop mattering and it can stay as an opt-in.</li><li>ElevenLabs audio is only ever used internally (never shipped to a client or published), the licence problem disappears and it is simply a small free quota.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/mcp-free-tiers.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="context-budget">
+        <div class="item-head">
+          <h3><code class="slug">context-budget</code></h3>
+          <span class="owner claude">Claude, in Léon&#x27;s environment</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> where the base / opt-in line falls, with numbers instead of intuition.</p>
+        <p class="answer">About 28,500 tokens before the first word is typed, measured by running one-shot sessions and reading the usage report; MCP servers account for only about 5,600 of that, because Claude Code lists their tool names and defers the schemas until a tool is needed. The ten most expensive items are not servers at all but the fixed system prompt plus the 124 skill descriptions (about 6,900 tokens); the servers marked for pruning save about 520 tokens together and the HyperFrames suite about 320. Prune for security and clarity, not for context.</p>
+        <p class="conf"><b>Confidence</b> high for the totals (measured, not estimated); medium for the attribution to skills, which is a 4-characters-per-token estimate of the frontmatter.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>A future Claude Code version that stops deferring MCP tool schemas. Then every server&#x27;s full tool list lands in context and Sentry alone (70-odd tools) would cost several thousand tokens; re-measure after major updates.</li><li>ills growing past a few hundred. At roughly 55 tokens per skill description, 300 skills would cost 16k tokens, and tiering them becomes worth it.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/context-budget.md</code> in the claude-env repo.</p>
+      </article>
+    </section>
+    <section>
+      <h2><span class="letter">B</span> Decides the models <span class="tally">— 3</span></h2>
+      
+      <article class="item is-done" id="clm-hosting-reality">
+        <div class="item-head">
+          <h3><code class="slug">clm-hosting-reality</code></h3>
+          <span class="owner leon">Léon</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> whether CLM exists in this environment at all.</p><p class="why">Found by: the inventory. CLM-8B&#x27;s bf16 encoder needs ~16 GB VRAM (clm-mcp-server README).</p><p class="why">The largest GPU in the crew is Ryan&#x27;s 6 GB. Léon has a spare laptop or PC, unconfirmed.</p>
+        <p class="answer">The bf16 path needs a 24 GB NVIDIA card: the Qwen3-8B weights alone are 16.4 GB, more than any 16 GB card can hold once vLLM reserves memory for its cache. A Q4_K_M GGUF with full offload needs about 5.5 GB, so an 8 GB card is comfortable and Ryan&#x27;s 6 GB RTX 2060 is borderline — but nobody has measured how much ranking quality CLM&#x27;s heads lose on quantised embeddings, which is the real unknown. Léon&#x27;s own Arc 140T was benchmarked: 64 tokens/s of prompt processing via Vulkan, three times the CPU, but only after disabling fp16 shaders because the Mesa 25.0.7 driver that ships with NixOS 25.05 hangs the GPU; the spare machine could not be checked from here because it is not on the tailnet.</p>
+        <p class="conf"><b>Confidence</b> medium — the VRAM arithmetic and the iGPU numbers are measured or derived from official file sizes; the quality of CLM on Q4 embeddings is unmeasured, and the iGPU result may change a lot with the newer Mesa in 26.05.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>A measured comparison of CLM&#x27;s rankings on bf16 versus Q4_K_M embeddings over ~50 real idea pairs. If Q4 holds up, Ryan&#x27;s 2060 or Léon&#x27;s laptop can host it and the spare box is unnecessary; this belongs with Ryan&#x27;s `dedup-without-clm` item.</li><li>e spare machine turning out to have an NVIDIA card with 8 GB or more.</li><li>e Arc 140T numbers after Léon&#x27;s 26.05 upgrade (Mesa 25.0.7 → 25.3 or newer). If prompt processing lands near the 140V&#x27;s reported ~490 t/s, the laptop becomes the obvious host.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/clm-hosting-reality.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="dedup-without-clm">
+        <div class="item-head">
+          <h3><code class="slug">dedup-without-clm</code></h3>
+          <span class="owner ryan">Ryan</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> whether idea-collision detection needs CLM at all, or a small embedding model does it.</p><p class="why">New. At four people and perhaps a few hundred recorded ideas, ranking by cosine similarity</p><p class="why">with a small sentence-embedding model may be enough — and runs on every laptop&#x27;s CPU.</p>
+        <p class="answer">B now, A later only if B visibly misses things: a small embedding model ranks a few hundred paragraphs on any laptop CPU in well under a second, and the existing calibrated yes/no check covers the precision the small model lacks. On similarity-style benchmarks the small models sit within a few points of the 8B class; the large gap is on hard retrieval, which is not this task. Start with `bge-small-en-v1.5` (MIT) if ideas are written in English.</p>
+        <p class="conf"><b>Confidence</b> medium — model sizes, licences and benchmark scores are from papers and model cards; no published benchmark matches &quot;near-duplicate project ideas at n ≈ 500&quot;, and no latency was measured on our hardware.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If a hand-made test set of 20–30 known overlapping idea pairs shows B ranking the true match outside the top 3 more than occasionally, move to a mid-size model first (finding 7), and to A only after that.</li><li>ideas are written in Dutch or mixed languages, the English-only models are the wrong pick (finding 8).</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/dedup-without-clm.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="roblox-on-nvidia-kde">
+        <div class="item-head">
+          <h3><code class="slug">roblox-on-nvidia-kde</code></h3>
+          <span class="owner ryan">Ryan (a guess, from the handle — reassign if wrong)</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> whether the Roblox toolchain ships as an opt-in module that actually works off Léon&#x27;s machine.</p><p class="why">Found by: the inventory. Léon built it on Intel Arc + Hyprland; the Roblox friend is on NVIDIA + KDE.</p>
+        <p class="answer">Probably yes, but not untouched: the driver side is straightforward (the RTX 2060 is supported by NVIDIA&#x27;s open kernel module and by PRIME offload), while the likely trouble is Vinegar picking the integrated GPU on a hybrid laptop and a handful of open Studio-under-Wine bugs on KDE. Studio runs through XWayland by default, and 16 GB of RAM is twice Roblox&#x27;s recommended figure. The module needs two things it did not need on Léon&#x27;s machine: a per-machine GPU setting, and a check that Vinegar&#x27;s bundled Wine can run on NixOS.</p>
+        <p class="conf"><b>Confidence</b> medium-low — driver facts are from the NixOS wiki and Vinegar&#x27;s own docs, but the KDE-specific problems are from open issue reports, the nixpkgs packaging was not inspected, and two of the four questions (download size, caching) have no sourced answer.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If Vinegar on the Legion cannot be made to use the NVIDIA card (finding 3), Studio still runs on the integrated GPU with limited video memory — usable for scripting, poor for large places. That may be acceptable for an opt-in module.</li><li>the open KDE file-picker bug (finding 5) is still present, exporting and importing models from Studio is unreliable on Plasma, and the module should say so.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/roblox-on-nvidia-kde.md</code> in the claude-env repo.</p>
+      </article>
+    </section>
+    <section>
+      <h2><span class="letter">C</span> Products <span class="tally">— 3</span></h2>
+      
+      <article class="item is-done" id="booking-stack-licences">
+        <div class="item-head">
+          <h3><code class="slug">booking-stack-licences</code></h3>
+          <span class="owner almar">Almar</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> build or adopt, for the booking system every hairdresser site needs. Licence first.</p>
+        <p class="answer">No option is disqualified on licence — but the premise has changed: Cal.com went closed source in April 2026, and what is left to self-host (Cal.diy, MIT) is a single-user scheduler its own publisher says is not for production. Build it (option C): it is the only route that is free at five salons with several staff each, keeps EU customers&#x27; names and phone numbers on a server we choose, and has no vendor to change terms on us. The cost is our time and owning the hard parts — double-booking, time zones, reminders — ourselves.</p>
+        <p class="conf"><b>Confidence</b> medium — the Cal.com change is confirmed by Cal.com&#x27;s own changelog and repository; the hosted free-tier limits are from comparison articles that contradict each other in places, and none of the three options was tried.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If a typical client is a one-chair salon with a single calendar, a hosted free plan (or Cal.diy) is enough and building is overkill for the first clients.</li><li>nobody has two to four weeks for a careful first version, start clients on a hosted plan and build behind it.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/booking-stack-licences.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="trading-free-data">
+        <div class="item-head">
+          <h3><code class="slug">trading-free-data</code></h3>
+          <span class="owner open">unassigned — whoever drives the trading bot</span>
+          <span class="badge-done">answered</span>
+        </div>
+        
+        <p class="answer">For crypto, exchange public APIs are the only genuinely free live source: Binance&#x27;s REST and WebSocket need no account for market data, allow 1,200 requests a minute, and go back years; use CCXT (MIT) so the exchange can change. For aggregated or cross-exchange data, CoinGecko&#x27;s Demo key gives 10,000 calls a month with a year of hourly history, REST only. For US stocks, Alpaca&#x27;s Basic plan is free with IEX-only quotes, 200 requests a minute, 30 streamed symbols, history since 2016 and the latest 15 minutes withheld; yfinance works for research but should not be in the loop of a running bot.</p>
+        <p class="conf"><b>Confidence</b> medium — Alpaca&#x27;s and CoinGecko&#x27;s limits are from their own pages; Binance&#x27;s are from secondary comparisons and should be read off Binance&#x27;s API documentation before the bot depends on them.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>A bot that polls every minute: one such bot alone uses about 43,000 calls a month, so any monthly-capped API (CoinGecko Demo, Twelve Data) is out and only exchange streams or Alpaca&#x27;s uncapped plan fit.</li><li>ading non-US stocks or needing the consolidated tape: Alpaca&#x27;s free tier does not cover it, and every stock alternative found costs from about $9 a month.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/trading-free-data.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="srs-algorithms">
+        <div class="item-head">
+          <h3><code class="slug">srs-algorithms</code></h3>
+          <span class="owner open">unassigned — whoever drives the learning app</span>
+          <span class="badge-done">answered</span>
+        </div>
+        
+        <p class="answer">FSRS, through the official `ts-fsrs` (MIT) library in the SvelteKit front end or `py-fsrs` (MIT) in FastAPI; both are maintained by the Open Spaced Repetition group and had commits this week. FSRS-6 with default parameters already beats every SM-2 variant on the public benchmark of 350 million reviews, and per-user optimisation of its 21 parameters is optional. SM-2 is only worth considering as a fallback for a first demo, and there is no licence reason to prefer it.</p>
+        <p class="conf"><b>Confidence</b> high on licences and maintenance (read from the repositories); medium on the benchmark figures, which come from the benchmark README and summaries of it.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If the app must run fully offline on a phone with no JavaScript, SM-2&#x27;s handful of lines is simpler to port; FSRS needs a small library.</li><li>RS-7 shipping as the default in the libraries (it is already in the benchmark with better log loss); then adopt it with the same code.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/srs-algorithms.md</code> in the claude-env repo.</p>
+      </article>
+    </section>
+    <section>
+      <h2><span class="letter">D</span> crew-memory — the shared memory system <span class="tally">— 3</span></h2>
+      
+      <article class="item is-done" id="obsidian-multi-person-sync">
+        <div class="item-head">
+          <h3><code class="slug">obsidian-multi-person-sync</code></h3>
+          <span class="owner kish">Kish</span>
+          <span class="badge-done">answered</span>
+        </div>
+        <p class="decides"><b>Decides</b> the foundation of the memory system. Everything else sits on this.</p>
+        <p class="answer">Use a git-backed vault (option A) — it is the only one of the three that actually merges two people&#x27;s edits to the same note instead of producing duplicate files or risking loss. It only holds up if Claude Code hooks write one file per session rather than appending to a shared note, and if the hook does its own commit and push instead of relying on the Obsidian plugin. Syncthing is a workable second choice with whole-file conflict copies; Taildrive is alpha and should be ruled out.</p>
+        <p class="conf"><b>Confidence</b> medium — the conflict behaviour of git and Syncthing is from their official documentation, but the obsidian-git plugin&#x27;s exact behaviour on conflict and the hook interaction are reasoned from partial sources and not tested.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If people regularly edit the *same note at the same time* (live co-writing, not just overlapping within a few minutes), git&#x27;s merge markers become a daily chore and a real-time tool is needed instead — not evaluated here.</li><li>the memory design ends up needing shared notes that many sessions append to, the &quot;one file per session&quot; rule fails and the append-only notes need the `merge=union` setting described in finding 5, with its ordering caveat.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/obsidian-multi-person-sync.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="memory-schema-prior-art">
+        <div class="item-head">
+          <h3><code class="slug">memory-schema-prior-art</code></h3>
+          <span class="owner claude">Claude, in Léon&#x27;s environment</span>
+          <span class="badge-done">answered</span>
+        </div>
+        
+        <p class="answer">The published schemas agree on three things we should copy: frontmatter is the schema and a hook lints it on every write; one durable fact per file, superseded by linking rather than editing; and an always-loaded index under a few hundred lines that points at files loaded on demand. None of them has a first-class &quot;attempt&quot; or &quot;dead end&quot; type, so the four-store split is an extension of prior art, not a contradiction of it; the closest ancestors are MADR&#x27;s `rejected` and `superseded by` statuses and obsidian-mind&#x27;s `confidence` field. Below is a concrete schema per store and a query rule that never loads the whole vault.</p>
+        <p class="conf"><b>Confidence</b> medium — the prior art is read from the projects&#x27; own READMEs and templates, but no schema was tested against real sessions; the field proposals are design, not findings.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If a session-end hook cannot reliably fill `outcome` and `components` without a human, the Attempts store degrades into a log nobody queries; a two-week trial decides this.</li><li>the MCP memory server&#x27;s graph (entities, relations, observations) turns out to be what people actually query, the four stores should be mirrored into it rather than replaced by it; today the graph lives per machine and is being pruned for that reason.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/memory-schema-prior-art.md</code> in the claude-env repo.</p>
+      </article>
+      <article class="item is-done" id="memory-dashboard-options">
+        <div class="item-head">
+          <h3><code class="slug">memory-dashboard-options</code></h3>
+          <span class="owner almar">Almar</span>
+          <span class="badge-done">answered</span>
+        </div>
+        
+        <p class="answer">For the first month use Obsidian Bases inside the vault (option A): it is built in, free, needs no code, and can edit a note&#x27;s status from the table. Later, if people want it outside Obsidian or want computed things Bases cannot do, build the small SvelteKit app that reads a local clone of the vault (option B). A hosted page (option C) is the weakest fit: free hosting is easy, but keeping it private, current and writable is not.</p>
+        <p class="conf"><b>Confidence</b> medium — Bases&#x27; capabilities are from Obsidian&#x27;s own help pages; the SvelteKit and hosted options are reasoned from how the pieces work, not from a build.</p>
+        <p class="conf"><b>What would change the decision</b></p>
+        <ul class="change"><li>If &quot;idea overlaps&quot; is the view people care about most, Bases cannot produce it (it only filters and sorts properties) and option B moves up — it depends on the outcome of `dedup-without-clm`.</li><li>the vault does *not* end up on every laptop (that is, if the sync decision is not git or Syncthing), option A stops working for anyone who does not hold the files.</li></ul>
+        <p class="filed">Full write-up with sources: <code>research/memory-dashboard-options.md</code> in the claude-env repo.</p>
+      </article>
+    </section>
+
+  <footer>
+    <p>source of truth · claude-env/research/PROGRESS.md · owners are suggestions</p>
+    <p>four of these can change decisions already made: atlassian-mcp-auth · booking-stack-licences · nixos-version-matrix · dedup-without-clm</p>
+  </footer>
+</div>

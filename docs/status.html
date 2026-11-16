@@ -1,0 +1,646 @@
+<title>claude-env Build Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root {
+    --ground: #f5f5f9;
+    --surface: #ffffff;
+    --surface-sunk: #ecebf2;
+    --ink: #272736;
+    --ink-soft: #55556e;
+    --muted: #70708c;
+    --line: #e0dfea;
+    --line-strong: #cbc9db;
+    --accent: #6f3fd4;
+    --accent-soft: #ece4fc;
+    --ok: #2d8550;
+    --ok-soft: #dff0e4;
+    --warn: #a86a05;
+    --warn-soft: #f8ecd6;
+    --stop: #b62e46;
+    --stop-soft: #fae1e6;
+    --go: #2259bd;
+    --go-soft: #dfe8fa;
+
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #15151d;
+      --surface: #1d1d27;
+      --surface-sunk: #232330;
+      --ink: #d9d9e8;
+      --ink-soft: #aaaac4;
+      --muted: #8b8ba6;
+      --line: #2d2d3c;
+      --line-strong: #3d3d50;
+      --accent: #b495f7;
+      --accent-soft: #2a2340;
+      --ok: #84cf92;
+      --ok-soft: #1d2e22;
+      --warn: #e2b461;
+      --warn-soft: #302718;
+      --stop: #f08098;
+      --stop-soft: #351d25;
+      --go: #83abf2;
+      --go-soft: #1c2437;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #15151d;
+    --surface: #1d1d27;
+    --surface-sunk: #232330;
+    --ink: #d9d9e8;
+    --ink-soft: #aaaac4;
+    --muted: #8b8ba6;
+    --line: #2d2d3c;
+    --line-strong: #3d3d50;
+    --accent: #b495f7;
+    --accent-soft: #2a2340;
+    --ok: #84cf92;
+    --ok-soft: #1d2e22;
+    --warn: #e2b461;
+    --warn-soft: #302718;
+    --stop: #f08098;
+    --stop-soft: #351d25;
+    --go: #83abf2;
+    --go-soft: #1c2437;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  h1, h2, h3 { font-family: var(--cond); text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---- header ---- */
+  .masthead { display: flex; flex-direction: column; gap: 18px; }
+  .masthead h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.015em; }
+  .masthead .tagline { color: var(--ink-soft); max-width: 62ch; }
+
+  .vitals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .vital { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; }
+  .vital .figure {
+    font-family: var(--cond);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .vital .sub { font-size: 13px; color: var(--muted); }
+  .vital.is-warn .figure { color: var(--warn); }
+
+  .next-up {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 14px 18px;
+    border-radius: 0 3px 3px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .next-up p { font-size: 15px; }
+  .next-up strong { font-weight: 600; }
+
+  /* ---- scope bar: the actual subject of the project ---- */
+  .scopes { display: flex; flex-direction: column; gap: 10px; }
+  .scope-bar { display: flex; height: 34px; border-radius: 3px; overflow: hidden; border: 1px solid var(--line-strong); }
+  .scope-seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--surface);
+    min-width: 0;
+  }
+  .scope-seg.user { background: var(--go); flex: 9; }
+  .scope-seg.local { background: var(--stop); flex: 25; }
+  .scope-seg.project { background: var(--warn); flex: 2; }
+  .scope-key { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--ink-soft); }
+  .scope-key span { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+  .dot.user { background: var(--go); }
+  .dot.local { background: var(--stop); }
+  .dot.project { background: var(--warn); }
+
+  /* ---- generic section ---- */
+  section { display: flex; flex-direction: column; gap: 18px; }
+  section > h2 { font-size: 13px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+
+  .goal-body { display: flex; flex-direction: column; gap: 16px; }
+  .goal-body > p { max-width: 66ch; font-size: 16px; }
+  .nongoals { display: flex; flex-direction: column; gap: 7px; margin: 0; padding: 0; list-style: none; }
+  .nongoals li { position: relative; padding-left: 22px; color: var(--ink-soft); max-width: 66ch; font-size: 14px; }
+  .nongoals li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--stop);
+    font-family: var(--mono);
+  }
+
+  /* ---- feature board ---- */
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .group-head { display: flex; align-items: baseline; gap: 10px; }
+  .group-head h3 { font-size: 17px; font-weight: 600; }
+  .group-head .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  .feat {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-strong);
+    border-radius: 0 3px 3px 0;
+    padding: 15px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .feat.blocked { border-left-color: var(--stop); }
+  .feat.progress { border-left-color: var(--go); }
+  .feat.planned { border-left-color: var(--line-strong); }
+  .feat.done { border-left-color: var(--ok); }
+  .feat-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+  .feat-top h4 { font-family: var(--cond); font-size: 19px; font-weight: 600; margin: 0; }
+  .id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface-sunk);
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+  .feat .note { color: var(--ink-soft); max-width: 72ch; font-size: 14px; }
+  .meta { display: flex; flex-direction: column; gap: 7px; padding-top: 4px; border-top: 1px dashed var(--line); }
+  .meta-row { display: flex; gap: 10px; align-items: baseline; font-size: 14px; }
+  .meta-row .k {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex: none;
+    width: 86px;
+    padding-top: 3px;
+  }
+  .meta-row .v { color: var(--ink-soft); max-width: 68ch; }
+  .meta-row.gate .v { color: var(--stop); }
+
+  /* ---- facts ---- */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    background: var(--surface-sunk);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.key { font-family: var(--mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; }
+  td.val { font-family: var(--cond); font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.src { font-family: var(--mono); font-size: 11.5px; color: var(--muted); max-width: 290px; word-break: break-word; }
+  td.when { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+  tr.conflict td.val { color: var(--stop); }
+
+  .conflict-note {
+    border: 1px solid var(--stop);
+    background: var(--stop-soft);
+    border-radius: 3px;
+    padding: 15px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .conflict-note h3 { font-size: 16px; font-weight: 600; color: var(--stop); }
+  .conflict-note p { font-size: 14px; color: var(--ink-soft); max-width: 72ch; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: var(--surface-sunk);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* ---- footer ---- */
+  footer { display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--line); padding-top: 22px; }
+  .ver { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+  .ver h3 { font-size: 13px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .ver ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+  .ver li { font-size: 13.5px; color: var(--ink-soft); }
+  .stamp { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  @media (max-width: 560px) {
+    .masthead h1 { font-size: 31px; }
+    .meta-row { flex-direction: column; gap: 2px; }
+    .meta-row .k { width: auto; padding-top: 0; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Build board · updated 16 Nov 2026 · flake extracted, mr-blue builds from it · CLM parked</p>
+    <h1>claude-env</h1>
+    <p class="tagline">One NixOS flake that gives Léon and his friends the same Claude Code environment — every MCP server, skill, agent and guardrail available in every project folder — with a Blitsol tier for the people who also work on the company.</p>
+
+    <div class="vitals">
+      <div class="vital">
+        <span class="figure">3 / 15</span>
+        <span class="sub">features done · 0 in progress · 1 blocked on a human</span>
+      </div>
+      <div class="vital">
+        <span class="figure">green</span>
+        <span class="sub"><code>just test</code> — module evaluates on 25.05 and 26.05, 58 guard cases, 17 script tests · 16 Nov</span>
+      </div>
+      <div class="vital">
+        <span class="figure">0</span>
+        <span class="sub">open questions — NixOS release settled 16 Nov</span>
+      </div>
+    </div>
+
+    <div class="next-up">
+      <p class="eyebrow">What the research changed</p>
+      <p>All sixteen research items are answered. <strong>CLM is parked</strong> — a 24 GB card is needed and nobody has one — so crew-memory dedup runs on a small CPU embedding model plus Laya. <strong>Léon upgrades to 26.05</strong>; the modules already evaluate on both releases. The <strong>claude-mode layouts are Kitty-only</strong> and become opt-in for the KDE users. The MCP audit table is written and <strong>the flake is extracted</strong>: nix-config consumes it and the mr-blue system builds from it; the switch is Léon's. Next up is wiring the tier option so Blitsol servers only reach Blitsol machines.</p>
+    </div>
+
+    <div class="scope-key" style="font-size: 13.5px;">
+      <span><i class="dot user"></i> <strong>The crew:</strong> Almar, Ryan, Kish, Léon — all four on the Blitsol tier</span>
+      <span><i class="dot project"></i> Later friends get base tier only, no Blitsol access</span>
+    </div>
+  </header>
+
+  <section class="scopes">
+    <h2>Where the 39 MCP servers live today</h2>
+    <div class="scope-bar" role="img" aria-label="39 MCP server registrations: 9 at user scope, 25 at local scope, 5 at project scope">
+      <div class="scope-seg user">9</div>
+      <div class="scope-seg local">25</div>
+      <div class="scope-seg project">5</div>
+    </div>
+    <div class="scope-key">
+      <span><i class="dot user"></i> user scope — available everywhere</span>
+      <span><i class="dot local"></i> local scope — one directory each</span>
+      <span><i class="dot project"></i> project scope — three committed files</span>
+    </div>
+    <p class="note" style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">The red block is the problem this project exists to solve: 25 registrations reachable only by <code>cd</code>-ing into <code>~/projects/fastsdcpu</code>, <code>~</code> or <code>/etc/nixos</code>. Fourteen of them — shadcn-svelte, gsap, lighthouse, a11y, eslint, fonts, lottie, figma-dev and the rest — are the web-design toolkit, stranded inside a Stable Diffusion repo. The coverage audit added three more names that matter: <code>elevenlabs</code> is stranded away from the language app, <code>moneybird</code> away from the books, and <code>coingecko</code> away from the trading bot.</p>
+  </section>
+
+  <section>
+    <h2>Goal</h2>
+    <div class="goal-body">
+      <p>A shareable NixOS flake that gives Léon and his friends the same Claude Code environment — every MCP server, skill, agent and guardrail available in every project folder — with a Blitsol tier for the people who also work on the company.</p>
+      <div>
+        <p class="eyebrow" style="margin-bottom: 8px;">Not this</p>
+        <ul class="nongoals">
+          <li>Sharing Léon's personal nix-config — hardware, Borg backups, host secrets</li>
+          <li>Handing friends Blitsol credentials by copy-paste instead of inviting them into the real accounts</li>
+          <li>Adding an MCP server where a CLI already does the job better</li>
+          <li>Rebuilding the Claude config as dotfiles; it is already home-manager and stays that way</li>
+          <li>Building the shared crew memory system — its own project, <code>crew-memory</code>, designed 13 Nov; this one ships the tools it needs and the CLM host it depends on</li>
+          <li>Building the booking starter or the client legal-document generator — real gaps, their own repos</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Feature board</h2>
+
+    <div class="group">
+      <div class="group-head">
+        <h3>Done</h3>
+        <span class="count">3 — 13 and 16 Nov</span>
+      </div>
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Research track — free-tool verification</h4>
+          <span class="id">research-track</span>
+        </div>
+        <p class="note">Sixteen items that need looking up rather than deciding, each a paste-ready prompt so any of the four people's Claudes can take one on any model. Three per person suggested, two for Claude here, two unassigned. The binding constraint: free, apart from Claude subscriptions and deliberate production purchases.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">All sixteen answered on 16 Nov and filed under <code>research/</code>. Three tested here, nine run by Kish in Claude web and checked here (module checklist, git merge simulation, embedding timing, vendor pricing pages), four done here. Nothing reopened a settled decision. Two things moved: CLM is parked, and <code>claude-mode</code> is Kitty-only so it becomes opt-in.</span></div>
+          <div class="meta-row"><span class="k">Surprises</span><span class="v">MCP servers cost only ~5.6k of the 28.5k startup tokens because schemas are deferred, so tiering is about secrets, not context. Cal.com went closed-source in April, so booking is built in-house. The 25.05 branch Léon runs has been end-of-life since December.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Extract modules/home/claude into its own flake</h4>
+          <span class="id">extract-flake</span>
+        </div>
+        <p class="note"><code>~/Projects/claude-env</code> now exports <code>homeManagerModules.default</code> and <code>nixosModules.default</code> (the guard). nix-config consumes it as the <code>claude-env</code> input and the mr-blue system builds from it: the managed settings come out byte-identical, and <code>CLAUDE.md</code> differs only by the personal lines moving under a "This machine" heading.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">Four portability fixes on the way out: the <code>inputs</code> argument is gone (the playbook arrives through <code>claude-env.webDesignPlaybook</code>), prettier and nixfmt resolve per release, the Kitty-only <code>claude-mode</code> layouts sit behind <code>claude-env.modes.enable</code>, and the servers the audit dropped are on <code>mcp.nix</code>'s prune list. <code>just test</code> evaluates base and Blitsol homes plus the guard on 25.05 and 26.05.</span></div>
+          <div class="meta-row"><span class="k">Left for Léon</span><span class="v">The switch itself (<code>nh os switch /etc/nixos</code>) and giving claude-env its own repo — <code>~/Projects</code> is a git checkout, so for now the input is a local <code>path:</code> URL. Both are on the todo board with guides.</span></div>
+        </div>
+      </article>
+
+      <article class="feat progress">
+        <div class="feat-top">
+          <h4>Domain coverage audit</h4>
+          <span class="id">coverage-audit</span>
+        </div>
+        <p class="note">Ten domains checked against what the crew actually builds. Design is over-covered — six HyperFrames skills load in every session of every project. Roblox is the strongest domain and the least shareable. Booking does not exist at all. Written up in <code>docs/coverage.md</code>.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Found</span><span class="v">The guard lives outside the module being extracted; the Roblox toolchain does too; tiering has to cover skills, not just MCP servers; and <code>elevenlabs</code>, <code>moneybird</code> and <code>coingecko</code> are stranded in the exact three projects that need them.</span></div>
+        </div>
+      </article>
+    </div>
+
+
+    <div class="group">
+      <div class="group-head">
+        <h3>Blocked</h3>
+        <span class="count">1 — waiting on a person, not on code</span>
+      </div>
+
+      <article class="feat blocked">
+        <div class="feat-top">
+          <h4>Real account invites for Blitsol-tier friends</h4>
+          <span class="id">connector-invites</span>
+        </div>
+        <p class="note">The claude.ai connectors — HubSpot, Gmail, Calendar, Drive, Clay, QuickBooks, Stripe — bind to a Claude <em>account</em>, not to a machine. No flake can ever hand these over.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Invite each Blitsol-tier friend into HubSpot, Cloudflare, Stripe and Moneybird; the flake only records which connectors that tier is expected to have.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — GUI invites in four separate billing accounts</span></div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="group">
+      <div class="group-head">
+        <h3>Planned</h3>
+        <span class="count">11 — nothing built yet</span>
+      </div>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>One module, two NixOS releases</h4>
+          <span class="id">nixos-version-matrix</span>
+        </div>
+        <p class="note">Found by the hardware inventory. Léon is on 25.05 with home-manager release-25.05; Ryan and Kish are on 26.05. A module that evaluates on one and not the other fails the first friend who installs it.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">The flake exposes modules only and lets each consumer's inputs supply nixpkgs and home-manager; a check evaluates the module against both releases before anything is tagged.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">q-nixos-version — the research is in and supports option one; Léon's yes is all that is left</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>The module must not assume Hyprland</h4>
+          <span class="id">desktop-neutral</span>
+        </div>
+        <p class="note">Found by the hardware inventory. Two of four run KDE Plasma 6 on Wayland. Léon's config was built on Hyprland and Kitty; the hooks use <code>notify-send</code>, which is fine, but nothing has been checked for compositor or terminal assumptions.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Run the checklist from research item <code>desktop-neutral-module</code> against the module; guard or strip anything compositor-specific; test on a KDE machine before the onboarding test.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Laya available in every project; CLM parked</h4>
+          <span class="id">laya-clm-userscope</span>
+        </div>
+        <p class="note">Both decision-model servers are project-scope in <code>Laya_And_CLM-MCPs</code>, so they vanish in every other folder. The repo already ships <code>register-decision-mcps.sh</code> to fix exactly this, and it has never been run.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Fold Laya into the module at user scope — it is small, calibrated and fine on CPU, so it waits on nothing. Register CLM only when a tailnet <code>clm-serve</code> host resolves, so a dead tool is never in the list.</span></div>
+          <div class="meta-row"><span class="k">Settled</span><span class="v"><strong>CLM is parked</strong> (Léon, 16 Nov): the bf16 path needs a 24 GB NVIDIA card, no crew laptop has more than 6 GB, and the two spare machines are weeks away. The crew-memory dedup uses <code>bge-small</code> plus Laya instead — measured at 101 ms per idea on Léon's CPU. The hosting write-up stays ready for when a box appears.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>The flake must carry the security guard</h4>
+          <span class="id">guard-portability</span>
+        </div>
+        <p class="note">Found by the coverage audit. <code>claude-code-policy.nix</code> is a NixOS <em>system</em> module, separate from <code>modules/home/claude/</code> — so extracting only the home module would hand friends every skill, agent and MCP server with none of the deny rules on <code>.env</code>, <code>/run/agenix</code> and SSH keys.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Expose <code>nixosModules.default</code> alongside <code>homeManagerModules.default</code>, carrying the policy and <code>guard.sh</code>, and say plainly in the guide that the home module alone gives you the tools without the brakes.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Consolidate the 36 scattered MCP servers</h4>
+          <span class="id">mcp-consolidate</span>
+        </div>
+        <p class="note">Servers are split across three local scopes plus user and project scope, which is why the web-design toolkit is invisible everywhere except one directory.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Apply the settled policy, declare the survivors in <code>mcp.nix</code>, and strip the local-scope entries from <code>~/.claude.json</code>.</span></div>
+          <div class="meta-row"><span class="k">Settled</span><span class="v">CLI-first wins — prune <code>github</code>, <code>filesystem</code> and <code>memory</code>; keep <code>playwright</code> for the design skills.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Make mcp.nix the single source of truth</h4>
+          <span class="id">mcp-declarative</span>
+        </div>
+        <p class="note">Today <code>mcp.nix</code> ships a <code>setup-claude-mcp.sh</code> that has to be run by hand, so user-scope servers drift the moment anyone types <code>claude mcp add</code>. That drift is exactly what happened.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Write the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation, merging rather than replacing — the same trick <code>settings.nix</code> already uses for <code>settings.json</code>.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Base and Blitsol tiers</h4>
+          <span class="id">tiers</span>
+        </div>
+        <p class="note">One option — <code>claude-env.tier = "base" | "blitsol"</code> — decides whether a machine gets the company connectors and secrets on top of the shared toolkit.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">The option exists (<code>modules/home/options.nix</code>, <code>base</code> by default) but nothing reads it yet. Wire the Blitsol servers from <code>docs/mcp-audit.md</code> behind <code>tier = "blitsol"</code>, and give the opt-in groups the audit named (nix, roblox, legal, trading, seo, firecrawl, sentry, the HyperFrames suite) their own enable flags.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Shared Blitsol secrets via agenix</h4>
+          <span class="id">secrets-delivery</span>
+        </div>
+        <p class="note">agenix is already an input of nix-config and already holds the Claude API key and Borg passphrases, so the mechanism exists. What is missing is multi-recipient re-keying.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">A private <code>blitsol-secrets</code> repo whose <code>secrets.nix</code> lists each client-work friend's SSH public key as a recipient, plus a runbook for adding and revoking a person.</span></div>
+          <div class="meta-row"><span class="k">Settled</span><span class="v">agenix in a private sibling repo; the tier goes only to friends already on Blitsol client work.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — the recipient list is the list of SSH keys, which he has to collect</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>The guide for friends</h4>
+          <span class="id">friend-guide</span>
+        </div>
+        <p class="note">A friend needs to know what exists, when to reach for which skill or agent, and what the guardrails will stop him doing. None of that is discoverable from the flake.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Written <em>after</em> the coverage audit, so it documents the toolkit that actually ships rather than the one that exists today.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Jira on the shared board, wired to Google Calendar</h4>
+          <span class="id">jira-calendar</span>
+        </div>
+        <p class="note">The crew shares one Jira board for the website work, but there is no Jira MCP server installed at any scope, and Jira is not yet feeding Léon's calendar.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Add the Atlassian remote MCP at base tier, and subscribe Google Calendar to the board.</span></div>
+          <div class="meta-row"><span class="k">Settled</span><span class="v">Atlassian's remote MCP, at base tier — the one deliberate exception to the CLI-first rule, because every friend touches the shared board daily.</span></div>
+        </div>
+      </article>
+
+      <article class="feat planned">
+        <div class="feat-top">
+          <h4>Prove it on a friend's laptop</h4>
+          <span class="id">onboarding-test</span>
+        </div>
+        <p class="note">The only real test of a shareable environment is a second machine going from zero to working without Léon typing on it.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">One friend adds the flake input, rebuilds, and works through the guide unaided while every place he gets stuck is recorded.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">extract-flake, tiers and friend-guide, in that order</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>What was measured</h2>
+
+    <div class="conflict-note">
+      <h3>Document versus code — the code wins</h3>
+      <p><code>mcp.nix</code> declares exactly two servers and lists <code>memory</code>, <code>filesystem</code>, <code>github</code>, <code>playwright</code>, <code>svelte</code> and <code>mcp-nixos</code> as legacy to be pruned. Four of those six are live at user scope right now. Meanwhile <code>firecrawl</code>, which the module does declare, is <em>not</em> registered at user scope at all — it sits in local scope under <code>~</code>. The module's intent and the live configuration have fully diverged, and that is the single finding this whole project turns on.</p>
+      <p><strong>Resolved 13 Nov:</strong> the module's CLI-first intent is the truth and the live config is the drift. <code>github</code>, <code>filesystem</code> and <code>memory</code> go; <code>playwright</code> stays, because the <code>design</code> and <code>web-design-playbook</code> skills drive a real browser. The deeper fix is <code>mcp-declarative</code> — until Nix writes the server list on activation rather than a script anyone can forget, this divergence simply happens again.</p>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">Fact</th><th scope="col">Value</th><th scope="col">Source</th><th scope="col">As of</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">user_scope_mcps</td><td class="val">9</td>
+            <td class="src">jq -r '.mcpServers | keys | length' ~/.claude.json</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr>
+            <td class="key">local_scope_mcps</td><td class="val">25</td>
+            <td class="src">jq '[.projects[].mcpServers // {} | length] | add' ~/.claude.json</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr>
+            <td class="key">project_scope_mcps</td><td class="val">5</td>
+            <td class="src">fd -H -I -t f '^\.mcp\.json$' — three files, not one</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr class="conflict">
+            <td class="key">mcp_nix_declared</td><td class="val">2</td>
+            <td class="src">modules/home/claude/mcp.nix — conflicts with the live config, see above</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr class="conflict">
+            <td class="key">placeholder_token_servers</td><td class="val">3</td>
+            <td class="src">rg -c 'YOUR_[A-Z_]*(TOKEN|PAT|KEY)' ~/.claude.json</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr>
+            <td class="key">account_connectors</td><td class="val">12</td>
+            <td class="src">claude mcp list — 11 connect since 15 Nov, Indeed needs auth, GoDaddy times out, Cloudflare DP deprecated upstream</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr>
+            <td class="key">claude_skills_installed</td><td class="val">36</td>
+            <td class="src">ls -1 ~/.claude/skills | wc -l</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr>
+            <td class="key">claude_agents_installed</td><td class="val">12</td>
+            <td class="src">ls -1 ~/.claude/agents | wc -l</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr class="conflict">
+            <td class="key">clm_backend_up</td><td class="val">false</td>
+            <td class="src">ss -ltn | grep 8700 — nothing listening, CLM_BASE_URL unset</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr>
+            <td class="key">settings_json_mutable</td><td class="val">true</td>
+            <td class="src">modules/home/claude/settings.nix — by design, merged on activation</td><td class="when">2026-11-13</td>
+          </tr>
+          <tr class="conflict">
+            <td class="key">crew_max_vram_gb</td><td class="val">6</td>
+            <td class="src">crew-memory/docs/hardware-inventory.md — CLM bf16 needs ~16</td><td class="when">2026-11-15</td>
+          </tr>
+          <tr>
+            <td class="key">nixos_releases_in_crew</td><td class="val">2</td>
+            <td class="src">hardware-inventory.md — 25.05 and 26.05, Hyprland and KDE</td><td class="when">2026-11-15</td>
+          </tr>
+          <tr>
+            <td class="key">project_folders</td><td class="val">42</td>
+            <td class="src">ls -1 ~/projects ~/Projects | wc -l</td><td class="when">2026-11-13</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">Two of these deserve a second look. <code>placeholder_token_servers</code> means <code>figma-dev</code> ships <code>YOUR_FIGMA_PAT</code> and <code>shopify</code> ships <code>YOUR_SHOPIFY_ACCESS_TOKEN</code> and <code>YOUR_STORE.myshopify.com</code> — they fail on first call and always have. And <code>project_folders</code> counts 42 across two roots that differ only in capitalisation, while the filesystem MCP is scoped to <code>/home/leon-new</code> and <code>/home/leon-new/projects</code> — so it cannot see <code>~/Projects</code> at all, including this repo.</p>
+  </section>
+
+  <footer>
+    <div class="ver">
+      <div>
+        <h3>Verified live today</h3>
+        <ul>
+          <li>Every figure in the table above — each one re-derived from <code>~/.claude.json</code>, the Nix modules or a live <code>claude mcp list</code>.</li>
+          <li>Connector health, including the three needing authentication and GoDaddy's 30-second timeout.</li>
+          <li>That <code>~/.claude/agents</code> and <code>~/.claude/hooks</code> are home-manager symlinks, so that half of the environment is already reproducible.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Taken on trust</h3>
+        <ul>
+          <li>Nothing. This is the first run, so <code>docs/project-state.yaml</code> was created today and every fact in it was measured rather than inherited.</li>
+          <li>The goal and feature names came out of conversation, not from code — worth a read-through before they harden.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="stamp">docs/project-state.yaml · 15 features · 26 facts · 0 open questions · created 2026-11-13, updated 2026-11-16</p>
+  </footer>
+
+</div>
