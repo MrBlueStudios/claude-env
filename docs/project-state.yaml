@@ -111,8 +111,9 @@ features:
       The claude.ai connectors (HubSpot, Gmail, Calendar, Drive, Clay, QuickBooks, Stripe) bind to
       a Claude account, not to this machine, so no flake can hand them over.
     remaining: >-
-      Invite each client-work friend into HubSpot, Cloudflare, Stripe and Moneybird; the flake
-      only records which connectors that tier is expected to have.
+      Invite each client-work friend into HubSpot, Cloudflare, Stripe and AdministratieX; the
+      flake only records which connectors that tier is expected to have. The bookkeeping slot
+      changed from Moneybird on 2026-11-17 and its connector situation is unchecked.
     waiting_on: Léon — these are GUI invites in four separate billing accounts
   - id: laya-clm-userscope
     name: Laya available in every project; CLM parked
@@ -518,12 +519,34 @@ claude_todos:
     done_when: >-
       `claude mcp list` shows exactly the declared set after a rebuild, and a hand-added server
       survives the next rebuild only if it was added to the module
+  - id: ct-atlassian-ask
+    text: Make Jira and Confluence writes ask, in managed settings
+    status: done
+    closed: 2026-11-17
+    done_when: >-
+      The generated managed-settings.json carries permissions.ask for every Atlassian write tool,
+      and the suite stays green on both releases
+    note: >-
+      Nine write tools are in permissions.ask in modules/system/guard.nix, where a managed rule
+      outranks any later allow, so it survives the approve-and-remember click that caused the
+      problem in mt-atlassian-test. Reads deliberately stay silent: a rule that prompts all day
+      is a rule people switch off, which is the failure this is meant to prevent. Verified in the
+      generated JSON on 26.05, not only in the Nix source: 5 deny rules unchanged, 9 ask rules
+      added. Suite green, 58 guard and 17 script cases. Deliberate deviation from the original
+      suggestion of a blanket mcp__atlassian__* ask. Consequence for mt-switch-to-flake: managed
+      settings are no longer byte-identical with the running system, so expect exactly one added
+      key rather than an empty diff.
+    paths:
+      - /home/leon-new/Projects/claude-env/modules/system/guard.nix
   - id: ct-jira-mcp
     text: Add the Atlassian remote MCP to the base tier for the shared board
     status: later
     done_when: >-
       `claude mcp list` shows the Atlassian server connected and a test query returns an issue
       from the shared website board
+    note: >-
+      Unblocked by mt-atlassian-test on 2026-11-17: the server, the auth flow and a write are all
+      proven to work, so this is now only the module wiring.
   - id: ct-enrolment
     text: Write the agenix enrolment runbook for adding and removing a Blitsol friend
     status: later
@@ -588,12 +611,34 @@ my_todos:
       fastfetch for Ryan and Kish, Almar partial. Recorded privately in
       ~/Projects/crew-memory/docs/crew.md. The remainder is mt-almar-specs.
   - id: mt-invites
-    text: Invite the Blitsol-tier friends into HubSpot, Cloudflare, Stripe and Moneybird
+    text: Invite the Blitsol-tier friends into HubSpot, Cloudflare, Stripe and AdministratieX
     owner: leon
     why_yours: GUI invites in four billing accounts
     guide: claude-env-blitsol-invites
     status: open
     added: 2026-11-13
+    blocked_by: mt-bookkeeping-switch
+    note: >-
+      The bookkeeping row changed on 2026-11-17: Moneybird is trial-only, so AdministratieX
+      replaces it and mt-bookkeeping-switch has to land first. If the friends end up sharing one
+      business-email login there, that row is not an invite at all but credentials handed over,
+      which is less reversible; record which of the two it turned out to be.
+  - id: mt-bookkeeping-switch
+    text: Replace Moneybird with AdministratieX before anyone is invited into the books
+    owner: leon
+    why_yours: a tool choice that spends your money and holds the crew's financial data
+    status: open
+    added: 2026-11-17
+    note: >-
+      Léon found on 2026-11-17 that Moneybird is trial-only, so it cannot hold the real books.
+      His plan: AdministratieX with two users, his own account as the main bookkeeping account
+      plus a shared business email the friends sign in with, until there is budget for seats.
+      Two parts are his belief rather than checked facts and decide whether the plan works at
+      all: the two-user allowance, and the price once any trial ends. Whether AdministratieX has
+      an MCP connector is also unchecked, which matters for the Blitsol tier list in
+      docs/mcp-audit.md. Trade-off he has already been told once and accepted: a shared login
+      removes attribution, so the books cannot answer who entered or changed an entry, and many
+      providers forbid shared logins in their terms.
   - id: mt-connector-auth
     text: Authenticate the Sentry, Stripe and Cloudflare Developer Platform connectors
     owner: leon
@@ -618,9 +663,15 @@ my_todos:
     owner: leon
     why_yours: a decision about hardware and your time
     guide: claude-env-clm-call
-    status: paused
+    status: done
     added: 2026-11-13
+    closed: 2026-11-17
     note: >-
+      Decided 2026-11-17: parked, with a date rather than a condition. Léon said revisit in about
+      three weeks, around 2026-12-08, or whenever there is money or time to set a host up. This
+      also closes the dependency the other way round: the crew GPU survey existed mainly to size
+      a CLM host, so Almar's fastfetch stopped being urgent the moment CLM was parked. Laya is
+      unaffected and still goes to user scope alone. History below.
       Paused rather than open, on purpose. Léon's own machine settles half of it — a Core Ultra 9
       285H with an Arc iGPU and an NPU but no discrete GPU cannot run an 8B encoder at System One
       speed, so a local clm-serve is off. The other half turns on whether Almar, Ryan or Kish has
@@ -640,34 +691,88 @@ my_todos:
     guide: claude-env-almar-specs
     status: open
     added: 2026-11-15
+    note: >-
+      Léon said on 2026-11-17 that Almar's paste is not reachable right now. The fastfetch half
+      is no longer urgent: with CLM parked (mt-clm-call) his GPU decides nothing, and the
+      inventory saying "GTX 1650 Ti or 1660 Ti" costs nothing this month. The email half still
+      gates every invite, so chase that independently rather than waiting for one reply covering
+      both.
   - id: mt-rovo-extra-usage
     text: Turn Rovo extra usage off in Atlassian Administration before 3 December 2026
     owner: leon
     why_yours: org-admin setting on the Blitsol Atlassian site
     guide: claude-env-rovo-extra-usage
-    status: open
+    status: blocked
     added: 2026-11-16
+    recheck: 2026-12-03
+    note: >-
+      Checked 2026-11-17 and there is nothing to switch off yet. Usage -> Meters says "data is
+      coming soon", AI and Rovo -> Overview has no usage data, no apps or subscriptions are
+      listed, and the org reports 0 Rovo credits used in the last 7 days. Not done and not
+      failed: the control does not exist. Part of the empty result is explained by the two
+      organisations whose names differ only by case. The capital-B "Blitsol" org Léon checked
+      holds no sites, which is why its sites filter returned no matches; the lowercase "blitsol"
+      org holds blitsol.atlassian.net. Recheck under the lowercase one. Still unverified either
+      way: whether a Free site with no card on file can be billed for credits at all.
   - id: mt-atlassian-test
     text: Connect the Atlassian MCP server once from Claude Code and read one issue from the shared board
     owner: leon
     why_yours: needs your Atlassian login in a browser
     guide: claude-env-atlassian-test
-    status: open
+    status: done
     added: 2026-11-16
+    closed: 2026-11-17
+    note: >-
+      Both halves proven on 2026-11-17 against Léon's own site, blitsol.atlassian.net (cloudId
+      fce75e4a-1cc1-4afc-9dfd-38ebd80581e0), created the same night as a free dev site. A read
+      returned KAN-1 with its fields and a write posted a comment. No admin approval step exists
+      on a Free site, which was the open question for the friend guide. The board is Kanban so it
+      has no sprints, meaning that clause of the original done-when cannot be tested there. The
+      write test also found the real hazard, which produced ct-atlassian-ask: the permission
+      prompt fired correctly, then the approve-and-remember click wrote the comment tool into the
+      project allow list permanently.
   - id: mt-switch-to-flake
     text: Switch mr-blue to the claude-env flake input and check ~/.claude still looks the same
     owner: leon
     why_yours: a system switch on your own laptop; built and compared, not switched
     guide: claude-env-switch-to-flake
-    status: open
+    status: done
     added: 2026-11-16
+    closed: 2026-11-17
+    note: >-
+      Verified 2026-11-17: ~/.claude/agents/backend.md resolves into
+      /nix/store/...-home-manager-files, and ~/.claude/CLAUDE.md begins "Léon — crew conventions
+      (claude-env, tier: blitsol)". Still to tidy: the stale comment above the input in
+      /etc/nixos/flake.nix still says "Local checkout until the repo is pushed", and the dead
+      modules/home/claude and modules/system/claude-code-policy.nix copies in nix-config can go.
   - id: mt-repo-init
     text: Make ~/Projects/claude-env its own jj/git repo and push it to MrBlueStudios/claude-env
     owner: leon
     why_yours: ~/Projects is already a git repo with claude-env files staged in it; nesting a repo there is your call
     guide: claude-env-repo-init
-    status: open
+    status: done
     added: 2026-11-16
+    closed: 2026-11-17
+    note: >-
+      Verified 2026-11-17: colocated .jj and .git in ~/Projects/claude-env, origin
+      git@github.com:MrBlueStudios/claude-env.git, and /etc/nixos/flake.nix consumes
+      github:MrBlueStudios/claude-env rather than a path. Consequence worth remembering: local
+      edits in the working copy no longer reach the system. A change has to be committed, pushed
+      and picked up with `nix flake update claude-env` before a switch sees it.
+  - id: mt-push-guard-ask
+    text: Commit and push the Atlassian ask rules, then update the flake input so they reach the system
+    owner: leon
+    why_yours: a push and a system switch on your own laptop
+    status: open
+    added: 2026-11-17
+    note: >-
+      Found 2026-11-17: /etc/claude-code/managed-settings.json on the running system has the 5
+      deny rules but no permissions.ask, because the ask rules added in ct-atlassian-ask are still
+      an uncommitted working-copy change while the flake input now points at GitHub. So the
+      guardrail exists in the repo but not on the machine. Sequence: commit and push
+      modules/system/guard.nix, then `nix flake update claude-env` in /etc/nixos and switch.
+      Until then, Jira writes are gated only by the ordinary per-project permission prompt, which
+      an approve-and-remember click can switch off again.
   - id: mt-spare-machines
     text: When the spare machines are set up, run the GPU check from research/clm-hosting-reality.md on each
     owner: leon
@@ -675,6 +780,12 @@ my_todos:
     guide: claude-env-clm-call
     status: paused
     added: 2026-11-16
+    recheck: 2026-12-08
+    note: >-
+      Still genuinely paused, but it now hangs off a date instead of an open-ended wait. CLM was
+      parked on 2026-11-17 with a revisit around 2026-12-08 (mt-clm-call), and this GPU check only
+      ever mattered for CLM, so it should be picked up as part of that revisit rather than tracked
+      as its own loose end. If CLM is dropped for good at that revisit, close this with it.
 
 questions:
   - id: q-mcp-philosophy
