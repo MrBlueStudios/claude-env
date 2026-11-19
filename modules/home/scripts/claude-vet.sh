@@ -69,10 +69,24 @@ fi
 LIC=""
 d="$ROOT"
 while [ -n "$d" ] && [ "$d" != "/" ] && [ "$d" != "$HOME" ]; do
-  LIC="$(find "$d" -maxdepth 1 \( -iname 'LICENSE*' -o -iname 'COPYING*' \) -print -quit 2>/dev/null)"
+  # -type f matters: projects following the REUSE convention (Serena does) keep a LICENSES/
+  # *directory* of SPDX texts, and reading a directory is an error, not a licence.
+  LIC="$(find "$d" -maxdepth 1 -type f \( -iname 'LICENSE*' -o -iname 'COPYING*' \) -print -quit 2>/dev/null)"
   [ -n "$LIC" ] && break
   d="$(dirname "$d")"
 done
+# A LICENSES/ directory is the REUSE convention for a repo whose parts are under different
+# terms — Serena's SolidLSP is MIT while the application is GPL-3.0-or-later. That distinction
+# decides whether anything here can be vendored into a public repo, so it is said out loud
+# rather than left to whoever opens the root LICENSE and sees one name.
+SPDX_DIR="$(find "$ROOT" -maxdepth 2 -type d -name LICENSES -print -quit 2>/dev/null)"
+if [ -n "$SPDX_DIR" ]; then
+  printf '  licences: %s holds %s SPDX text(s): %s\n' \
+    "${SPDX_DIR#"$ROOT"/}" "$(find "$SPDX_DIR" -type f | wc -l)" \
+    "$(find "$SPDX_DIR" -type f -printf '%f ' 2>/dev/null | sed 's/\.txt//g')"
+  warn "Parts of this tree are under different licences. Check which one covers the part you want before vendoring any of it."
+fi
+
 if [ -n "$LIC" ]; then
   printf '  LICENSE: %s — %s%s\n' \
     "$(basename "$LIC")" \

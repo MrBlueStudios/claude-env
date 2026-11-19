@@ -217,6 +217,12 @@ What you did not look at and why.
 
 ## D. crew-memory — the shared memory system
 
+> **All three are filed, and this section is now history rather than a track.** crew-memory
+> became a real project on 2026-11-19 (`~/Projects/crew-memory`), and it consumed these: the
+> git-backed vault from `obsidian-multi-person-sync`, the per-store frontmatter from
+> `memory-schema-prior-art`, and the still-open dashboard question from
+> `memory-dashboard-options`. Follow-ups live in that project's README, not here.
+
 - [x] **obsidian-multi-person-sync** — *Kish*
   Decides: the foundation of the memory system. Everything else sits on this.
   > Four people on NixOS laptops will share one Obsidian vault that both humans and Claude

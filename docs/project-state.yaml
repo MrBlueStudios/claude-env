@@ -10,8 +10,10 @@ non_goals:
   - Rebuilding the Claude Code config as dotfiles; it is already home-manager and stays that way
   - >-
     Building the shared crew memory system or its dashboard — its own project (crew-memory),
-    designed 2026-11-13 at ~/Projects/crew-memory/docs/design.md; claude-env only ships the
-    tools it needs and the CLM host it depends on
+    designed 2026-11-13 and built to v0 on 2026-11-19 at ~/Projects/crew-memory; claude-env
+    only ships the tools it needs and the CLM host it depends on. What claude-env still owes it
+    is the packaging: the crew-memory CLI on PATH and its capture skill installed for all four,
+    once crew-memory is its own repo (the claude-web-stack pattern)
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
@@ -573,10 +575,15 @@ claude_todos:
     text: >-
       Work the research/PROGRESS.md items, filing each result as research/<slug>.md and ticking
       its box
-    status: next
+    status: done
     done_when: >-
       Every one of the sixteen items in research/PROGRESS.md is ticked with a filed write-up in the
       deliverable format, and the crew-memory items have moved to that project's own board
+    note: >-
+      Done 2026-11-19. All sixteen boxes are ticked and filed. The handover half closed when
+      crew-memory became a real project the same day: section D's three items (sync, schema,
+      dashboard) are now consumed by ~/Projects/crew-memory, whose README carries the open
+      follow-ups, so this board no longer owns them.
     paths:
       - /home/leon-new/Projects/claude-env/research/PROGRESS.md
   - id: ct-plugin-audit
@@ -652,9 +659,36 @@ claude_todos:
       Two groups, run in sequence, never together: repo-scoped (Beads, the graph tool, Serena on
       the largest repo) and machine-scoped on Léon's laptop only (the output compressor, Claude
       HUD). A compressor that rewrites Bash output and a new MCP tool landing in the same fortnight
-      makes any measurement uninterpretable. Headroom's beacon is on by default and must be
-      disabled with HEADROOM_BEACON=off before it goes near the crew; RTK's PreToolUse hook rewrites
-      every Bash command and has to be tested against the guard first.
+      makes any measurement uninterpretable.
+      .
+      All four reachable candidates were vetted on 2026-11-19 with `just vet`, which is as far as
+      this can go without Léon: installing any of them is denied as untrusted code integration,
+      correctly. Results, worst first.
+      .
+      Beads (steveyegge/beads, MIT) FAILS the gate: four hooks, of which SessionStart and
+      UserPromptSubmit are blocking. The review's note that `--stealth` keeps it from planting
+      git hooks is about git, not about Claude Code's lifecycle — it still wants to run on every
+      session and every prompt. It needs a written exemption before anyone installs it, and it is
+      the most invasive thing on the list.
+      .
+      wshobson/agents is 185 skills, a projected 11,840 always-on tokens, about 44 per cent of
+      session start. It passes the gate (MIT, PreToolUse/PostToolUse only) but the number settles
+      the question: raid two or three plugins, never install the catalogue.
+      .
+      Serena (oraios/serena) declares no hooks and is the quiet one, but its root LICENSE is an
+      overview rather than a licence: SolidLSP is MIT and the Serena application is
+      GPL-3.0-or-later, in a REUSE-style LICENSES/ directory. Nothing from the GPL half can be
+      vendored into this public repo. It also has four `os.system` calls in repo_dir_sync.py.
+      .
+      Claude HUD (jarrodwatts/claude-hud, MIT, named author) is the cleanest: no hooks declared,
+      one skill, and its child_process uses are in maintainer tooling rather than the runtime.
+      .
+      The compressor half of this trial is in trouble. RTK and Headroom are NOT in nixpkgs under
+      any name — the review claimed both were, and `haskellPackages.headroom` is an unrelated
+      licence-header manager. So the only two entries of the forty with a real token-saving
+      mechanism would both have to be installed imperatively, which is the thing this repo exists
+      to stop. Decide whether that is worth an exception before spending a fortnight on it;
+      research/context-budget.md finding 9 is the argument that it is not.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-

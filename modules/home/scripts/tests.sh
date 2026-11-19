@@ -149,6 +149,19 @@ out="$(vet "$EMPTY_EX" "$TMP/mono/plugins/sub")"; rc=$?
 assert_rc       "vet: finds a licence at the repo root"    0 "$rc"
 assert_contains "vet: says where it found it"              "not in the plugin itself" "$out"
 
+# REUSE-style repos keep a LICENSES/ *directory* of SPDX texts. Reading a directory used to
+# be an error; worse, a repo whose parts are under different terms would be reported as having
+# exactly one licence, which is the detail that decides whether it can be vendored at all.
+mk_plugin "$TMP/dual" dual ""
+mkdir -p "$TMP/dual/LICENSES"
+printf 'MIT License\n' > "$TMP/dual/LICENSES/MIT.txt"
+printf 'GNU GENERAL PUBLIC LICENSE\n' > "$TMP/dual/LICENSES/GPL-3.0-or-later.txt"
+out="$(vet "$EMPTY_EX" "$TMP/dual")"; rc=$?
+assert_rc       "vet: a multi-licence tree still passes"      0 "$rc"
+assert_contains "vet: names both licences"                    "GPL-3.0-or-later" "$out"
+assert_contains "vet: warns that the terms differ by part"    "different licences" "$out"
+assert_lacks    "vet: never tries to read the directory"      "Is a directory" "$out"
+
 out="$(vet "$EMPTY_EX" "$TMP/does-not-exist")"; rc=$?
 assert_rc       "vet: a missing path is a usage error, not a pass" 2 "$rc"
 
