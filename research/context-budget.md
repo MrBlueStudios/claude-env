@@ -4,7 +4,9 @@
 
 **Answer:** About 28,500 tokens before the first word is typed, measured by running one-shot sessions and reading the usage report; MCP servers account for only about 5,600 of that, because Claude Code lists their tool names and defers the schemas until a tool is needed. The ten most expensive items are not servers at all but the fixed system prompt plus the 124 skill descriptions (about 6,900 tokens); the servers marked for pruning save about 520 tokens together and the HyperFrames suite about 320. Prune for security and clarity, not for context.
 
-**Confidence:** high for the totals (measured, not estimated); medium for the attribution to skills, which is a 4-characters-per-token estimate of the frontmatter.
+**Re-measured 19 November 2026** (same method): **26,825 tokens with every server connected, 22,155 with none**, so the MCP share is now 4,670. Two things that were estimated on 16 November are now measured: tool deferral is real, and a skill costs about 64 tokens. One thing that was assumed is wrong — see finding 11, where two plugins counted in the 124 turned out never to have been enabled.
+
+**Confidence:** high for the totals and, since 19 November, high for the per-skill cost too (finding 10 measures it instead of estimating it).
 
 **What would change our decision:**
 - A future Claude Code version that stops deferring MCP tool schemas. Then every server's full tool list lands in context and Sentry alone (70-odd tools) would cost several thousand tokens; re-measure after major updates.
@@ -41,6 +43,25 @@
 7. **The fixed cost is the system prompt.** With no MCP at all the session still starts at 22,857 tokens: Claude Code's own instructions, the tool definitions for its built-in tools, the skills list, memory index, and the user's `CLAUDE.md`. This is the same for every crew member with the same skills installed and cannot be tiered away. Source: finding 1.
 
 8. **Where the base / opt-in line should fall, then.** Not on tokens. Base tier: whatever is useful on every project and holds no Blitsol secret (Context7, Playwright from nixpkgs, Svelte, Atlassian). Opt-in: anything with a paid cliff or a client-specific credential (Figma, ElevenLabs, Firecrawl keyed, Sentry per project, HyperFrames). The context cost of being generous with the base tier is a few hundred tokens.
+
+9. **Deferral is confirmed, not inferred (19 November).** All servers together cost 4,670 tokens while QuickBooks alone exposes about 100 tools, Sentry about 70 and HubSpot about 45. Inlined schemas for those three would be tens of thousands of tokens on their own, so the schemas are demonstrably not in the prompt. This settles a claim made during the 40-repo review that per-project server scoping is the biggest lever available: it is not, because the thing it would save is not being paid. Re-check after major Claude Code updates, as finding 3 already said. Source: local measurement.
+
+10. **A skill costs about 64 tokens, measured.** Disabling the superpowers plugin (15 skills) moved a no-MCP session from 22,155 to 21,192, a 963-token drop; re-enabling restored it. That is 64 tokens per skill against the 55 the 4-characters-per-token estimate predicted, so finding 4's method was sound and its total was slightly low. Source: local A/B, each arm one `claude -p` run.
+
+11. **Installed is not enabled, and two plugins were only ever installed.** `ponytail` and `pstack` were installed on 5 November and never appeared in `enabledPlugins`, so neither was ever live. Three independent checks agree: removing both moved session start by zero tokens, on the same day that removing superpowers moved it by 963; no pstack skill fired in any of the 580 transcripts on this machine; and ponytail's ledger (`~/.config/ponytail/`, default on, written by a `UserPromptSubmit` hook) was never created, which it would have been on the first prompt of any session where its hooks ran. So the 124 skills in finding 4 included 64 that were never in context, and pstack's 58 skills never cost the ~4,800 tokens `claude plugin details` projects for them. Both were removed on 19 November anyway — dead weight, and ponytail was one settings edit from a live prompt-exfiltration path. Source: local measurement and transcript count.
+
+12. **The claude.ai-synced plugins are large and free here.** 38 plugins sync from the claude.ai account (small-business 44 skills, sales 36, brightdata 21, a 90-skill legal suite, ~328 `SKILL.md` files in total), but `claude plugin list` reports "sync is off in this shell; these load only in a synced session" and a one-shot CLI session enumerates 75 skills with none of them present. They cost nothing in Claude Code on this machine. They would cost in a synced session (claude.ai, Claude Tag), where at 64 tokens each they would be roughly 21,000 tokens — worth knowing before anyone works there, but not a CLI problem and not something the flake can control. Source: local inventory and skill enumeration.
+
+13. **Before and after the 40-repo adoption round (19 November).** Before: 26,825 with MCP,
+    22,155 without. Removing ponytail and pstack changed neither, for the reason in finding 11.
+    Four skills were then vendored in (`writing-for-agents`, `domain-modeling`, `grilling`,
+    `performance-optimization`), which at the measured rate is **+256 tokens**, about 1 % of
+    session start — confirm against a fresh measurement after the next `nixos-rebuild switch`,
+    since nothing declared in the flake is live until then. What was turned down matters more
+    than what was taken: the two packs those four came from hold 39 and 26 skills, so taking
+    either whole would have cost ~2,500 or ~1,700 tokens for skills that largely duplicate
+    superpowers. Léon's rule for this round was measure and report, not cap, and 1 % needs no
+    decision from him. Source: local measurement plus the per-skill rate in finding 10.
 
 ## Not checked
 

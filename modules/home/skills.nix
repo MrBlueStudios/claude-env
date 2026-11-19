@@ -134,9 +134,10 @@
   # reach ~/.claude after a commit, a push and a flake update — that is the
   # trade for reproducibility, and it is the point.
   home.file.".claude/skills/web-design-playbook" =
-    lib.mkIf (config.claude-env.webDesignPlaybook != null) {
-      source = "${config.claude-env.webDesignPlaybook}/skills/web-design-playbook";
-    };
+    lib.mkIf (config.claude-env.webDesignPlaybook != null)
+      {
+        source = "${config.claude-env.webDesignPlaybook}/skills/web-design-playbook";
+      };
 
   # The three vendored thermo-nuclear review skills, MIT (c) 2026 Cursor. Each
   # directory carries its own LICENSE and NOTICE.md, and the whole-directory
@@ -146,4 +147,19 @@
   home.file.".claude/skills/thermo-nuclear-review".source = ./skills/thermo-nuclear-review;
   home.file.".claude/skills/thermo-nuclear-code-quality-review".source =
     ./skills/thermo-nuclear-code-quality-review;
+
+  # Four skills taken out of two MIT packs on 2026-11-19 (mattpocock/skills,
+  # addyosmani/agent-skills), each with its own LICENSE and NOTICE.md as above.
+  #
+  # Taken piecemeal on purpose. The packs are 39 and 26 skills; at the 64 tokens
+  # per skill measured in research/context-budget.md that is ~4,200 tokens on
+  # every session for all four of us, and most of it duplicates superpowers,
+  # which is the one plugin the transcripts show actually being used. These four
+  # are the ones with no equivalent already installed — see each NOTICE.md for
+  # what was left behind and why. `just vet` cleared both packs: MIT, named
+  # authors, no self-firing hooks.
+  home.file.".claude/skills/writing-for-agents".source = ./skills/writing-for-agents;
+  home.file.".claude/skills/domain-modeling".source = ./skills/domain-modeling;
+  home.file.".claude/skills/grilling".source = ./skills/grilling;
+  home.file.".claude/skills/performance-optimization".source = ./skills/performance-optimization;
 }

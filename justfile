@@ -38,3 +38,10 @@ test-guard:
 # The firecrawl wrapper and other helper scripts.
 test-scripts:
     bash modules/home/scripts/tests.sh
+
+# What a plugin or skill tree would bring onto this machine. Run it on a checkout *before*
+# `claude plugin install` executes any of its code. Exits 1 on a blocking finding; the
+# exemptions it honours are in docs/vet-exemptions.md.
+vet path:
+    @bash {{ root }}/modules/home/scripts/claude-vet.sh \
+      --exemptions {{ root }}/docs/vet-exemptions.md {{ path }}

@@ -127,14 +127,44 @@ let
     ];
     text = builtins.readFile ./scripts/compliance-scan.sh;
   };
+
+  # What a plugin or skill tree would bring onto the machine, before `claude plugin install`
+  # runs its code. Ships to all four of us rather than living in the justfile alone, because
+  # the person about to install something is the one who needs it.
+  claudeVet = pkgs.writeShellApplication {
+    name = "claude-vet";
+    runtimeInputs = with pkgs; [
+      ripgrep
+      jq
+      coreutils
+      findutils
+      gnugrep
+      gnused
+    ];
+    # same reason as compliance-scan: this is greps, and "no match" is usually the good outcome
+    bashOptions = [
+      "nounset"
+      "pipefail"
+    ];
+    text = builtins.readFile ./scripts/claude-vet.sh;
+  };
 in
 {
   home.packages = [
+    # repomix as a CLI only — never `repomix --mcp`, and never to pack a repo into context,
+    # which is the opposite of the budget discipline in research/context-budget.md. What it is
+    # here for is measuring (`--token-count-tree`, `--token-budget`) and its Secretlint pass
+    # (on by default; `--no-security-check` turns it off) as a pre-flight before anything is
+    # shared. Note the release split: 26.05 has 1.15.0 with both measuring flags, 25.05 has
+    # 0.3.3 with neither — only the secret scan works there, so measure on 26.05.
+    pkgs.repomix
+
     (withGit statusline "claude-statusline")
     (withGit artifactHook "claude-artifact-hook")
     (withGit artifacts "claude-artifacts")
     artifactsPick
     complianceScan
+    claudeVet
     playwrightCli
     hyperframes
     ttsPython

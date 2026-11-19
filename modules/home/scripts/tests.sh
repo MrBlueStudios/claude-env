@@ -79,5 +79,103 @@ out="$(FIRECRAWL_KEY_FILE="$TMP/secret" firecrawl)"
 assert_lacks "key is not printed by the wrapper itself" "super-secret
 firecrawl-mcp" "$out"
 
+# ── claude-vet ───────────────────────────────────────────────────────────────
+#
+# A gate that passes everything is not a gate, so these fix both directions: a tree with a
+# self-firing hook must fail, and the same tree must pass once the exemption is written down.
+# Fixtures are built here rather than pointed at ~/.claude, which drifts.
+
+vet() { bash "$HERE/claude-vet.sh" --exemptions "$1" "$2" 2>&1; }
+
+mk_plugin() { # dir name hook-event
+  mkdir -p "$1/.claude-plugin" "$1/hooks" "$1/skills/demo"
+  printf 'MIT License\n\nCopyright (c) 2026 A Person\n' > "$1/LICENSE"
+  cat > "$1/.claude-plugin/plugin.json" <<EOF
+{ "name": "$2", "version": "1.0.0", "author": { "name": "A Person" }, "hooks": ["./hooks/h.json"] }
+EOF
+  printf -- '---\nname: demo\ndescription: a demo skill\n---\nbody\n' > "$1/skills/demo/SKILL.md"
+  if [ -n "${3:-}" ]; then
+    printf '{ "hooks": { "%s": [ { "hooks": [ { "type": "command", "command": "./x.js" } ] } ] } }\n' \
+      "$3" > "$1/hooks/h.json"
+  else
+    printf '{ "hooks": {} }\n' > "$1/hooks/h.json"
+  fi
+}
+
+EMPTY_EX="$TMP/no-exemptions.md"; : > "$EMPTY_EX"
+
+mk_plugin "$TMP/hooky" hooky UserPromptSubmit
+out="$(vet "$EMPTY_EX" "$TMP/hooky")"; rc=$?
+assert_rc       "vet: a UserPromptSubmit hook blocks"      1 "$rc"
+assert_contains "vet: names the event it blocked on"       "UserPromptSubmit hook" "$out"
+assert_contains "vet: points at the exemption file"        "$EMPTY_EX" "$out"
+
+cat > "$TMP/with-exemption.md" <<'EOF'
+- `hooky` UserPromptSubmit — needed because the plugin delivers its whole payload this way.
+EOF
+out="$(vet "$TMP/with-exemption.md" "$TMP/hooky")"; rc=$?
+assert_rc       "vet: a written exemption clears it"       0 "$rc"
+assert_contains "vet: says the exemption applied"          "is exempted in" "$out"
+
+# A bare name with no reason is how an exemption list rots; the reason is the point.
+printf -- '- `hooky` UserPromptSubmit\n' > "$TMP/bare.md"
+out="$(vet "$TMP/bare.md" "$TMP/hooky")"; rc=$?
+assert_rc       "vet: an exemption with no reason does not count" 1 "$rc"
+
+mk_plugin "$TMP/clean" clean ""
+out="$(vet "$EMPTY_EX" "$TMP/clean")"; rc=$?
+assert_rc       "vet: a hookless plugin passes"            0 "$rc"
+assert_contains "vet: reports the named author"            "A Person" "$out"
+assert_contains "vet: projects the always-on cost"         "projected always-on" "$out"
+
+# PostToolUse still runs code, but only on a tool call — reported, never blocking.
+mk_plugin "$TMP/posthook" posthook PostToolUse
+out="$(vet "$EMPTY_EX" "$TMP/posthook")"; rc=$?
+assert_rc       "vet: PostToolUse is reported, not blocked" 0 "$rc"
+assert_contains "vet: still lists the hook"                 "PostToolUse" "$out"
+
+mk_plugin "$TMP/nolicence" nolicence ""
+rm "$TMP/nolicence/LICENSE"
+out="$(vet "$EMPTY_EX" "$TMP/nolicence")"; rc=$?
+assert_rc       "vet: a tree with no licence blocks"       1 "$rc"
+assert_contains "vet: explains why the licence matters"    "public" "$out"
+
+# The common monorepo case: the plugin is a subdirectory, the licence is at the repo root.
+mkdir -p "$TMP/mono"
+printf 'MIT License\n' > "$TMP/mono/LICENSE"
+mk_plugin "$TMP/mono/plugins/sub" sub ""
+rm "$TMP/mono/plugins/sub/LICENSE"
+out="$(vet "$EMPTY_EX" "$TMP/mono/plugins/sub")"; rc=$?
+assert_rc       "vet: finds a licence at the repo root"    0 "$rc"
+assert_contains "vet: says where it found it"              "not in the plugin itself" "$out"
+
+out="$(vet "$EMPTY_EX" "$TMP/does-not-exist")"; rc=$?
+assert_rc       "vet: a missing path is a usage error, not a pass" 2 "$rc"
+
+# ── vendored trees carry their attribution ───────────────────────────────────
+#
+# skills.nix declares each vendored skill by whole-directory source precisely so the LICENSE
+# and NOTICE.md travel with it. That argument only holds if they are actually there, and the
+# failure mode is silent: a skill copied in without them still works, it is just no longer
+# legitimately redistributable from a public repo.
+
+SKILL_SRC="$(cd "$HERE/../skills" && pwd)"
+for d in "$SKILL_SRC"/*/; do
+  name="$(basename "$d")"
+  if [ -f "$d/LICENSE" ] || [ -f "$d/NOTICE.md" ]; then
+    [ -f "$d/LICENSE" ]   && ok || bad "$name: has NOTICE.md but no LICENSE" "LICENSE" "missing"
+    [ -f "$d/NOTICE.md" ] && ok || bad "$name: has LICENSE but no NOTICE.md" "NOTICE.md" "missing"
+    if [ -f "$d/NOTICE.md" ]; then
+      n="$(cat "$d/NOTICE.md")"
+      assert_contains "$name: NOTICE names the upstream" "Vendored from http" "$n"
+      [[ "$n" == *commit* ]] && ok || bad "$name: NOTICE pins no commit" "a commit" "$n"
+    fi
+  else
+    # Not licence-bearing: it must still say where it came from, somewhere in its own text.
+    grep -rqiE 'vendored from|written for this repo|source: ' "$d" \
+      && ok || bad "$name: vendored with no attribution anywhere" "an origin line" "none found"
+  fi
+done
+
 printf 'claude helper script tests: %d passed, %d failed\n' "$pass" "$fail"
 [[ "$fail" -eq 0 ]]

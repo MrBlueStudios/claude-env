@@ -68,8 +68,14 @@
   home.file.".claude/agents/thermo-nuclear-code-quality-review-subagent.md".source =
     ./agents/thermo-nuclear-code-quality-review-subagent.md;
 
-  # ~/.claude/rules/ — read by the pstack skill to decide which model each role
-  # runs on. Undeclared until now, which meant a fresh install would silently
-  # fall back to the skill's own defaults instead of this budget-conscious map.
-  home.file.".claude/rules/pstack-models.md".source = ./rules/pstack-models.md;
+  # ~/.claude/rules/*.md is loaded into every session as a global instruction,
+  # so a file here is always-on context for all four of us — keep it short and
+  # keep it earning its place.
+  #
+  # The lazy-senior ruleset is the payload of the ponytail plugin, vendored as
+  # text after the plugin itself was removed on 2026-11-19 (its reasons are in
+  # ./rules/lazy-senior/NOTICE.md). It goes here rather than in a skill because
+  # it is a default posture, not a workflow: a skill only fires when something
+  # invokes it, and nothing would.
+  home.file.".claude/rules/lazy-senior.md".source = ./rules/lazy-senior/lazy-senior.md;
 }

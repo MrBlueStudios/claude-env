@@ -15,11 +15,11 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-16T05:10"
+updated: "2026-11-19T18:55"
 suite:
   command: just test
   result: green
-  as_of: 2026-11-16
+  as_of: 2026-11-19
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
     26.05 (tests/eval-*), then runs the 58 guard cases and 17 helper-script tests. Nothing is built
@@ -579,6 +579,82 @@ claude_todos:
       deliverable format, and the crew-memory items have moved to that project's own board
     paths:
       - /home/leon-new/Projects/claude-env/research/PROGRESS.md
+  - id: ct-plugin-audit
+    text: >-
+      Audit the imperatively installed plugins against the 40-repo review, remove what fails the
+      bar, and re-measure the context budget
+    status: done
+    note: >-
+      Done 2026-11-19. ponytail and pstack removed, their marketplaces with them; ponytail's
+      ruleset vendored as modules/home/rules/lazy-senior/ (MIT, author named) because the rules
+      were the whole value and the plugin's UserPromptSubmit hook plus a webhookUrl option with
+      sendNames defaulting to true were not. pstack was MIT from cursor/plugins and safe, but 58
+      skills with zero invocations across 580 transcripts; modules/home/rules/pstack-models.md
+      existed only to configure it and went too. The audit's real finding is in
+      research/context-budget.md finding 11: neither plugin was ever in enabledPlugins, so neither
+      ever cost a token or ran a hook. Installed is not enabled, and nothing in the repo could
+      have told us which — that is what ct-plugin-channel fixes.
+  - id: ct-vet-gate
+    text: >-
+      Add `just vet <path>`, a mechanical check a plugin or skill tree must pass before it may be
+      adopted
+    status: done
+    done_when: >-
+      `just vet` reports declared hooks and their lifecycle events, every child_process/spawn/exec/
+      fetch/http occurrence, every environment variable read, the licence and named author, and any
+      curl-pipe-to-shell install step; it fails on a SessionStart or UserPromptSubmit hook unless an
+      exemption is written down with a reason; and it fails ponytail while passing mattpocock/skills
+    note: >-
+      Done 2026-11-19. modules/home/scripts/claude-vet.sh, shipped as the `claude-vet` command so
+      the person about to install something has it, and wrapped by `just vet`. Exemptions live in
+      docs/vet-exemptions.md and must carry a reason; a bare name does not count, which is tested.
+      It is deliberately calibrated rather than merely strict: it fails ponytail (3 blocking) and
+      svelte (no LICENSE in the cached subdirectory of a monorepo), and passes superpowers via a
+      written exemption, brag, frontend-design and all three candidate packs. It does not shell out
+      to `claude plugin details`, which only works after install — the point is to look first — but
+      it borrows that command's idea of reporting a projected always-on cost, at the 64 tokens per
+      skill measured in research/context-budget.md. Projected is not measured: finding 11 is the
+      counter-example, and the output says "projected" for that reason.
+    paths:
+      - /home/leon-new/Projects/claude-env/justfile
+  - id: ct-plugin-channel
+    text: >-
+      Give plugins and third-party skills a declarative channel, so what is installed is visible in
+      the repo and reaches all four laptops
+    status: in_progress
+    done_when: >-
+      Every skill and plugin a crew laptop loads is either declared in this repo or deliberately
+      listed as personal, and a fresh laptop that builds the flake gets the same set as Léon's
+    note: >-
+      The same drift as ct-mcp-declarative, one layer up. Reuse both patterns already in
+      skills.nix: a pinned `flake = false` input for a pack taken whole (as claude-web-stack does),
+      and a vendored directory carrying its own LICENSE and NOTICE.md for a pack taken in part (as
+      the three thermo-nuclear skills do). First adoptions landed 2026-11-19, all by vendoring
+      rather than pinning, because reading the packs changed the plan: mattpocock/skills is 39
+      skills and addyosmani/agent-skills 26, and most of both duplicate superpowers, the one
+      plugin the transcripts show being used. Taken: writing-for-agents, domain-modeling and
+      grilling (MIT, Matt Pocock) and performance-optimization (MIT, Addy Osmani), four skills
+      and ~256 tokens against ~4,200 for both packs whole. Also repomix from nixpkgs as a CLI
+      only. Left: accessibility-engineering, because web-design-guidelines already carries 25
+      concrete WCAG rules written against this crew's own stack. Still open — the imperative
+      plugins that remain (superpowers, brag, svelte, frontend-design) are enabled through
+      settings.nix but their versions are not pinned by the flake, so a fresh laptop gets
+      whatever the marketplace serves that day.
+  - id: ct-tool-trials
+    text: >-
+      Run the six time-boxed trials from the 40-repo review and record each verdict here
+    status: later
+    done_when: >-
+      Each of Beads, one of Codegraph/Graphify, Serena, one of RTK/Headroom, Claude HUD and the
+      raid on wshobson/agents has a dated verdict in this file, and anything that survived is
+      declared through ct-plugin-channel rather than installed by hand
+    note: >-
+      Two groups, run in sequence, never together: repo-scoped (Beads, the graph tool, Serena on
+      the largest repo) and machine-scoped on Léon's laptop only (the output compressor, Claude
+      HUD). A compressor that rewrites Bash output and a new MCP tool landing in the same fortnight
+      makes any measurement uninterpretable. Headroom's beacon is on by default and must be
+      disabled with HEADROOM_BEACON=off before it goes near the crew; RTK's PreToolUse hook rewrites
+      every Bash command and has to be tested against the guard first.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
