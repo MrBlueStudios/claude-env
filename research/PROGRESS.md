@@ -274,6 +274,12 @@ The sixteen above are the track, and it is finished. `research/` has since gaine
 out of building rather than out of a question somebody was handed. They are listed here so the
 folder does not accumulate items nobody can account for.
 
+- **hook-precedence-and-the-guard** — 20 Nov, Claude here. Whether a second `PreToolUse` hook can
+  weaken the managed guard. It cannot change what the guard sees (matching hooks run in parallel
+  on the original input) and cannot disable it (managed hooks merge and outrank), but whether a
+  command rewritten with `updatedInput` is re-checked is undocumented — stated as open rather
+  than assumed, and deliberately not tested, because the test is a bypass. Also corrects the
+  40-repo plan: neither compressor is in nixpkgs.
 - **session-capture-hooks** — 20 Nov, Claude here. What a session-end capture hook has to get
   right, read out of `claude-mem` (Apache-2.0) without installing it, which is what the 40-repo
   plan's Phase 4 asked for. Picks `SessionEnd` over `Stop` and is the reason `crew-memory` spools
