@@ -1,4 +1,14 @@
-# claude-env — evaluation tests. Nothing here builds or switches a system.
+# claude-env — tests. Nothing here switches a system.
+#
+# `test` was evaluation-only until 2026-11-20, and that is how two scripts reached `main` with a
+# build failure in them: `pkgs.writeShellApplication` runs `bash -n` and `shellcheck` in its
+# *check* phase, which a `nix eval` never reaches. The suite was green, and `nh os switch` on
+# Léon's laptop was not. `test-shellcheck` closes that, and it is the same tool with the same
+# default flags rather than a lint of our own choosing — plus one trap worth stating: the Nix
+# build sandbox has no locale, so a shellcheck diagnostic whose context line holds a non-ASCII
+# character (an em dash, which these scripts are full of) dies with "cannot encode character"
+# and exit 2. A style warning nobody would act on therefore breaks a system build, so the
+# findings have to be at zero rather than merely understood.
 
 set shell := ["bash", "-c"]
 
@@ -13,7 +23,37 @@ default: test
 
 # Evaluate the home-manager module (base + blitsol) and the NixOS guard on both supported releases,
 # then run the guard and helper-script tests.
-test: test-25-05 test-26-05 test-guard test-scripts
+test: test-25-05 test-26-05 test-shellcheck test-guard test-scripts test-build
+
+# The same suite without the two real builds: everything that runs in seconds, for the inner
+# loop. `test` is what runs before a commit, because `test-fast` is exactly what was green
+# while the switch was broken.
+test-fast: test-25-05 test-26-05 test-shellcheck test-guard test-scripts
+
+# The ground truth the eval tests cannot reach: actually build what `nh os switch` builds, so a
+# failing check phase inside any writeShellApplication is caught here instead of on a laptop.
+# ~40 s per release once the store is warm, minutes on a cold one. test-shellcheck is the fast
+# proxy for the same failure; this is the one that cannot be fooled.
+test-build:
+    @cd {{ root }} && for d in tests/eval-25.05 tests/eval-26.05; do \
+        printf '%-22s %-8s ' "$d" build; \
+        (cd "$d" && nix build --no-link {{overrides}} "path:$PWD#homeConfigurations.base.activationPackage" {{quiet}}) \
+          && echo "home-manager generation builds: ok" || exit 1; \
+      done
+
+# Every script the module wraps in writeShellApplication, checked the way its check phase does:
+# `bash -n -O extglob` then `shellcheck` with no flags. Run against the source rather than the
+# assembled file, so it needs no build — the assembled version only adds a shebang and `set -o`
+# lines, neither of which changes a finding. A finding here is a failed `nh os switch`.
+test-shellcheck:
+    @cd {{ root }} && fail=0; \
+      if command -v shellcheck >/dev/null; then sc="shellcheck"; else sc="nix run nixpkgs#shellcheck --"; fi; \
+      for f in modules/home/scripts/*.sh modules/system/claude-code/*.sh; do \
+        case "$f" in *tests.sh|*-test.sh) continue ;; esac; \
+        bash -n -O extglob "$f" || { echo "bash -n: $f"; fail=1; }; \
+        LC_ALL=C.UTF-8 $sc -s bash "$f" || fail=1; \
+      done; \
+      [ "$fail" = 0 ] && echo "shellcheck: $(ls modules/home/scripts/*.sh modules/system/claude-code/*.sh | grep -vcE 'tests\.sh|-test\.sh') packaged script(s) clean" || exit 1
 
 test-25-05:
     @just _eval tests/eval-25.05

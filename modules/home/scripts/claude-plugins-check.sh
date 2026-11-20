@@ -74,6 +74,12 @@ while IFS=$'\t' read -r name repo ref; do
   if [ "$REMOTE" = 1 ] && [ -n "$repo" ]; then
     upstream="$(gh api "repos/$repo/commits?per_page=1" --jq '.[0].sha' 2>/dev/null)"
     if [ -n "$upstream" ] && [ "$upstream" != "$head" ]; then
+      # The backticks are literal text in a message, not a command substitution — and the
+      # disable has to be here rather than left as a warning, because `writeShellApplication`
+      # runs shellcheck at build time with no locale set, so printing a diagnostic whose
+      # context line contains the em dash below kills the build (see the test-shellcheck note
+      # in the justfile).
+      # shellcheck disable=SC2016
       printf '    upstream is at %s — raise the pin only after `just vet`\n' "${upstream:0:12}"
     fi
   fi

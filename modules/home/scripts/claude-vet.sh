@@ -118,6 +118,10 @@ fi
 # skills/<name>/, mattpocock's are skills/<category>/<name>/ — so depth is not the test.
 # What is excluded is the per-harness copies (.openclaw, .codex-plugin, …) that ship the same
 # skills again for Codex, Gemini and the rest, and anything under tests or evals.
+# `grep -c` is what shellcheck suggests, and it exits 1 when nothing matches — which here is
+# the ordinary case of a tree with no skills, and would make the count's exit status say
+# "failed" instead of "zero". Counting lines keeps zero a number rather than an error.
+# shellcheck disable=SC2126
 SKILLS="$(find "$ROOT" -name SKILL.md -not -path '*/node_modules/*' 2>/dev/null \
   | grep -vE '/(\.openclaw|\.agents|\.codex-plugin|\.gemini|\.opencode|\.cursor|\.windsurf|\.kiro|\.qoder|\.grok-plugin|\.kimi-plugin|\.devin-plugin|tests|evals)/' \
   | wc -l)"
@@ -144,6 +148,9 @@ fi
 if [ -z "$FOUND_HOOKS" ]; then
   echo "  none declared"
 else
+  # Indenting *every* line of a multi-line string, which ${var//from/to} cannot do: it has no
+  # way to anchor a replacement to each line start. Same for the two below.
+  # shellcheck disable=SC2001
   echo "$FOUND_HOOKS" | sed 's/^/  /'
   for ev in $FOUND_HOOKS; do
     if echo "$ev" | grep -qE "^($BLOCKING)$"; then
@@ -162,6 +169,7 @@ surface() { # label pattern
   local out
   out="$("${CODE[@]}" --line-number -o -e "$2" "$ROOT" 2>/dev/null | cut -c1-160 | head -6)"
   [ -z "$out" ] && return
+  # shellcheck disable=SC2001  # per-line prefix strip; see the note above
   printf '  %s:\n%s\n' "$1" "$(echo "$out" | sed 's|^'"$ROOT"'/|    |')"
 }
 surface "process spawning" 'child_process|spawnSync|execSync|\bspawn\(|\bexecFile\(|subprocess\.|os\.system'
@@ -179,6 +187,7 @@ if [ "$N_HOSTS" -gt 0 ]; then
   printf '  outbound addresses in code (%s): %s\n' "$N_HOSTS" "$(echo "$ALL_HOSTS" | head -15 | tr '\n' ' ')"
   if [ "$N_HOSTS" -gt 15 ]; then
     echo "    … $((N_HOSTS - 15)) more; rerun with CLAUDE_VET_HOSTS=all to see them"
+    # shellcheck disable=SC2001  # per-line prefix; see the note above
     [ "${CLAUDE_VET_HOSTS:-}" = all ] && echo "$ALL_HOSTS" | sed 's/^/    /'
     # Hundreds of hosts is usually a brand/icon lookup table rather than a call site, which is
     # exactly what it is in taste-skill. Say so instead of implying hundreds of exfil paths.

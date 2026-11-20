@@ -307,7 +307,7 @@
         <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">16</span>
+        <span class="figure">17</span>
         <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
@@ -320,6 +320,7 @@
       <p class="eyebrow">Where you are</p>
       <p>Three features landed on 20 November and <strong>none of them is live</strong>: the tier split, the declarative MCP block and the pinned plugin channel are all on <code>main</code>, past what <code>/etc/nixos</code> is locked to. One switch turns all of it on, and it is the first card below.</p>
       <p><strong>Do the five-minute card above it first.</strong> <code>mcp.nix</code> now owns the user-scope server list, so the two servers nobody declared — <code>obsidian</code> and <code>vies-vat</code> — are removed by that switch unless you declare them. They are recoverable either way, but it is less annoying to decide before than to restore after.</p>
+      <p><strong>Your 16:56 switch failed, and that was my bug, not yours.</strong> <code>claude-plugins-check</code> would not build. It is fixed on <code>main</code>, together with the reason <code>just test</code> did not catch it, and the card below says what to re-run.</p>
     </div>
   </header>
 
@@ -349,10 +350,11 @@
         <h3>Run one switch — everything on this board is on <code>main</code>, and none of it is live</h3>
         <span class="why">two commands, no decisions · everything on this board turns on here</span>
       </div>
-      <p class="rationale"><code>/etc/nixos/flake.lock</code> pins <code>claude-env</code> at <code>3dbbd93</code>. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, the guide and enrolment runbook, and a fix for a guard rule that was denying ordinary pushes. That is every commit since <code>3dbbd93</code> — the features, and the boards that describe them — and the only thing between them and your laptop is this.</p>
+      <p class="trap" style="border-left-color: var(--stop); background: var(--stop-soft);"><b>You already tried this twice and it failed both times. The break was mine.</b> <code>nix flake update</code> moved your lock to <code>6e9f917</code> and that revision does not build: <code>claude-plugins-check.drv</code> exits 2 with <code>cannot encode character '\8212'</code>. Cause, exactly — <code>pkgs.writeShellApplication</code> runs <code>shellcheck</code> in a <em>check</em> phase, the Nix sandbox sets no locale, and a diagnostic whose context line holds an em dash kills shellcheck itself while it prints. The finding being a harmless style warning made no difference: the builder still exited non-zero, and <code>home-manager-generation</code>, <code>user-environment</code>, <code>etc</code> and the system closure all fell over behind it. Two scripts were affected, both are fixed, and <code>just test</code> now builds the generation instead of only evaluating it, so this class cannot reach you again. Run the same command again — a fresh <code>nix flake update claude-env</code> picks up the fix.</p>
+      <p class="rationale">That lock was pinned at <code>3dbbd93</code> before your first attempt. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, the guide and enrolment runbook, and a fix for a guard rule that was denying ordinary pushes. That is every commit since <code>3dbbd93</code> — the features, and the boards that describe them — and the only thing between them and your laptop is this.</p>
       <p class="rationale">Your 19 November switch reporting <code>0 paths added, 0 paths removed, delta +0</code> was correct and is worth remembering: the input resolves from <code>github:MrBlueStudios/claude-env</code>, so a local edit in <code>~/Projects/claude-env</code> changes nothing until it is committed, pushed and re-locked.</p>
       <ol class="steps">
-        <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
+        <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code> — the same command as before, now against a revision that builds.
           <span class="done-when"><b>Done when</b> the closure actually changes, and <code>jq -r '.nodes["claude-env"].locked.rev' /etc/nixos/flake.lock</code> matches <code>git -C ~/Projects/claude-env rev-parse origin/main</code>. <code>delta +0</code> means the update did not take.</span></li>
         <li>Read the activation output rather than scrolling past it. It names every MCP server it adds or removes, and every plugin that was installed but is no longer declared.
           <span class="done-when"><b>Done when</b> the removals are ones you expected. If not, <code>~/.claude/removed-mcp-servers.json</code> has them.</span></li>
@@ -521,7 +523,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 16 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
+    <h2>My queue <span class="tally">— 17 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -540,6 +542,10 @@
       <div class="row">
         <div class="row-top"><span class="pill next">Next</span><span class="txt">Package crew-memory through the flake, once it is its own repo</span></div>
         <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Fixed the build that broke your switch, and the gap in <code>just test</code> that let it through</span></div>
+        <p class="dw">Your failed switch, diagnosed rather than guessed at: <code>writeShellApplication</code> wraps each helper script and runs <code>bash -n</code> plus <code>shellcheck</code> in its check phase, which <code>nix eval</code> never reaches — so the suite was green while the build was broken. The sandbox has no locale, so shellcheck died printing a diagnostic containing an em dash and exited 2. Fixed with scoped <code>shellcheck disable</code> directives, each carrying its reason, in <code>claude-plugins-check.sh</code> and <code>claude-vet.sh</code>. <b>The real fix is the suite:</b> <code>just test</code> now runs <code>test-shellcheck</code> (the same tool with the same default flags, over all 8 packaged scripts) and <code>test-build</code>, which actually builds the base home-manager generation on 25.05 and 26.05 — the thing <code>nh os switch</code> builds. Mutation-checked: reverting either fix makes the suite fail. <code>just test-fast</code> is the old, seconds-long set for the inner loop, and it is exactly what was green while your laptop was not.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">The tier split is real, and asserted</span></div>
@@ -722,10 +728,10 @@
   </section>
 
   <footer>
-    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · nothing live until one switch</p>
+    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed · nothing live until one switch</p>
     <p>input · github:MrBlueStudios/claude-env, so a module change needs commit, push, nix flake update, switch</p>
-    <p>suite · just test green on 25.05 and 26.05 · 65 guard cases · 142 script tests</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 31 facts, 3 open questions</p>
+    <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both · 65 guard cases · 142 script tests · 8 scripts shellchecked</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 37 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>

@@ -17,16 +17,21 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T17:05"
+updated: "2026-11-20T17:25"
 suite:
   command: just test
   result: green
   as_of: 2026-11-20
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
-    26.05 (tests/eval-*), then runs the 65 guard cases and 142 helper-script tests. Nothing is
-    built or switched. `just plugins-check` is deliberately not part of it: it reports the state
-    of the machine it runs on, which is not a property of the repo.
+    26.05 (tests/eval-*), runs shellcheck over the eight packaged scripts, then the 65 guard
+    cases and 142 helper-script tests, and finally *builds* the base home-manager generation on
+    both releases. The build is new on 2026-11-20 and it is there because its absence shipped a
+    broken switch: writeShellApplication runs shellcheck in its check phase, which no `nix eval`
+    reaches, so two scripts with style findings evaluated green and failed to build. `just
+    test-fast` is the same suite without the builds, for the inner loop. Nothing switches.
+    `just plugins-check` is deliberately not part of it: it reports the state of the machine it
+    runs on, which is not a property of the repo.
 artifacts:
   status: https://claude.ai/code/artifact/71c33b0d-0713-44c6-a94c-bf3312635352
   todo: https://claude.ai/code/artifact/e3563a45-ca0e-44d9-b157-56b3b202b2f6
@@ -454,6 +459,22 @@ facts:
       which is a shrug; rephrasing to "should these two talk first" gave 0.418, so prompting is
       not the fix. The checkpoints are zero-shot and this is outside their calibration. Shipped
       pipeline: the ranker shortlists, Laya drops confident negatives, the person decides.
+  - key: eval_green_but_build_broken
+    value: 2
+    source: >-
+      nh os switch on mr-blue, 2026-11-20 16:56 — claude-plugins-check.drv failed with exit 2
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Two scripts, claude-vet and claude-plugins-check, reached main with a build failure while
+      `just test` was green, because the suite only evaluated. pkgs.writeShellApplication runs
+      `bash -n -O extglob` and `shellcheck` in its check phase, which no nix eval reaches. The
+      trigger is sharper than "a lint warning": the Nix sandbox sets no locale, so shellcheck
+      dies with "cannot encode character '\8212'" — an em dash — while printing a style
+      diagnostic, and exits 2. Verified by reproduction: the same derivation with
+      excludeShellChecks passes, with LC_ALL=C.UTF-8 it reaches exit 1 instead of the crash.
+      Fixed with scoped `# shellcheck disable=` directives carrying reasons, and `just test`
+      now ends with a real build of the base generation on both releases.
   - key: account_synced_plugins
     value: 38
     source: >-
