@@ -54,6 +54,12 @@ inputs.claude-env.url = "github:MrBlueStudios/claude-env";
 }
 ```
 
+**Import both.** The home module on its own gives you the tools with none of the brakes: every
+skill, agent and MCP server, and nothing stopping a `.env` read or an `rm -rf` of your home
+directory. If you only want to try the tools on a machine you do not administer, that is a
+reason to take the home module alone — but know that is what you are choosing, and say so, so
+nobody assumes your sessions are guarded when they are not.
+
 **Run in: your config**
 
 ```bash

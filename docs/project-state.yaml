@@ -17,14 +17,14 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T11:20"
+updated: "2026-11-20T15:20"
 suite:
   command: just test
   result: green
   as_of: 2026-11-20
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
-    26.05 (tests/eval-*), then runs the 58 guard cases and 134 helper-script tests. Nothing is
+    26.05 (tests/eval-*), then runs the 65 guard cases and 134 helper-script tests. Nothing is
     built or switched. `just plugins-check` is deliberately not part of it: it reports the state
     of the machine it runs on, which is not a property of the repo.
 artifacts:
@@ -129,7 +129,7 @@ features:
     waiting_on: Léon — these are GUI invites in four separate billing accounts
   - id: laya-clm-userscope
     name: Laya available in every project; CLM parked
-    status: planned
+    status: in_progress
     note: >-
       Both decision-model servers are project-scope in Laya_And_CLM-MCPs, so they vanish in every
       other folder. The repo already ships register-decision-mcps.sh to fix exactly this. Laya no
@@ -144,6 +144,7 @@ features:
       backend is parked is a tool that always fails. What is left is one line in /etc/nixos
       setting layaPath to the checkout — Léon's, since the path is his.
     paths:
+      - /home/leon-new/Projects/claude-env/modules/home/mcp.nix
       - /home/leon-new/Projects/Laya_And_CLM-MCPs/register-decision-mcps.sh
       - /home/leon-new/Projects/Laya_And_CLM-MCPs/.mcp.json
   - id: coverage-audit
@@ -157,29 +158,35 @@ features:
       - /home/leon-new/Projects/claude-env/docs/coverage.md
   - id: guard-portability
     name: The flake must carry the security guard
-    status: planned
+    status: done
     note: >-
       Found by the coverage audit. claude-code-policy.nix is a NixOS system module, separate from
       modules/home/claude/, so extracting only the home module would hand friends every skill,
       agent and MCP server with none of the deny rules on .env, /run/agenix and SSH keys.
     remaining: >-
-      Expose a nixosModules.default alongside homeManagerModules.default, carrying the policy and
-      guard.sh, and state plainly in the guide that the home module alone gives tools without
-      brakes.
+      Done. flake.nix exports nixosModules.default (and .guard) carrying modules/system/guard.nix
+      and guard.sh, `just test` evaluates it on both releases, and docs/guide.md §1 says to
+      import both and what taking the home module alone actually means: every skill, agent and
+      server, and nothing stopping a .env read or an rm -rf of your home directory.
     paths:
-      - /etc/nixos/modules/system/claude-code-policy.nix
-      - /etc/nixos/modules/system/claude-code/guard.sh
+      - /home/leon-new/Projects/claude-env/flake.nix
+      - /home/leon-new/Projects/claude-env/modules/system/guard.nix
+      - /home/leon-new/Projects/claude-env/modules/system/guard.sh
+      - /home/leon-new/Projects/claude-env/docs/guide.md
   - id: friend-guide
     name: The guide for friends
-    status: planned
+    status: done
     note: >-
       A friend needs to know what exists, when to reach for which skill or agent, and what the
       guardrails will stop him doing — none of that is discoverable from the flake.
     remaining: >-
-      Written after the coverage audit, so it documents the toolkit that actually ships rather
-      than the one that exists today.
-    absent_paths:
+      Done 2026-11-20: docs/guide.md, written after the audit and against what now ships, plus
+      docs/enrolment.md for the Blitsol-tier half. ct-guide and ct-enrolment have what is in
+      them. The claim in the done_when that has not been tested is the last one — that a friend
+      can follow it without asking Léon a question — and the test for that is onboarding-test.
+    paths:
       - /home/leon-new/Projects/claude-env/docs/guide.md
+      - /home/leon-new/Projects/claude-env/docs/enrolment.md
   - id: jira-calendar
     name: Jira on the shared board, wired to Google Calendar
     status: planned
@@ -187,21 +194,30 @@ features:
       The crew shares one Jira board for the websites, but there is no Jira MCP server installed
       at any scope, and Jira is not yet feeding Léon's calendar.
     remaining: >-
-      Add the Atlassian remote MCP at base tier, and connect Jira to Google Calendar.
+      The MCP half landed 2026-11-20: atlassian is base tier in mcp.nix, with its nine write
+      operations behind the managed `ask` rule. Two things are left and both are Léon's. The
+      shared website board does not exist — KAN, named "test", is the only project on the site
+      and holds the only issue — so there is nothing yet for a friend following the guide to
+      look at (mt-jira-board). And the Calendar subscription is a Jira setting, not a connector
+      (mt-jira-calendar).
   - id: nixos-version-matrix
     name: One module, two NixOS releases
-    status: planned
+    status: done
     note: >-
       Found by the hardware inventory. Léon is on 25.05 with home-manager release-25.05; Ryan and
       Kish are on 26.05. A module that evaluates on one and not the other fails the first friend
       who installs it.
     remaining: >-
-      Flake exposes modules only and lets each consumer's inputs supply nixpkgs and home-manager;
-      a check that evaluates the module against both releases before anything is tagged.
+      Done. flake.nix takes no nixpkgs or home-manager of its own — the only input is the
+      web-design playbook — and `just test` evaluates base, blitsol and the guard against
+      nixos-25.05 and nixos-26.05 on every run. Where the two releases genuinely differ, the
+      module resolves it rather than picking one: prettier and nixfmt per release, playwright-mcp
+      and mcp-nixos from nixpkgs on 26.05 and a pinned fetch on 25.05, and repomix's measuring
+      flags documented as 26.05-only.
     waiting_on: q-nixos-version and research item nixos-version-matrix
   - id: desktop-neutral
     name: The module must not assume Hyprland
-    status: planned
+    status: done
     note: >-
       Found by the hardware inventory. Two of four run KDE Plasma 6 on Wayland. Léon's config was
       built on Hyprland and Kitty. Checked 2026-11-16 against research/desktop-neutral-module.md:
@@ -210,10 +226,15 @@ features:
       kitten @ remote control (35 references) and cannot work under Konsole, so the modes become
       an opt-in module gated on Kitty.
     remaining: >-
-      Run the checklist from research item desktop-neutral-module against the module; guard or
-      strip anything compositor-specific; test on a KDE machine before the onboarding test.
+      Done, apart from the part that needs someone else's laptop. The checklist was run on
+      2026-11-16 and the one gap it found — claude-mode's 35 references to Kitty's remote control
+      — is gated behind claude-env.modes.enable, which defaults off, and `just test` asserts that
+      a base config ships no claude-mode skill on either release. Confirming it on a real KDE
+      machine is part of onboarding-test, because that is the first time one exists.
     paths:
-      - /etc/nixos/modules/home/claude/hooks.nix
+      - /home/leon-new/Projects/claude-env/modules/home/modes.nix
+      - /home/leon-new/Projects/claude-env/modules/home/options.nix
+      - /home/leon-new/Projects/claude-env/justfile
   - id: research-track
     name: Research track — free-tool verification
     status: done
@@ -447,17 +468,64 @@ facts:
       base + blitsol home configurations and the NixOS guard evaluate on nixpkgs/home-manager
       25.05 and 26.05 from the in-repo test flakes. Recheck: cd ~/Projects/claude-env && just test
   - key: guard_tests
-    value: 58
+    value: 65
     source: modules/system/claude-code/guard-test.sh
     source_kind: command
-    as_of: 2026-11-16
-    note: "All pass. Recheck: just test-guard"
+    as_of: 2026-11-20
+    note: >-
+      All pass. 58 until 2026-11-20, when the force-push rule was scoped to the push command
+      itself and seven cases were added around it. Recheck: just test-guard
   - key: helper_script_tests
-    value: 17
+    value: 134
     source: modules/home/scripts/tests.sh
     source_kind: command
-    as_of: 2026-11-16
-    note: "All pass. Recheck: just test-scripts"
+    as_of: 2026-11-20
+    note: >-
+      All pass. 17 on 2026-11-16, then +117 for claude-settings (the version gate), claude-mcp
+      (the declarative server block) and claude-plugins-check. Recheck: just test-scripts
+  - key: claude_code_version_installed
+    value: "2.1.278"
+    source: claude --version
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Matters because marketplace pinning by commit SHA needs 2.1.324 or newer. nixpkgs master is
+      at 2.1.328, so the pins start applying after the next flake update — claude-settings.sh
+      decides which overlay to write at activation time, so no repo edit is needed when it does.
+  - key: declared_mcp_servers_base
+    value: 3
+    source: nix eval ... homeConfigurations.base.config.claude-env.mcp.declared
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      atlassian, context7, playwright. blitsol adds cloudflare and nothing else; six opt-in
+      modules are off by default. Asserted by `just test` on both releases.
+  - key: dropped_mcp_registrations
+    value: 23
+    source: modules/home/mcp.nix
+    source_kind: file
+    as_of: 2026-11-20
+    note: >-
+      Each with a one-line reason in the module, and each pruned from ~/.claude.json's local
+      scopes on activation. The 23 are what the audit cut from the 39 live registrations.
+  - key: pinned_plugin_marketplaces
+    value: 3
+    source: modules/home/settings.nix
+    source_kind: file
+    as_of: 2026-11-20
+    note: >-
+      superpowers-marketplace, brag and svelte, each at a full commit SHA. frontend-design comes
+      from claude-plugins-official, a reserved name Claude Code refuses to let a config pin.
+  - key: plugin_cache_leftover_mb
+    value: 20.0
+    source: du -sk ~/.claude/plugins/cache/ponytail ~/.claude/plugins/cache/cursor-plugins
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Caches of two marketplaces nothing declares any more: ponytail (12.7 MB, removed by
+      decision) and cursor-plugins (7.7 MB, which is where pstack came from). The marketplace
+      clones themselves are already gone; these two cache directories are what is left.
+      claude-plugins-check reports them and deleting them is Léon's call."
   - key: mr_blue_builds_from_input
     value: true
     source: research/nixos-version-matrix.md
@@ -829,6 +897,30 @@ claude_todos:
       mechanism would both have to be installed imperatively, which is the thing this repo exists
       to stop. Decide whether that is worth an exception before spending a fortnight on it;
       research/context-budget.md finding 9 is the argument that it is not.
+  - id: ct-guard-refspec
+    text: >-
+      Fix the force-push rule's false positives: it read the whole command string, so an ordinary
+      push was blocked by a + or a -f belonging to something else in the same line
+    status: done
+    done_when: >-
+      A commit message containing "+0" and an `rm -f` before a push both stop being read as
+      force-pushes, while every real force-push to main is still denied
+    note: >-
+      Found 2026-11-20 by hitting it twice in one session: `jj describe -m '... +0' && jj git push
+      --bookmark main` was denied as a force-push to main, because `\s\+\S` matched the message
+      rather than a refspec, and a heredoc containing both example commands as documentation text
+      was denied for the same reason. `rm -f old.log && git push origin main` had the same defect.
+      .
+      Fixed by scoping the flag search to the push command itself — `grep -oP '\bgit\s+push\b[^;&|]*'`
+      — and tightening the refspec pattern to `\s\+[\w./*-]+(:|\s|$)`. The branch-name check still
+      reads the whole string on purpose, because `git switch main && git push -f` is genuinely a
+      force-push to main. Seven cases added, 58 -> 65, and the old pattern was replayed against the
+      new cases to confirm they bite.
+      .
+      Worth knowing: the fix only reaches the machine at the next switch, because the running
+      guard comes from /etc/claude-code/managed-settings.json. Until then the false positive is
+      still live, and the honest workaround is to use the file-editing tools rather than a bash
+      heredoc containing the example text.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
@@ -1023,6 +1115,9 @@ my_todos:
       modules/system/guard.nix, then `nix flake update claude-env` in /etc/nixos and switch.
       Until then, Jira writes are gated only by the ordinary per-project permission prompt, which
       an approve-and-remember click can switch off again.
+      Half done 2026-11-20: everything is committed and pushed, so what is left is only the
+      switch, and it is the same switch six other things now wait on. Verify with
+      `jq '.permissions.ask | length' /etc/claude-code/managed-settings.json`, which must print 9.
   - id: mt-spare-machines
     text: When the spare machines are set up, run the GPU check from research/clm-hosting-reality.md on each
     owner: leon

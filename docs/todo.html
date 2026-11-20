@@ -298,42 +298,97 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">claude-env · queue · 17 Nov 2026 · Almar · Ryan · Kish · Léon</p>
+    <p class="eyebrow">claude-env · queue · 20 Nov 2026 · Almar · Ryan · Kish · Léon</p>
     <h1>What's on you, what's on me</h1>
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">6</span>
-        <span class="sub">yours — 5 open, 1 blocked, 1 paused, 8 closed</span>
+        <span class="figure">7</span>
+        <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">11</span>
-        <span class="sub">mine — 2 ready, 5 queued, 4 done</span>
+        <span class="figure">14</span>
+        <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked</span>
       </div>
       <div class="vital">
-        <span class="figure">0</span>
-        <span class="sub">open questions — CLM and NixOS both answered</span>
+        <span class="figure">3</span>
+        <span class="sub">open questions — personal skills, the superpowers pin, vies-vat</span>
       </div>
     </div>
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p>The switch and the repo are both done and verified, so the Nix track is clear and the tier work is unblocked on my side. <strong>Jira into Google Calendar</strong> is what you said you'd do next and the recommendation is in that card. One cheap thing jumped the queue behind it: the Atlassian write guardrail is in the repo but not on your laptop, because the input now resolves from GitHub and the change is still uncommitted.</p>
+      <p>Three features landed on 20 November and <strong>none of them is live</strong>: the tier split, the declarative MCP block and the pinned plugin channel are all on <code>main</code>, seven commits ahead of what <code>/etc/nixos</code> is locked to. One switch turns all of it on, and it is the first card below.</p>
+      <p><strong>Do the five-minute card above it first.</strong> <code>mcp.nix</code> now owns the user-scope server list, so the two servers nobody declared — <code>obsidian</code> and <code>vies-vat</code> — are removed by that switch unless you declare them. They are recoverable either way, but it is less annoying to decide before than to restore after.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 8 open, in your stated order</span></h2>
-    <p class="rationale">CLM is parked by your decision of 17 November and has moved to Settled. One item stays paused and is not shown here: the GPU check on your and Almar's spare machines. It only ever mattered for CLM, so it now hangs off the same early-December revisit rather than waiting on nothing in particular.</p>
+    <h2>Your queue <span class="tally">— 7 open, 1 pair of decisions, 1 blocked on Atlassian</span></h2>
+    <p class="rationale">The order changed at the top only: two short cards now come before the Jira work, because both are prerequisites for it being worth doing. CLM stays parked by your decision of 17 November. One item is paused and not shown: the GPU check on your and Almar's spare machines, which hangs off the same early-December revisit.</p>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Decide about <code>obsidian</code> and <code>vies-vat</code> before you switch</h3>
+        <span class="why">five minutes · one Nix block · do it first or undo it after</span>
+      </div>
+      <p class="rationale">As of 20 November <code>mcp.nix</code> owns the <code>mcpServers</code> block of <code>~/.claude.json</code>. That is the fix for drift, and it has one edge: a server that is not declared is removed at the next activation. Ten are registered on your laptop right now and two of them are deliberately not in the module — <code>obsidian</code>, which points at <code>~/Obsidian/ZEN-Vault</code> and is personal, and <code>vies-vat</code>, which runs from a path in <code>~/projects</code>.</p>
+      <p class="rationale">Nothing is lost either way: the switch writes whatever it removes to <code>~/.claude/removed-mcp-servers.json</code> with a timestamp, and names each one on stderr while it does it. This card only exists so the removal is a decision rather than a surprise.</p>
+      <ol class="steps">
+        <li>In <code>/etc/nixos</code>, in the module where you set <code>claude-env.tier</code>, add what you want to keep:
+          <code>claude-env.mcp.personal.obsidian = { type = "stdio"; command = "..."; args = [ ... ]; };</code> — copy the <code>command</code> and <code>args</code> straight out of <code>jq '.mcpServers.obsidian' ~/.claude.json</code>.
+          <span class="done-when"><b>Done when</b> the servers you intend to keep are in that attribute set, and the ones you do not are not.</span></li>
+        <li>Decide <code>vies-vat</code> with the question at the bottom of this board rather than here — my recommendation is to drop the server and let me write a <code>vat-check</code> CLI instead.
+          <span class="done-when"><b>Done when</b> you have said drop or keep. Saying nothing means it goes at the next switch and can be restored from the removal file.</span></li>
+      </ol>
+      <p class="trap"><b>Worth knowing:</b> the same mechanism prunes <em>local</em>-scope copies of anything declared or dropped, which is what finally clears the 25 registrations stranded in <code>~/projects/fastsdcpu</code> and two other directories. A local server that is neither declared nor dropped is left alone and reported, so nothing you added on purpose for one project disappears silently.</p>
+    </article>
+
+    <article class="task" style="border-top-color: var(--warn);">
+      <div class="task-head">
+        <h3>Run one switch — seven commits are on <code>main</code> and none of it is live</h3>
+        <span class="why">two commands, no decisions · everything on this board turns on here</span>
+      </div>
+      <p class="rationale"><code>/etc/nixos/flake.lock</code> pins <code>claude-env</code> at <code>3dbbd93</code>. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, and the guide and enrolment runbook. That is seven commits, and the only thing between them and your laptop is this.</p>
+      <p class="rationale">Your 19 November switch reporting <code>0 paths added, 0 paths removed, delta +0</code> was correct and is worth remembering: the input resolves from <code>github:MrBlueStudios/claude-env</code>, so a local edit in <code>~/Projects/claude-env</code> changes nothing until it is committed, pushed and re-locked.</p>
+      <ol class="steps">
+        <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
+          <span class="done-when"><b>Done when</b> the closure actually changes, and <code>jq -r '.nodes["claude-env"].locked.rev' /etc/nixos/flake.lock</code> matches <code>git -C ~/Projects/claude-env rev-parse origin/main</code>. <code>delta +0</code> means the update did not take.</span></li>
+        <li>Read the activation output rather than scrolling past it. It names every MCP server it adds or removes, and every plugin that was installed but is no longer declared.
+          <span class="done-when"><b>Done when</b> the removals are ones you expected. If not, <code>~/.claude/removed-mcp-servers.json</code> has them.</span></li>
+        <li>Check the three things that are new: <code>claude mcp list</code> (atlassian, cloudflare, context7, playwright and whatever you declared as personal), <code>jq '.permissions.ask | length' /etc/claude-code/managed-settings.json</code> (9), and <code>claude-plugins-check</code> (no drift).
+          <span class="done-when"><b>Done when</b> all three agree with the repo. <code>claude-plugins-check</code> is the new one — it is the drift report, and it also lists 20 MB of marketplace caches for plugins nothing declares any more, which you can delete whenever you like.</span></li>
+      </ol>
+      <p class="trap"><b>Expect one warning, and it is not a fault.</b> Pinning marketplaces by commit SHA needs Claude Code 2.1.324 and you are on 2.1.278, so activation writes the unpinned form and says exactly that on stderr. nixpkgs master is already at 2.1.328: the pins start applying by themselves on the first switch after Claude Code updates, with no repo change. That check is made at activation time for precisely this reason.</p>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
+        <h3>Create the real website board in Jira</h3>
+        <span class="why">twenty minutes in the UI · decides how the four of you work</span>
+      </div>
+      <p class="rationale">The Atlassian server is wired at base tier and answers — a JQL query returns <code>KAN-1</code>, "test issue". But <code>KAN</code>, literally named "test", is the only project on <code>blitsol.atlassian.net</code> and that is its only issue. So every friend who follows <code>docs/guide.md</code> to the board finds a sandbox, and the calendar card below has nothing real to subscribe to.</p>
+      <p class="rationale">This is yours because it is not a technical choice. One board for all client websites or one per client; which issue types; whether Almar, Ryan and Kish can create issues or only comment; and what the columns mean. Those decide how the crew works, and changing them later costs more than deciding now.</p>
+      <p class="rec-why"><b>Recommendation: one board, one project, labels per client.</b> At four people and a handful of sites, a project per client is four filters, four calendars and four sets of permissions to keep in step, for the sole benefit of a tidier issue key. One project with a label per client gives you the same views through JQL and one thing to maintain. Keep Kanban — you already have it, and nothing here has sprint boundaries.</p>
+      <ol class="steps">
+        <li>Create the project, pick a key you will be typing for years, and keep it short.
+          <span class="done-when"><b>Done when</b> the key is not <code>KAN</code> and the name is not "test".</span></li>
+        <li>Put something real in it — the three outside dates you already have are a good start.
+          <span class="done-when"><b>Done when</b> there is at least one issue nobody invented for the test.</span></li>
+        <li>Tell me the project key, so the guide stops pointing people at a sandbox.
+          <span class="done-when"><b>Done when</b> <code>docs/guide.md</code> names the real board.</span></li>
+      </ol>
+      <p class="trap"><b>While you are in there:</b> the invites in the card further down need the Jira email of each friend, and nobody has confirmed the address they sent is the one on their Atlassian account. A mismatch looks exactly like "the invite never arrived", three days later.</p>
+    </article>
 
     <article class="task">
       <div class="task-head">
         <h3>Connect Jira to Google Calendar</h3>
         <span class="why">your stated next move · a click path through two GUIs you own</span>
       </div>
-      <p class="rationale">You said on 17 November this is what you want next, and asked what should appear. The board is your own: <code>blitsol.atlassian.net</code>, project key <code>KAN</code>.</p>
+      <p class="rationale">You said on 17 November this is what you want next, and asked what should appear. The site is your own, <code>blitsol.atlassian.net</code> — but the board to point this at is the one in the card above, not <code>KAN</code>. Everything below holds whichever key you choose.</p>
       <p class="rec-why"><b>Recommendation: two feeds split by meaning, not one per board.</b> You said this is mainly for yourself, and that you want your own boards in it alongside the crew's. That changes the shape. A due date on shared work means <em>someone else is holding me to this</em>; on your own board it means <em>I intend this</em>. They must not share a colour, because your own dates slip routinely and a client's must not, and mixing them teaches you to discount both. "Assigned to me" also stops being a useful filter once your own projects are in scope, since everything there is yours anyway. One option from the first version of this card does not apply either: you used the Kanban template, so there are no sprint boundaries unless you deliberately turn sprints on.</p>
-      <p class="rationale"><b>The convention worth agreeing with the crew:</b> on shared work a due date means an outside party expects it on that date. A client deadline, a filing date, a launch, a billing date. Internal sequencing is expressed by column and priority and never by a due date. That keeps the calendar sparse enough that every entry means something, and it matches where your risk sits. Forgetting internal work is what these boards are for; what hurts is an outside date arriving unnoticed, and you have three already: Rovo on 3 December, the Moneybird trial before it bills, and the CLM revisit around 8 December.</p>
+      <p class="rationale"><b>The convention worth agreeing with the crew:</b> on shared work a due date means an outside party expects it on that date. A client deadline, a filing date, a launch, a billing date. Internal sequencing is expressed by column and priority and never by a due date. That keeps the calendar sparse enough that every entry means something, and it matches where your risk sits. Forgetting internal work is what these boards are for; what hurts is an outside date arriving unnoticed, and you have three already: the Rovo recheck on 3 December, closing the Moneybird trial before it can bill, and the CLM revisit around 8 December.</p>
       <p class="rationale"><b>On your own boards, a structural warning.</b> The site has exactly one project today, <code>KAN</code>, holding one issue, so this is still free to decide. If your tracks go into Jira, put them in <strong>one</strong> personal project with a label per track rather than a project per track. One project is one filter and one feed; a project per track is five feeds, five colours and a maintenance job. And it is worth asking whether they belong in Jira at all, because you already keep personal state in this board, in <code>project-state.yaml</code>, and in <code>My Todos.md</code> plus the vault. Jira would be a fourth place, and that kind of fragmentation is part of why crew-memory exists.</p>
       <ol class="steps">
         <li>Write the due-date convention down and tell the other three. One sentence is enough.
@@ -358,24 +413,6 @@
 
     <article class="task" style="border-top-color: var(--warn);">
       <div class="task-head">
-        <h3>Run one switch — everything is on <code>main</code> and none of it is live yet</h3>
-        <span class="why">a consequence of the GitHub input · two commands, no decisions</span>
-      </div>
-      <p class="rationale">You ran <code>nix flake update claude-env &amp;&amp; nh os switch .</code> on 19 November and it reported <code>0 paths added, 0 paths removed, delta +0</code>. That was correct: the input resolves from <code>github:MrBlueStudios/claude-env</code>, and at that moment the work was still sitting uncommitted in your working copy. Nothing was wrong with the command — there was simply nothing new on <code>main</code> to fetch.</p>
-      <p class="rationale">It is all pushed now: the nine Atlassian <code>ask</code> rules, the plugin audit, the <code>claude-vet</code> gate and the four adopted skills. Everything is on <code>main</code> at MrBlueStudios/claude-env. Until you run this, <code>/etc/claude-code/managed-settings.json</code> still has five deny rules and no <code>permissions.ask</code>, so a Jira write is gated only by the ordinary per-project prompt — the thing an approve-and-remember click switched off once already.</p>
-      <ol class="steps">
-        <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
-          <span class="done-when"><b>Done when</b> the closure actually changes. If it reports no paths added or removed again, the update did not take. Compare the two: <code>jq -r '.nodes["claude-env"].locked.rev' /etc/nixos/flake.lock</code> and <code>git -C ~/Projects/claude-env rev-parse origin/main</code> must be the same string.</span></li>
-        <li>Check the guardrail landed: <code>jq '.permissions.ask | length' /etc/claude-code/managed-settings.json</code>
-          <span class="done-when"><b>Done when</b> it prints <code>9</code>.</span></li>
-        <li>Check the new tooling landed: <code>claude-vet --help</code> and <code>repomix --version</code>
-          <span class="done-when"><b>Done when</b> both run. <code>repomix</code> will be 0.3.3 on 25.05 and 1.15.0 on 26.05 — only the 26.05 one has the token-measuring flags.</span></li>
-      </ol>
-      <p class="trap"><b>Worth internalising, since it has now cost one wasted switch:</b> every module change needs commit, push, <code>nix flake update claude-env</code>, switch. A local edit that appears to do nothing is this, not a broken module. The clue is <code>delta +0</code>.</p>
-    </article>
-
-    <article class="task" style="border-top-color: var(--warn);">
-      <div class="task-head">
         <h3>Two calls on the tool trials, now that all four candidates are vetted</h3>
         <span class="why">both change what the crew runs · neither can be answered from the repo</span>
       </div>
@@ -383,7 +420,7 @@
       <p class="rationale"><b>Beads fails the gate.</b> It declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code on every session and every prompt. The plan's note about installing with <code>--stealth</code> is about <em>git</em> hooks, not Claude Code's lifecycle, so that does not help. It is the most invasive thing on the list, and it is also the only candidate that would give the four of you a git-mergeable shared work graph. Either write it an exemption in <code>docs/vet-exemptions.md</code> with an honest reason, or drop it and keep Jira.</p>
       <p class="rationale"><b>The compressors are not packaged.</b> RTK and Headroom are the only two entries of the forty with a real token-saving mechanism, and the plan said both were in nixpkgs. They are not, under any name — <code>haskellPackages.headroom</code> is an unrelated licence-header manager. So both would have to be installed imperatively, which is the exact drift this repo exists to stop, for a saving their own README puts at roughly 20%.</p>
       <p class="trap"><b>My recommendation on the second one:</b> skip both. <code>research/context-budget.md</code> finding 9 is the argument — session start is 26,825 tokens and all MCP servers together are 4,670 of it, so the compressors would be fighting for a slice of the small half while costing the reproducibility rule. Revisit only if a measurement shows command output is actually where your tokens go.</p>
-      <p class="rationale">The other two need nothing from you yet. <b>Claude HUD</b> is the cleanest thing on the list: MIT, named author, no hooks declared, one skill. <b>wshobson/agents</b> is 185 skills and a projected 11,840 always-on tokens — about 44% of session start — which settles it: raid two or three plugins, never install the catalogue.</p>
+      <p class="rationale">Both are still open on 20 November, and neither blocks anything — the flake does not reference either tool. The other two need nothing from you yet. <b>Claude HUD</b> is the cleanest thing on the list: MIT, named author, no hooks declared, one skill. <b>wshobson/agents</b> is 185 skills and a projected 11,840 always-on tokens — about 44% of session start — which settles it: raid two or three plugins, never install the catalogue.</p>
     </article>
 
     <article class="task">
@@ -465,8 +502,50 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 1 ready, 5 queued, 7 done</span></h2>
+    <h2>My queue <span class="tally">— 14 done, 2 in progress and both waiting on you, 1 parked</span></h2>
     <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
+        <p class="dw">The mechanism landed 20 Nov: <code>claude-env.mcp.layaPath</code> registers the Laya server with absolute paths, so it appears in every project folder instead of only in <code>Laya_And_CLM-MCPs</code>. CLM is deliberately not registrable, because a server whose backend is parked is a tool that always fails. <b>Done when</b> you set <code>claude-env.mcp.layaPath = "/home/leon-new/Projects/Laya_And_CLM-MCPs";</code> and <code>claude mcp list</code> from another directory shows Laya connected.</p>
+        <p class="gate">yours — the path is on your machine, so I will not guess it</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">In progress</span><span class="txt">The skills half of the plugin channel</span></div>
+        <p class="dw">The plugin half closed on 20 Nov. The skills half is a question rather than work: <code>claude-plugins-check</code> counts 20 skills that load from <code>~/.claude/skills</code> on your laptop only, 7 more that are symlinks into <code>~/Projects/Claude_testing/skills/</code> and therefore break on anyone else's machine, and 3 directories with no <code>SKILL.md</code> that register nothing at all. <b>Done when</b> every skill a crew laptop loads is either declared in the repo or deliberately listed as personal.</p>
+        <p class="gate">q-personal-skills — the split is at the bottom of this board with my recommendation</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill later">Parked</span><span class="txt">The six tool trials from the 40-repo review</span></div>
+        <p class="dw">All four reachable candidates were vetted on 19 Nov, which is as far as this goes without you — installing any of them is denied here as untrusted code integration, correctly. Two of the verdicts are decisions rather than next steps and they are in your queue above. The other two need nothing: Claude HUD is clean, and <code>wshobson/agents</code> is settled by its own number — 185 skills, a projected 11,840 always-on tokens, about 44% of session start.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Package crew-memory through the flake, once it is its own repo</span></div>
+        <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">The tier split is real, and asserted</span></div>
+        <p class="dw"><code>base</code> resolves to atlassian, context7 and playwright exactly; <code>blitsol</code> adds cloudflare; six opt-in modules default off. <code>just test</code> checks both tiers on both releases, so a server cannot be added to the wrong tier without a test failing. No <code>tiers.nix</code>: the tier is read where it has an effect, and a file that only re-exports a boolean is a layer with nothing in it.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Nix writes the MCP server list, and <code>setup-claude-mcp.sh</code> is gone</span></div>
+        <p class="dw">The drift fix. A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it — your account block, project trust decisions and history are untouched. Removals are named on stderr and saved to <code>~/.claude/removed-mcp-servers.json</code> first. It refuses to create the file if it does not exist, because inventing an account-less state file is worse than waiting. 44 of the 134 script tests are this one helper.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">The plugin channel is declared, pinned and checkable</span></div>
+        <p class="dw">Three marketplaces pinned to full commit SHAs, four plugins enabled from Nix, and <code>claude-plugins-check</code> as the drift report. Two cannot be pinned and the reasons differ: <code>frontend-design</code> is on Anthropic's built-in marketplace, whose reserved name refuses a commit pin by design, and superpowers' catalog entry fetches a branch, so pinning the catalog does not pin the plugin — that one is a question for you. <b>The audit's real finding:</b> installed is not enabled. Neither plugin I removed was ever in <code>enabledPlugins</code>, so neither ever cost a token, and nothing in the repo could have told us that.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">The friend guide and the enrolment runbook</span></div>
+        <p class="dw"><code>docs/guide.md</code>: install and how to check it took, the two tiers, the full inventory, how to add your own things, the guardrails, vetting, the first hour in seven steps, and a symptom table. <code>docs/enrolment.md</code>: adding and revoking a Blitsol friend, with the two traps that cost evenings — the recipient must be the raw <code>ssh-ed25519</code> line rather than the <code>age1…</code> form, and the recipient count needs <code>grep -ac</code> because age files are binary. Every command says which directory it runs in, and whose machine.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Atlassian at base tier, and three corrections to the audit</span></div>
+        <p class="dw">The server is wired and was tested against your own site. Wiring it also corrected three claims in <code>docs/mcp-audit.md</code> that reading alone had not: <code>moneybird</code> is gone with the bookkeeping switch, <code>overheid-apis</code> does not exist on npm under that name, and <code>vies-vat</code> was attributed to you when it is someone else's MIT template.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Fixed a guard false positive that blocked ordinary pushes</span></div>
+        <p class="dw">The force-push rule read the whole command string, so a commit message containing <code>+0</code> looked like a <code>+ref</code> refspec, and a <code>-f</code> belonging to an earlier <code>rm</code> looked like a force flag. Both denied an ordinary push to main. The flags are now looked for inside the push command itself, while the branch name is still looked for in the whole string, because switching to main and then force-pushing really is one act. Seven cases added, 58 → 65. <b>It is not on your machine until the switch</b> — the guard runs from <code>/etc/claude-code/</code>.</p>
+      </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">Research track — all 16 answered and filed</span></div>
         <p class="dw">Closed 19 Nov. My last two landed (<code>context-budget</code>, <code>memory-schema-prior-art</code>) and section D handed over: crew-memory is a real project now, so it owns the sync, schema and dashboard follow-ups rather than this board. Four of the sixteen can still reopen settled decisions if anyone re-reads them: <code>atlassian-mcp-auth</code>, <code>booking-stack-licences</code>, <code>nixos-version-matrix</code>, <code>dedup-without-clm</code>.</p>
@@ -479,11 +558,6 @@
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">crew-memory v0 — it exists and runs</span></div>
         <p class="dw">19 Nov, at <code>~/Projects/crew-memory</code>. The four stores are real: schema, CLI (<code>lint</code>, <code>index</code>, <code>query</code>, <code>capture</code>, <code>touch</code>), the vault skeleton, and a capture skill. 27 tests, standard library only, flake8 clean. Seeded with three real dead ends from the same day's work rather than fixtures. <b>Two deviations, both written up:</b> capture is a model-invoked skill rather than a session-end hook, because <code>just vet</code> blocks that hook shape and exempting our own new system on day one would be a poor precedent; and <code>.gitattributes</code> sets no <code>merge=union</code>, because one file per session means two sessions never touch the same path. Committed locally, <b>not pushed</b> — <code>~/Projects</code> had 116 unrelated pending changes, so that one is yours.</p>
       </div>
-      <div class="row">
-        <div class="row-top"><span class="pill next">Next</span><span class="txt">Package crew-memory through the flake, once it is its own repo</span></div>
-        <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
-      </div>
-      <div class="row"></div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">Keep / drop / tier table for every MCP server and connector</span></div>
         <p class="dw"><code>docs/mcp-audit.md</code>, 16 Nov: 39 registrations, 12 connectors and the Svelte plugin each with a verdict and a reason. Base keeps context7, playwright, svelte, atlassian, laya and vies-vat; Blitsol adds cloudflare, the bookkeeping connector and the HubSpot/Stripe connectors; seven groups become opt-in modules; 23 are dropped. The bookkeeping row said Moneybird when it was written; as of 17 Nov that is AdministratieX, and whether it has a connector at all is unchecked.</p>
@@ -498,33 +572,7 @@
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">Jira and Confluence writes now ask, in managed settings</span></div>
-        <p class="dw">The 17 Nov write test exposed the real hazard: the prompt fired correctly, then your approve-and-remember click put the comment tool on the project allow list permanently. Nine Atlassian write tools are now in <code>permissions.ask</code> in <code>modules/system/guard.nix</code>, where a managed rule outranks any later allow. Reads stay silent on purpose, since a rule that prompts all day is a rule people switch off. Suite green on both releases, 58 guard and 17 script cases. <b>Note for your switch:</b> managed settings are no longer byte-identical with the running system. Expect exactly one added key.</p>
-      </div>
-      <div class="row">
-        <div class="row-top"><span class="pill next">Next</span><span class="txt">Wire the claude-env.tier option (declared, base by default) to the Blitsol servers and secrets</span></div>
-        <p class="dw"><b>Done when</b> a test build with <code>tier = "base"</code> produces no Blitsol connector or secret, and <code>tier = "blitsol"</code> produces both.</p>
-      </div>
-      <div class="row">
-        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Write the mcpServers block of ~/.claude.json from Nix on activation, merging not replacing</span></div>
-        <p class="dw">This is the fix that stops the drift recurring. <b>Done when</b> <code>claude mcp list</code> shows exactly the declared set after a rebuild, and a hand-added server survives the next rebuild only if it was added to the module.</p>
-        <p class="gate">after the audit table</p>
-      </div>
-      <div class="row">
-        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Add the Atlassian remote MCP to the base tier</span></div>
-        <p class="dw"><b>Done when</b> <code>claude mcp list</code> shows the Atlassian server connected and a test query returns an issue from the shared website board.</p>
-      </div>
-      <div class="row">
-        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Write the agenix enrolment runbook for adding and removing a Blitsol friend</span></div>
-        <p class="dw"><b>Done when</b> the runbook takes one SSH public key to a re-keyed secret the friend can decrypt, and names the exact steps to revoke it again.</p>
-      </div>
-      <div class="row">
-        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Write the friend-facing guide to the environment</span></div>
-        <p class="dw"><b>Done when</b> <code>docs/guide.md</code> covers install, the two tiers, what each MCP and skill is for, the guardrails and a first-hour walkthrough — and a friend can follow it without asking you a question.</p>
-        <p class="gate">after the coverage audit, so it documents what ships rather than what exists</p>
-      </div>
-      <div class="row">
-        <div class="row-top"><span class="pill later">Queued</span><span class="txt">Fold Laya into the module at user scope, CLM only if a tailnet host resolves</span></div>
-        <p class="dw">Laya waits on nothing now. <b>Done when</b> <code>claude mcp list</code> run from <code>~/projects/testing</code> shows Laya connected, and CLM is absent by construction rather than present and broken.</p>
+        <p class="dw">The 17 Nov write test exposed the real hazard: the prompt fired correctly, then your approve-and-remember click put the comment tool on the project allow list permanently. Nine Atlassian write tools are now in <code>permissions.ask</code> in <code>modules/system/guard.nix</code>, where a managed rule outranks any later allow. Reads stay silent on purpose, since a rule that prompts all day is a rule people switch off. Suite green on both releases — 65 guard and 134 script cases as of 20 Nov. <b>Note for your switch:</b> managed settings are no longer byte-identical with the running system. Expect the <code>ask</code> block and the force-push fix.</p>
       </div>
     </div>
   </section>
@@ -585,6 +633,49 @@
   </section>
 
   <section>
+    <h2>Open questions <span class="tally">— 3, none of them urgent, all of them yours</span></h2>
+
+    <article class="q">
+      <h3>27 skills load from <code>~/.claude/skills</code> on your laptop and reach nobody else. Which of them are crew skills?</h3>
+      <p class="qid">q-personal-skills · blocks the skills half of the plugin channel</p>
+      <ul class="opts">
+        <li class="rec">Migrate the ones the crew would use; leave the rest personal and declared as personal</li>
+        <li>Migrate all 27, on the grounds that a shared environment should be the same everywhere</li>
+        <li>Leave them all personal; the flake carries only what was written for the crew</li>
+      </ul>
+      <p class="rec-why"><b>My recommendation: the first, and the split is mostly obvious from the names.</b> Crew: <code>review</code>, <code>deploy</code>, <code>ship</code>, <code>research</code>, <code>design</code>, <code>full-visual</code>, and the three <code>Claude_testing</code> audits that are about client work — <code>legal-audit</code>, <code>security-audit</code>, <code>site-analytics</code>. Those are the ones another laptop would miss. Personal: <code>roblox</code>, <code>media-use</code>, <code>normal</code>, <code>rapid</code>, <code>style-sampling</code>, <code>slideshow</code>, <code>reverse-any-video</code>, <code>remotion-to-hyperframes</code>, <code>figma</code>, <code>my-todo</code>, <code>project-status</code>, <code>prompt-optimizer</code>, and the three hyperframes skills, which drive a renderer only you have set up.</p>
+      <p class="rationale"><b>Three things to know before you answer.</b> <code>council</code> and <code>dashboard</code> are already in the flake as claude-mode skills, so the copies in <code>~/.claude/skills</code> are stale duplicates and should go whatever you decide. Seven skills are symlinks into <code>~/Projects/Claude_testing/skills/</code>, so they are already broken for everyone but you — migrating them means copying the directory into the repo, not linking it. And three directories register nothing at all because they have no <code>SKILL.md</code> of their own, including a second whole copy of superpowers.</p>
+      <p class="blocks"><b>Blocks:</b> nothing of yours. It is the last open half of my plugin-channel work.</p>
+    </article>
+
+    <article class="q">
+      <h3>superpowers is the one plugin the flake cannot pin, because its catalog entry fetches a branch. Replace the catalog with our own?</h3>
+      <p class="qid">q-superpowers-pin · the plugin the transcripts show you actually using</p>
+      <ul class="opts">
+        <li>Leave it floating; re-vet when a new version shows up in <code>just plugins-check</code></li>
+        <li class="rec">Declare an inline <code>settings</code> marketplace under the same name, pinning the plugin's own sha</li>
+        <li>Fork <code>obra/superpowers-marketplace</code> and pin the fork</li>
+      </ul>
+      <p class="rec-why"><b>My recommendation: the second, but not unsupervised.</b> An inline <code>settings</code> source keeps the plugin id (<code>superpowers@superpowers-marketplace</code>), so no skill prefix changes, and its catalog entry can carry the plugin's own <code>sha</code> — the only way to pin the bytes. It also needs no 2.1.324, because the version floor applies to marketplace pins and not plugin ones. The cost is that it changes how the plugin resolves: the next session re-fetches it, and if that goes wrong, the one plugin you actually use stops loading. Worth one supervised switch rather than a surprise during a working session.</p>
+      <p class="rationale">Where it stands today: the marketplace itself is pinned, and only the plugin's own bytes float. Your machine is on 7.0.0 against 7.0.2 upstream, so the floating is real rather than theoretical. Option three works too and costs a repo to maintain forever.</p>
+      <p class="blocks"><b>Blocks:</b> nothing. Either answer is safe to live with.</p>
+    </article>
+
+    <article class="q">
+      <h3>The <code>vies-vat</code> server is a clone of someone else's template running from a path in your home. Package it, keep it personal, or replace it?</h3>
+      <p class="qid">q-vies-vat · decide before the switch, or it is removed and restorable</p>
+      <ul class="opts">
+        <li class="rec">Replace it with a small <code>vat-check</code> CLI in <code>tools.nix</code>, and drop the server</li>
+        <li>Keep it personal — <code>claude-env.mcp.personal</code> on your machine only</li>
+        <li>Package the upstream repo with <code>buildNpmPackage</code> and declare it at base tier</li>
+      </ul>
+      <p class="rec-why"><b>My recommendation: the first.</b> The audit recorded this one as "Léon's own build, must be built by Nix", and it is neither: it is <code>Jazib-but/check-vat-vies-mcp-Jazib</code>, MIT, still carrying an <code>api-server.js</code>, a Dockerfile, a Coolify deployment guide and placeholder hosts. <code>just vet</code> clears it — no hooks, no keys, and the only outbound host is <code>ec.europa.eu</code>, which is the VIES API itself — so this is not a safety objection. It is a value one: the whole server is a SOAP call to one government endpoint, and a server costs its tool descriptions in every session on four laptops, where a CLI costs nothing until it is run. That is the rule in your own <code>CLAUDE.md</code>.</p>
+      <p class="rationale">If you say the word I will write the CLI; it is an afternoon at most, and invoicing does not wait on it either way. Saying nothing means the server is removed at the next switch and restorable from <code>~/.claude/removed-mcp-servers.json</code>.</p>
+      <p class="blocks"><b>Blocks:</b> nothing. Listed because the switch acts on it.</p>
+    </article>
+  </section>
+
+  <section>
     <h2>Answered 16 Nov <span class="tally">— 1</span></h2>
     <article class="q">
       <h3>You run NixOS 25.05; Ryan and Kish run 26.05. Does the flake support both, do you upgrade, or does everyone pin one release?</h3>
@@ -600,14 +691,14 @@
   </section>
 
   <footer>
-    <p>17 nov · switch and repo both done and verified · CLM parked to ~8 Dec · Moneybird replaced by AdministratieX · Atlassian read and write proven · Rovo blocked on Atlassian · Almar's fastfetch no longer urgent</p>
+    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · 7 commits waiting on one switch</p>
     <p>input · github:MrBlueStudios/claude-env, so a module change needs commit, push, nix flake update, switch</p>
-    <p>uncommitted · modules/system/guard.nix (the ask rules, not yet on the machine) and these two docs</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml</p>
+    <p>suite · just test green on 25.05 and 26.05 · 65 guard cases · 134 script tests</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 31 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
-    <p>next project · crew-memory — design written to ~/Projects/crew-memory/docs/design.md, not started</p>
-    <p>todos · 10 checkboxes under ## claude-env; 65 pre-existing checkboxes left untouched, none ticked by me</p>
+    <p>crew-memory · v0 runs at ~/Projects/crew-memory, committed locally and not pushed — the repo is yours to create</p>
+    <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>
   </footer>
 
 </div>

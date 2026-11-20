@@ -156,12 +156,19 @@
   .scope-seg.user { background: var(--go); flex: 9; }
   .scope-seg.local { background: var(--stop); flex: 25; }
   .scope-seg.project { background: var(--warn); flex: 2; }
+  .scope-seg.ok { background: var(--ok); }
+  .scope-seg.go { background: var(--go); }
+  .scope-seg.off { background: var(--surface-sunk); color: var(--muted); }
+  .scopes .scope-bar + .scope-key { margin-bottom: 4px; }
   .scope-key { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--ink-soft); }
   .scope-key span { display: inline-flex; align-items: center; gap: 7px; }
   .dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
   .dot.user { background: var(--go); }
   .dot.local { background: var(--stop); }
   .dot.project { background: var(--warn); }
+  .dot.ok { background: var(--ok); }
+  .dot.go { background: var(--go); }
+  .dot.off { background: var(--line-strong); }
 
   /* ---- generic section ---- */
   section { display: flex; flex-direction: column; gap: 18px; }
@@ -284,28 +291,33 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">Build board · updated 16 Nov 2026 · flake extracted, mr-blue builds from it · CLM parked</p>
+    <p class="eyebrow">Build board · updated 20 Nov 2026 · tiers, declarative MCP and the plugin channel landed · nothing live until the switch</p>
     <h1>claude-env</h1>
     <p class="tagline">One NixOS flake that gives Léon and his friends the same Claude Code environment — every MCP server, skill, agent and guardrail available in every project folder — with a Blitsol tier for the people who also work on the company.</p>
 
     <div class="vitals">
       <div class="vital">
-        <span class="figure">3 / 15</span>
-        <span class="sub">features done · 0 in progress · 1 blocked on a human</span>
+        <span class="figure">10 / 15</span>
+        <span class="sub">features done · 1 in progress · 3 planned · 1 blocked on a human</span>
       </div>
       <div class="vital">
         <span class="figure">green</span>
-        <span class="sub"><code>just test</code> — module evaluates on 25.05 and 26.05, 58 guard cases, 17 script tests · 16 Nov</span>
+        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05 · 65 guard cases · 134 script tests · 20 Nov</span>
+      </div>
+      <div class="vital is-warn">
+        <span class="figure">7</span>
+        <span class="sub">commits not live — <code>/etc/nixos</code> is locked to <code>3dbbd93</code>; everything below ships on the next <code>nix flake update claude-env</code></span>
       </div>
       <div class="vital">
-        <span class="figure">0</span>
-        <span class="sub">open questions — NixOS release settled 16 Nov</span>
+        <span class="figure">3</span>
+        <span class="sub">open questions, all three for Léon — personal skills, the superpowers pin, vies-vat</span>
       </div>
     </div>
 
     <div class="next-up">
-      <p class="eyebrow">What the research changed</p>
-      <p>All sixteen research items are answered. <strong>CLM is parked</strong> — a 24 GB card is needed and nobody has one — so crew-memory dedup runs on a small CPU embedding model plus Laya. <strong>Léon upgrades to 26.05</strong>; the modules already evaluate on both releases. The <strong>claude-mode layouts are Kitty-only</strong> and become opt-in for the KDE users. The MCP audit table is written and <strong>the flake is extracted</strong>: nix-config consumes it and the mr-blue system builds from it; the switch is Léon's. Next up is wiring the tier option so Blitsol servers only reach Blitsol machines.</p>
+      <p class="eyebrow">What changed on 20 Nov</p>
+      <p><strong>The tier is real:</strong> <code>base</code> resolves to atlassian, context7 and playwright exactly, <code>blitsol</code> adds cloudflare, and <code>just test</code> asserts both on both releases. <strong>Nix now writes the MCP server block</strong> of <code>~/.claude.json</code> on every activation — hand-added servers are removed, named on stderr and saved to <code>~/.claude/removed-mcp-servers.json</code> first. <strong>The plugin channel is declared and pinned</strong> to three commit SHAs, behind a runtime version gate because SHA pinning needs Claude Code 2.1.324 and this laptop is on 2.1.278. And the two documents a friend actually needs exist: <code>docs/guide.md</code> and <code>docs/enrolment.md</code>.</p>
+      <p>The one thing standing between this board and reality is a switch: <code>nix flake update claude-env &amp;&amp; nh os switch .</code> in <code>/etc/nixos</code>. Declare <code>obsidian</code> under <code>claude-env.mcp.personal</code> before it, or activation will remove it.</p>
     </div>
 
     <div class="scope-key" style="font-size: 13.5px;">
@@ -315,18 +327,33 @@
   </header>
 
   <section class="scopes">
-    <h2>Where the 39 MCP servers live today</h2>
+    <h2>MCP servers — from 39 scattered registrations to 4 declared names</h2>
+
+    <p class="eyebrow">The audit baseline · 13 Nov · measured from <code>~/.claude.json</code></p>
     <div class="scope-bar" role="img" aria-label="39 MCP server registrations: 9 at user scope, 25 at local scope, 5 at project scope">
-      <div class="scope-seg user">9</div>
-      <div class="scope-seg local">25</div>
-      <div class="scope-seg project">5</div>
+      <div class="scope-seg user" style="flex: 9">9</div>
+      <div class="scope-seg local" style="flex: 25">25</div>
+      <div class="scope-seg project" style="flex: 5">5</div>
     </div>
     <div class="scope-key">
       <span><i class="dot user"></i> user scope — available everywhere</span>
       <span><i class="dot local"></i> local scope — one directory each</span>
       <span><i class="dot project"></i> project scope — three committed files</span>
     </div>
-    <p class="note" style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">The red block is the problem this project exists to solve: 25 registrations reachable only by <code>cd</code>-ing into <code>~/projects/fastsdcpu</code>, <code>~</code> or <code>/etc/nixos</code>. Fourteen of them — shadcn-svelte, gsap, lighthouse, a11y, eslint, fonts, lottie, figma-dev and the rest — are the web-design toolkit, stranded inside a Stable Diffusion repo. The coverage audit added three more names that matter: <code>elevenlabs</code> is stranded away from the language app, <code>moneybird</code> away from the books, and <code>coingecko</code> away from the trading bot.</p>
+
+    <p class="eyebrow" style="margin-top: 6px;">What the flake declares · 20 Nov · <code>modules/home/mcp.nix</code></p>
+    <div class="scope-bar" role="img" aria-label="10 declarable servers: 3 at base tier, 1 added by the Blitsol tier, 6 opt-in modules that default to off">
+      <div class="scope-seg ok" style="flex: 3">3</div>
+      <div class="scope-seg go" style="flex: 1">1</div>
+      <div class="scope-seg off" style="flex: 6">6 off</div>
+    </div>
+    <div class="scope-key">
+      <span><i class="dot ok"></i> base tier — atlassian, context7, playwright</span>
+      <span><i class="dot go"></i> Blitsol tier adds cloudflare</span>
+      <span><i class="dot off"></i> opt-in modules, all off by default — nix, legal, trading, seo, sentry, firecrawl</span>
+    </div>
+
+    <p class="note" style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">The red block was the problem this project existed to solve: 25 registrations reachable only by <code>cd</code>-ing into <code>~/projects/fastsdcpu</code>, <code>~</code> or <code>/etc/nixos</code>, including the entire web-design toolkit stranded inside a Stable Diffusion repo. <strong>Twenty-three of the 39 are dropped</strong>, each with a one-line reason in the module, and activation prunes them from every local scope. The <code>sentry</code> module is called out on its own because it costs 1,089 tokens — more than every other server put together — so it is for the week you are chasing a production error, not a habit. Until the switch runs, the live file still reads 10 at user scope and 25 at local: the drift is unchanged, not yet fixed.</p>
   </section>
 
   <section>
@@ -340,8 +367,9 @@
           <li>Handing friends Blitsol credentials by copy-paste instead of inviting them into the real accounts</li>
           <li>Adding an MCP server where a CLI already does the job better</li>
           <li>Rebuilding the Claude config as dotfiles; it is already home-manager and stays that way</li>
-          <li>Building the shared crew memory system — its own project, <code>crew-memory</code>, designed 13 Nov; this one ships the tools it needs and the CLM host it depends on</li>
+          <li>Building the shared crew memory system — its own project, <code>crew-memory</code>, designed 13 Nov; this one ships the tools it needs</li>
           <li>Building the booking starter or the client legal-document generator — real gaps, their own repos</li>
+          <li>Hosting CLM — parked 16 Nov: the bf16 path needs a 24 GB card and no crew laptop has more than 6 GB</li>
         </ul>
       </div>
     </div>
@@ -353,17 +381,93 @@
     <div class="group">
       <div class="group-head">
         <h3>Done</h3>
-        <span class="count">3 — 13 and 16 Nov</span>
+        <span class="count">10 — 13 to 20 Nov</span>
       </div>
+
       <article class="feat done">
         <div class="feat-top">
-          <h4>Research track — free-tool verification</h4>
-          <span class="id">research-track</span>
+          <h4>Base and Blitsol tiers</h4>
+          <span class="id">tiers</span>
         </div>
-        <p class="note">Sixteen items that need looking up rather than deciding, each a paste-ready prompt so any of the four people's Claudes can take one on any model. Three per person suggested, two for Claude here, two unassigned. The binding constraint: free, apart from Claude subscriptions and deliberate production purchases.</p>
+        <p class="note">One option — <code>claude-env.tier = "base" | "blitsol"</code> — decides whether a machine gets the company server on top of the shared toolkit.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Done</span><span class="v">All sixteen answered on 16 Nov and filed under <code>research/</code>. Three tested here, nine run by Kish in Claude web and checked here (module checklist, git merge simulation, embedding timing, vendor pricing pages), four done here. Nothing reopened a settled decision. Two things moved: CLM is parked, and <code>claude-mode</code> is Kitty-only so it becomes opt-in.</span></div>
-          <div class="meta-row"><span class="k">Surprises</span><span class="v">MCP servers cost only ~5.6k of the 28.5k startup tokens because schemas are deferred, so tiering is about secrets, not context. Cal.com went closed-source in April, so booking is built in-house. The 25.05 branch Léon runs has been end-of-life since December.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">Asserted by <code>just test</code> on both releases: <code>base</code> resolves to atlassian, context7 and playwright exactly; <code>blitsol</code> adds cloudflare. Six opt-in modules are wired and all default off.</span></div>
+          <div class="meta-row"><span class="k">Judgement</span><span class="v">No <code>tiers.nix</code>. The tier is read where it has an effect — <code>mcp.nix</code> and the <code>CLAUDE.md</code> header — and a file that only re-exports a boolean would be a layer with nothing in it.</span></div>
+          <div class="meta-row"><span class="k">Left</span><span class="v">The secrets half, which waits on nobody now that the keys are collected: see <code>secrets-delivery</code>.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Make mcp.nix the single source of truth</h4>
+          <span class="id">mcp-declarative</span>
+        </div>
+        <p class="note"><code>mcp.nix</code> used to ship a <code>setup-claude-mcp.sh</code> that had to be run by hand, so user-scope servers drifted the moment anyone typed <code>claude mcp add</code>. That drift is exactly what happened — twice.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it. The script is deleted. 44 of the 134 script tests cover this one helper.</span></div>
+          <div class="meta-row"><span class="k">Escape hatch</span><span class="v">Removals are named on stderr and written to <code>~/.claude/removed-mcp-servers.json</code> before they go, so "it worked yesterday" has an answer. Keeping one means declaring it — in the module for all four laptops, or <code>claude-env.mcp.personal</code> for one.</span></div>
+          <div class="meta-row"><span class="k">Careful</span><span class="v">It declines to create a missing <code>~/.claude.json</code>, because inventing an account-less state file is worse than waiting: start Claude Code once, then switch again.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Consolidate the 39 scattered MCP servers</h4>
+          <span class="id">mcp-consolidate</span>
+        </div>
+        <p class="note">Servers were split across three local scopes plus user and project scope, which is why the web-design toolkit was invisible everywhere except one directory.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">Twenty-three registrations dropped with a reason each, four declared, six behind opt-in flags. CLI-first held: no <code>github</code> server because <code>gh --json --jq</code> is cheaper and already authenticated, no <code>filesystem</code> server because it could not see <code>~/Projects</code> anyway, no <code>memory</code> server because the crew keeps one file-based memory system.</span></div>
+          <div class="meta-row"><span class="k">Corrected</span><span class="v">Three claims in <code>docs/mcp-audit.md</code> were wrong and were found by wiring the servers rather than reading about them: <code>moneybird</code> is gone with the bookkeeping switch, <code>overheid-apis</code> does not exist on npm, and <code>vies-vat</code> was attributed to the wrong author.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>The flake must carry the security guard</h4>
+          <span class="id">guard-portability</span>
+        </div>
+        <p class="note">The guard is a NixOS <em>system</em> module, separate from the home module — so shipping only the home half would hand friends every skill, agent and MCP server with none of the deny rules on <code>.env</code>, <code>/run/agenix</code> and SSH keys.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">The flake exports <code>nixosModules.default</code> alongside <code>homeManagerModules.default</code>, <code>just test</code> evaluates the managed settings on both releases, and §1 of the guide says to import both and spells out what taking the home module alone actually means.</span></div>
+          <div class="meta-row"><span class="k">Fixed</span><span class="v">One false positive, found by hitting it twice. The force-push rule read the whole command string, so a commit message containing <code>+0</code> looked like a <code>+ref</code> refspec and a <code>-f</code> belonging to an earlier <code>rm</code> looked like <code>--force</code> — both blocked an ordinary push to main. The flags are now looked for inside the push command itself, while the branch name is still looked for in the whole string, because switching to main and then force-pushing really is one act. Seven cases cover it.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>The guide for friends</h4>
+          <span class="id">friend-guide</span>
+        </div>
+        <p class="note">A friend needs to know what exists, when to reach for which skill or agent, and what the guardrails will stop him doing. None of that is discoverable from the flake.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v"><code>docs/guide.md</code> in nine sections: install and how to check it took, the two tiers and the six opt-in modules, the full inventory, how to add your own things, the deny and ask lists, vetting with <code>claude-vet</code>, the first hour as seven ordered steps, a symptom table, and four house rules. Every command says which directory to run it in.</span></div>
+          <div class="meta-row"><span class="k">And</span><span class="v"><code>docs/enrolment.md</code> for the Blitsol half: adding and revoking a person, host key versus personal key, the recipient count check that needs <code>grep -ac</code> because age files are binary, and a fourth revoke step that is actually security — re-keying does not un-leak, so values get rotated at source.</span></div>
+          <div class="meta-row"><span class="k">Untested claim</span><span class="v">That a friend can follow it without asking Léon a question. That is <code>onboarding-test</code>.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>One module, two NixOS releases</h4>
+          <span class="id">nixos-version-matrix</span>
+        </div>
+        <p class="note">Léon is on 25.05; Ryan and Kish are on 26.05. A module that evaluates on one and not the other fails the first friend who installs it.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">The flake takes no nixpkgs or home-manager of its own — the only input is the web-design playbook — and <code>just test</code> evaluates base, Blitsol and the guard against both releases on every run.</span></div>
+          <div class="meta-row"><span class="k">Where they differ</span><span class="v">The module resolves it rather than picking a side: prettier and nixfmt per release, <code>playwright-mcp</code> and <code>mcp-nixos</code> from nixpkgs on 26.05 and a pinned fetch on 25.05, and repomix's token-counting flags documented as 26.05-only.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>The module must not assume Hyprland</h4>
+          <span class="id">desktop-neutral</span>
+        </div>
+        <p class="note">Two of four run KDE Plasma 6 on Wayland. Léon's config was built on Hyprland and Kitty.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">Checklist run 16 Nov: no portal, compositor, clipboard or notification-channel assumptions, and <code>notify-send</code> passes. The one gap — <code>claude-mode</code>'s 35 references to Kitty's remote control — sits behind <code>claude-env.modes.enable</code>, off by default, and <code>just test</code> asserts a base config ships no claude-mode skill on either release.</span></div>
+          <div class="meta-row"><span class="k">Left</span><span class="v">Confirming it on a real KDE machine, which is part of <code>onboarding-test</code> because that is the first time one exists.</span></div>
         </div>
       </article>
 
@@ -372,25 +476,69 @@
           <h4>Extract modules/home/claude into its own flake</h4>
           <span class="id">extract-flake</span>
         </div>
-        <p class="note"><code>~/Projects/claude-env</code> now exports <code>homeManagerModules.default</code> and <code>nixosModules.default</code> (the guard). nix-config consumes it as the <code>claude-env</code> input and the mr-blue system builds from it: the managed settings come out byte-identical, and <code>CLAUDE.md</code> differs only by the personal lines moving under a "This machine" heading.</p>
+        <p class="note"><code>~/Projects/claude-env</code> exports <code>homeManagerModules.default</code> and <code>nixosModules.default</code>. nix-config consumes it as the <code>claude-env</code> input and the mr-blue system builds from it: the managed settings come out byte-identical, and <code>CLAUDE.md</code> differs only by the personal lines moving under a "This machine" heading.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Done</span><span class="v">Four portability fixes on the way out: the <code>inputs</code> argument is gone (the playbook arrives through <code>claude-env.webDesignPlaybook</code>), prettier and nixfmt resolve per release, the Kitty-only <code>claude-mode</code> layouts sit behind <code>claude-env.modes.enable</code>, and the servers the audit dropped are on <code>mcp.nix</code>'s prune list. <code>just test</code> evaluates base and Blitsol homes plus the guard on 25.05 and 26.05.</span></div>
-          <div class="meta-row"><span class="k">Left for Léon</span><span class="v">The switch itself (<code>nh os switch /etc/nixos</code>) and giving claude-env its own repo — <code>~/Projects</code> is a git checkout, so for now the input is a local <code>path:</code> URL. Both are on the todo board with guides.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">Four portability fixes on the way out: the <code>inputs</code> argument is gone, prettier and nixfmt resolve per release, the Kitty-only layouts became opt-in, and the dropped servers are on the prune list.</span></div>
+          <div class="meta-row"><span class="k">Left for Léon</span><span class="v">The switch, and giving claude-env its own repo — <code>~/Projects</code> is itself a git checkout, so the input is a local <code>path:</code> URL for now.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Domain coverage audit</h4>
+          <span class="id">coverage-audit</span>
+        </div>
+        <p class="note">Ten domains checked against what the crew actually builds. Design was over-covered — six HyperFrames skills loading in every session of every project. Roblox is the strongest domain and the least shareable. Booking does not exist at all. Written up in <code>docs/coverage.md</code>.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Found</span><span class="v">Four things that each became their own feature: the guard lived outside the module being extracted, the Roblox toolchain does too, tiering has to cover skills and not just servers, and three servers were stranded in the exact three projects that needed them.</span></div>
+        </div>
+      </article>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Research track — free-tool verification</h4>
+          <span class="id">research-track</span>
+        </div>
+        <p class="note">Sixteen items that needed looking up rather than deciding, each a paste-ready prompt so any of the four people's Claudes could take one on any model. The binding constraint: free, apart from Claude subscriptions and deliberate production purchases.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">All sixteen answered on 16 Nov and filed under <code>research/</code>. Nine run by Kish in Claude web and checked here, the rest done here. Nothing reopened a settled decision; two things moved — CLM parked, and <code>claude-mode</code> made opt-in.</span></div>
+          <div class="meta-row"><span class="k">Surprises</span><span class="v">MCP servers cost only ~5.6k of the 28.5k startup tokens because schemas are deferred, so tiering is about secrets rather than context. Cal.com went closed-source in April. The 25.05 branch Léon runs has been end-of-life since December.</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="group">
+      <div class="group-head">
+        <h3>In progress</h3>
+        <span class="count">2 — one line of config and one open question away</span>
+      </div>
+
+      <article class="feat progress">
+        <div class="feat-top">
+          <h4>Laya available in every project; CLM parked</h4>
+          <span class="id">laya-clm-userscope</span>
+        </div>
+        <p class="note">Both decision-model servers were project-scope in <code>Laya_And_CLM-MCPs</code>, so they vanished in every other folder.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">Laya is declared in <code>mcp.nix</code> and appears at user scope as soon as <code>claude-env.mcp.layaPath</code> points at the checkout — it is small, calibrated and fine on CPU, so it waits on nothing else. CLM stays unregistered on purpose: a dead tool in the list is worse than no tool.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — one line: <code>claude-env.mcp.layaPath = "/home/leon-new/Projects/Laya_And_CLM-MCPs";</code></span></div>
+          <div class="meta-row"><span class="k">Settled</span><span class="v"><strong>CLM is parked</strong> (16 Nov): the bf16 path needs a 24 GB NVIDIA card, no crew laptop has more than 6 GB, and the two spare machines are weeks away. crew-memory dedup uses <code>bge-small</code> plus Laya instead — 101 ms per idea on Léon's CPU. Revisit around 8 Dec.</span></div>
         </div>
       </article>
 
       <article class="feat progress">
         <div class="feat-top">
-          <h4>Domain coverage audit</h4>
-          <span class="id">coverage-audit</span>
+          <h4>Declare and pin the plugin channel</h4>
+          <span class="id">ct-plugin-channel</span>
         </div>
-        <p class="note">Ten domains checked against what the crew actually builds. Design is over-covered — six HyperFrames skills load in every session of every project. Roblox is the strongest domain and the least shareable. Booking does not exist at all. Written up in <code>docs/coverage.md</code>.</p>
+        <p class="note">Every plugin on the machine arrived through <code>claude plugin install</code> — unpinned, and reaching nobody else in the crew. The same drift as the MCP servers, one layer up.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Found</span><span class="v">The guard lives outside the module being extracted; the Roblox toolchain does too; tiering has to cover skills, not just MCP servers; and <code>elevenlabs</code>, <code>moneybird</code> and <code>coingecko</code> are stranded in the exact three projects that need them.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">Three marketplaces pinned to full commit SHAs, four plugins enabled from Nix, and <code>claude-plugins-check</code> reports where the machine has drifted from what the repo declares. <code>frontend-design</code> cannot be pinned: it comes from <code>claude-plugins-official</code>, a reserved name Claude Code refuses to let a config pin.</span></div>
+          <div class="meta-row"><span class="k">Version gate</span><span class="v">SHA pinning needs Claude Code 2.1.324 and this laptop runs 2.1.278, so activation picks the floating overlay and says why. The check is made at activation rather than in Nix, so the pins start applying on the first switch after the upgrade with no repo edit.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">q-personal-skills — which of the 27 personal skills become crew skills, and which stay on Léon's laptop</span></div>
         </div>
       </article>
     </div>
-
 
     <div class="group">
       <div class="group-head">
@@ -405,120 +553,28 @@
         </div>
         <p class="note">The claude.ai connectors — HubSpot, Gmail, Calendar, Drive, Clay, QuickBooks, Stripe — bind to a Claude <em>account</em>, not to a machine. No flake can ever hand these over.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Invite each Blitsol-tier friend into HubSpot, Cloudflare, Stripe and Moneybird; the flake only records which connectors that tier is expected to have.</span></div>
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">Invite each Blitsol-tier friend into HubSpot, Cloudflare, Stripe and <strong>AdministratieX</strong> — the books moved there because Moneybird turned out to be trial-only. The flake records which connectors the tier is expected to have and nothing more.</span></div>
           <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — GUI invites in four separate billing accounts</span></div>
         </div>
       </article>
-
     </div>
 
     <div class="group">
       <div class="group-head">
         <h3>Planned</h3>
-        <span class="count">11 — nothing built yet</span>
+        <span class="count">3 — each waiting on something outside this repo</span>
       </div>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>One module, two NixOS releases</h4>
-          <span class="id">nixos-version-matrix</span>
-        </div>
-        <p class="note">Found by the hardware inventory. Léon is on 25.05 with home-manager release-25.05; Ryan and Kish are on 26.05. A module that evaluates on one and not the other fails the first friend who installs it.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">The flake exposes modules only and lets each consumer's inputs supply nixpkgs and home-manager; a check evaluates the module against both releases before anything is tagged.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">q-nixos-version — the research is in and supports option one; Léon's yes is all that is left</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>The module must not assume Hyprland</h4>
-          <span class="id">desktop-neutral</span>
-        </div>
-        <p class="note">Found by the hardware inventory. Two of four run KDE Plasma 6 on Wayland. Léon's config was built on Hyprland and Kitty; the hooks use <code>notify-send</code>, which is fine, but nothing has been checked for compositor or terminal assumptions.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Run the checklist from research item <code>desktop-neutral-module</code> against the module; guard or strip anything compositor-specific; test on a KDE machine before the onboarding test.</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>Laya available in every project; CLM parked</h4>
-          <span class="id">laya-clm-userscope</span>
-        </div>
-        <p class="note">Both decision-model servers are project-scope in <code>Laya_And_CLM-MCPs</code>, so they vanish in every other folder. The repo already ships <code>register-decision-mcps.sh</code> to fix exactly this, and it has never been run.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Fold Laya into the module at user scope — it is small, calibrated and fine on CPU, so it waits on nothing. Register CLM only when a tailnet <code>clm-serve</code> host resolves, so a dead tool is never in the list.</span></div>
-          <div class="meta-row"><span class="k">Settled</span><span class="v"><strong>CLM is parked</strong> (Léon, 16 Nov): the bf16 path needs a 24 GB NVIDIA card, no crew laptop has more than 6 GB, and the two spare machines are weeks away. The crew-memory dedup uses <code>bge-small</code> plus Laya instead — measured at 101 ms per idea on Léon's CPU. The hosting write-up stays ready for when a box appears.</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>The flake must carry the security guard</h4>
-          <span class="id">guard-portability</span>
-        </div>
-        <p class="note">Found by the coverage audit. <code>claude-code-policy.nix</code> is a NixOS <em>system</em> module, separate from <code>modules/home/claude/</code> — so extracting only the home module would hand friends every skill, agent and MCP server with none of the deny rules on <code>.env</code>, <code>/run/agenix</code> and SSH keys.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Expose <code>nixosModules.default</code> alongside <code>homeManagerModules.default</code>, carrying the policy and <code>guard.sh</code>, and say plainly in the guide that the home module alone gives you the tools without the brakes.</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>Consolidate the 36 scattered MCP servers</h4>
-          <span class="id">mcp-consolidate</span>
-        </div>
-        <p class="note">Servers are split across three local scopes plus user and project scope, which is why the web-design toolkit is invisible everywhere except one directory.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Apply the settled policy, declare the survivors in <code>mcp.nix</code>, and strip the local-scope entries from <code>~/.claude.json</code>.</span></div>
-          <div class="meta-row"><span class="k">Settled</span><span class="v">CLI-first wins — prune <code>github</code>, <code>filesystem</code> and <code>memory</code>; keep <code>playwright</code> for the design skills.</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>Make mcp.nix the single source of truth</h4>
-          <span class="id">mcp-declarative</span>
-        </div>
-        <p class="note">Today <code>mcp.nix</code> ships a <code>setup-claude-mcp.sh</code> that has to be run by hand, so user-scope servers drift the moment anyone types <code>claude mcp add</code>. That drift is exactly what happened.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Write the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation, merging rather than replacing — the same trick <code>settings.nix</code> already uses for <code>settings.json</code>.</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>Base and Blitsol tiers</h4>
-          <span class="id">tiers</span>
-        </div>
-        <p class="note">One option — <code>claude-env.tier = "base" | "blitsol"</code> — decides whether a machine gets the company connectors and secrets on top of the shared toolkit.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">The option exists (<code>modules/home/options.nix</code>, <code>base</code> by default) but nothing reads it yet. Wire the Blitsol servers from <code>docs/mcp-audit.md</code> behind <code>tier = "blitsol"</code>, and give the opt-in groups the audit named (nix, roblox, legal, trading, seo, firecrawl, sentry, the HyperFrames suite) their own enable flags.</span></div>
-        </div>
-      </article>
 
       <article class="feat planned">
         <div class="feat-top">
           <h4>Shared Blitsol secrets via agenix</h4>
           <span class="id">secrets-delivery</span>
         </div>
-        <p class="note">agenix is already an input of nix-config and already holds the Claude API key and Borg passphrases, so the mechanism exists. What is missing is multi-recipient re-keying.</p>
+        <p class="note">agenix is already an input of nix-config and already holds the Claude API key and Borg passphrases, so the mechanism exists. What is missing is a repo whose recipient list is the crew.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">A private <code>blitsol-secrets</code> repo whose <code>secrets.nix</code> lists each client-work friend's SSH public key as a recipient, plus a runbook for adding and revoking a person.</span></div>
-          <div class="meta-row"><span class="k">Settled</span><span class="v">agenix in a private sibling repo; the tier goes only to friends already on Blitsol client work.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — the recipient list is the list of SSH keys, which he has to collect</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
-          <h4>The guide for friends</h4>
-          <span class="id">friend-guide</span>
-        </div>
-        <p class="note">A friend needs to know what exists, when to reach for which skill or agent, and what the guardrails will stop him doing. None of that is discoverable from the flake.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Written <em>after</em> the coverage audit, so it documents the toolkit that actually ships rather than the one that exists today.</span></div>
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">A private <code>blitsol-secrets</code> repo whose <code>secrets.nix</code> lists each friend's <em>host</em> key as a recipient. The runbook for adding and revoking a person is already written: <code>docs/enrolment.md</code>.</span></div>
+          <div class="meta-row"><span class="k">Known trap</span><span class="v">Recipients must be the raw <code>ssh-ed25519</code> line, not the <code>age1…</code> form from <code>ssh-to-age</code>, because agenix decrypts with the host key itself. The wrong form fails during the friend's activation and reads like a corrupt secret.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — creating the repo; the keys themselves are collected</span></div>
         </div>
       </article>
 
@@ -527,10 +583,10 @@
           <h4>Jira on the shared board, wired to Google Calendar</h4>
           <span class="id">jira-calendar</span>
         </div>
-        <p class="note">The crew shares one Jira board for the website work, but there is no Jira MCP server installed at any scope, and Jira is not yet feeding Léon's calendar.</p>
+        <p class="note">The crew shares one Jira board for the website work, and Jira is not yet feeding Léon's calendar.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">Add the Atlassian remote MCP at base tier, and subscribe Google Calendar to the board.</span></div>
-          <div class="meta-row"><span class="k">Settled</span><span class="v">Atlassian's remote MCP, at base tier — the one deliberate exception to the CLI-first rule, because every friend touches the shared board daily.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">The MCP half: <code>atlassian</code> is base tier, with its nine write operations behind the managed <code>ask</code> rule, and it was tested live against <code>blitsol.atlassian.net</code>.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — twice. The shared website board does not exist: <code>KAN</code>, named "test", is the only project on the site and holds its only issue, so there is nothing yet for a friend following the guide to look at. And the Calendar subscription is a Jira setting rather than a connector.</span></div>
         </div>
       </article>
 
@@ -541,8 +597,8 @@
         </div>
         <p class="note">The only real test of a shareable environment is a second machine going from zero to working without Léon typing on it.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Remaining</span><span class="v">One friend adds the flake input, rebuilds, and works through the guide unaided while every place he gets stuck is recorded.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">extract-flake, tiers and friend-guide, in that order</span></div>
+          <div class="meta-row"><span class="k">Remaining</span><span class="v">One friend adds the flake input, rebuilds, and works through the guide unaided while every place he gets stuck is recorded. It also settles two things nothing else can: that the module is genuinely desktop-neutral on KDE, and that the guide answers its own questions.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">the switch, then a friend's laptop and an hour of their time</span></div>
         </div>
       </article>
     </div>
@@ -551,10 +607,10 @@
   <section>
     <h2>What was measured</h2>
 
-    <div class="conflict-note">
-      <h3>Document versus code — the code wins</h3>
-      <p><code>mcp.nix</code> declares exactly two servers and lists <code>memory</code>, <code>filesystem</code>, <code>github</code>, <code>playwright</code>, <code>svelte</code> and <code>mcp-nixos</code> as legacy to be pruned. Four of those six are live at user scope right now. Meanwhile <code>firecrawl</code>, which the module does declare, is <em>not</em> registered at user scope at all — it sits in local scope under <code>~</code>. The module's intent and the live configuration have fully diverged, and that is the single finding this whole project turns on.</p>
-      <p><strong>Resolved 13 Nov:</strong> the module's CLI-first intent is the truth and the live config is the drift. <code>github</code>, <code>filesystem</code> and <code>memory</code> go; <code>playwright</code> stays, because the <code>design</code> and <code>web-design-playbook</code> skills drive a real browser. The deeper fix is <code>mcp-declarative</code> — until Nix writes the server list on activation rather than a script anyone can forget, this divergence simply happens again.</p>
+    <div class="conflict-note" style="border-color: var(--ok); background: var(--ok-soft);">
+      <h3 style="color: var(--ok);">Document versus code — settled by making Nix the document</h3>
+      <p>The finding this project turned on was that <code>mcp.nix</code> declared two servers while nine ran at user scope, and that <code>firecrawl</code>, which the module <em>did</em> declare, was not registered at user scope at all. The module's intent and the live configuration had fully diverged.</p>
+      <p><strong>Closed 20 Nov.</strong> There is no longer a document to disagree with the code: the module writes the server list on activation, so the only way to keep a server is to declare it. The same fix is now applied one layer up to plugins. What remains is not drift but a switch — until <code>nh os switch</code> runs in <code>/etc/nixos</code>, the live file is still the old one, and the numbers in the first two rows below are still true.</p>
     </div>
 
     <div class="table-scroll">
@@ -564,83 +620,92 @@
         </thead>
         <tbody>
           <tr>
-            <td class="key">user_scope_mcps</td><td class="val">9</td>
-            <td class="src">jq -r '.mcpServers | keys | length' ~/.claude.json</td><td class="when">2026-11-13</td>
+            <td class="key">user_scope_mcps</td><td class="val">10</td>
+            <td class="src">jq -r '.mcpServers | keys | length' ~/.claude.json — 9 at the audit, one added since</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
             <td class="key">local_scope_mcps</td><td class="val">25</td>
-            <td class="src">jq '[.projects[].mcpServers // {} | length] | add' ~/.claude.json</td><td class="when">2026-11-13</td>
+            <td class="src">jq '[.projects[].mcpServers // {} | length] | add' ~/.claude.json — unchanged; the prune runs at activation</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
-            <td class="key">project_scope_mcps</td><td class="val">5</td>
-            <td class="src">fd -H -I -t f '^\.mcp\.json$' — three files, not one</td><td class="when">2026-11-13</td>
+            <td class="key">declared_mcp_servers_base</td><td class="val">3</td>
+            <td class="src">nix eval … homeConfigurations.base.config.claude-env.mcp.declared — blitsol adds one</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">dropped_mcp_registrations</td><td class="val">23</td>
+            <td class="src">modules/home/mcp.nix — one reason per name, pruned from local scopes on activation</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">pinned_plugin_marketplaces</td><td class="val">3</td>
+            <td class="src">modules/home/settings.nix — full commit SHAs; claude-plugins-official is reserved and cannot be pinned</td><td class="when">2026-11-20</td>
           </tr>
           <tr class="conflict">
-            <td class="key">mcp_nix_declared</td><td class="val">2</td>
-            <td class="src">modules/home/claude/mcp.nix — conflicts with the live config, see above</td><td class="when">2026-11-13</td>
+            <td class="key">claude_code_version_installed</td><td class="val">2.1.278</td>
+            <td class="src">claude --version — SHA pinning needs 2.1.324, so activation writes the floating overlay and says so</td><td class="when">2026-11-20</td>
           </tr>
-          <tr class="conflict">
-            <td class="key">placeholder_token_servers</td><td class="val">3</td>
-            <td class="src">rg -c 'YOUR_[A-Z_]*(TOKEN|PAT|KEY)' ~/.claude.json</td><td class="when">2026-11-13</td>
+          <tr>
+            <td class="key">guard_tests</td><td class="val">65</td>
+            <td class="src">modules/system/claude-code/guard-test.sh — all pass; seven added with the force-push fix</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">helper_script_tests</td><td class="val">134</td>
+            <td class="src">modules/home/scripts/tests.sh — 17 on 16 Nov, +117 for the settings gate, the MCP block and the drift check</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">eval_matrix</td><td class="val">green</td>
+            <td class="src">just test — base, blitsol and the guard on nixpkgs 25.05 and 26.05</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">plugin_cache_leftover_mb</td><td class="val">20.0</td>
+            <td class="src">du -sk ~/.claude/plugins/cache/{ponytail,cursor-plugins} — two marketplaces nothing declares any more</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">startup_context_tokens</td><td class="val">28503</td>
+            <td class="src">research/context-budget.md — all MCP servers together are 5,646 of it; ~120 skill descriptions are ~6,900</td><td class="when">2026-11-16</td>
           </tr>
           <tr>
             <td class="key">account_connectors</td><td class="val">12</td>
-            <td class="src">claude mcp list — 11 connect since 15 Nov, Indeed needs auth, GoDaddy times out, Cloudflare DP deprecated upstream</td><td class="when">2026-11-13</td>
-          </tr>
-          <tr>
-            <td class="key">claude_skills_installed</td><td class="val">36</td>
-            <td class="src">ls -1 ~/.claude/skills | wc -l</td><td class="when">2026-11-13</td>
-          </tr>
-          <tr>
-            <td class="key">claude_agents_installed</td><td class="val">12</td>
-            <td class="src">ls -1 ~/.claude/agents | wc -l</td><td class="when">2026-11-13</td>
-          </tr>
-          <tr class="conflict">
-            <td class="key">clm_backend_up</td><td class="val">false</td>
-            <td class="src">ss -ltn | grep 8700 — nothing listening, CLM_BASE_URL unset</td><td class="when">2026-11-13</td>
-          </tr>
-          <tr>
-            <td class="key">settings_json_mutable</td><td class="val">true</td>
-            <td class="src">modules/home/claude/settings.nix — by design, merged on activation</td><td class="when">2026-11-13</td>
+            <td class="src">claude mcp list — an estimated ~3,200 tokens, controlled in account settings and not from any flake</td><td class="when">2026-11-13</td>
           </tr>
           <tr class="conflict">
             <td class="key">crew_max_vram_gb</td><td class="val">6</td>
-            <td class="src">crew-memory/docs/hardware-inventory.md — CLM bf16 needs ~16</td><td class="when">2026-11-15</td>
+            <td class="src">crew-memory/docs/hardware-inventory.md — CLM bf16 needs ~16, which is why it is parked</td><td class="when">2026-11-15</td>
+          </tr>
+          <tr>
+            <td class="key">bge_small_ms_per_idea</td><td class="val">101</td>
+            <td class="src">research/dedup-without-clm.md — the CPU path crew-memory uses instead</td><td class="when">2026-11-16</td>
           </tr>
           <tr>
             <td class="key">nixos_releases_in_crew</td><td class="val">2</td>
-            <td class="src">hardware-inventory.md — 25.05 and 26.05, Hyprland and KDE</td><td class="when">2026-11-15</td>
-          </tr>
-          <tr>
-            <td class="key">project_folders</td><td class="val">42</td>
-            <td class="src">ls -1 ~/projects ~/Projects | wc -l</td><td class="when">2026-11-13</td>
+            <td class="src">hardware-inventory.md — 25.05 and 26.05, Hyprland and KDE; both are evaluated on every test run</td><td class="when">2026-11-15</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">Two of these deserve a second look. <code>placeholder_token_servers</code> means <code>figma-dev</code> ships <code>YOUR_FIGMA_PAT</code> and <code>shopify</code> ships <code>YOUR_SHOPIFY_ACCESS_TOKEN</code> and <code>YOUR_STORE.myshopify.com</code> — they fail on first call and always have. And <code>project_folders</code> counts 42 across two roots that differ only in capitalisation, while the filesystem MCP is scoped to <code>/home/leon-new</code> and <code>/home/leon-new/projects</code> — so it cannot see <code>~/Projects</code> at all, including this repo.</p>
+    <p style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">Two rows deserve a second look. <code>claude_code_version_installed</code> is the only thing standing between the plugin pins and reality, and it fixes itself on the next flake update — nixpkgs master is already at 2.1.328. And <code>startup_context_tokens</code> is the number that settles the token-saver question: MCP servers are a fifth of session startup because schemas are deferred, so the lever worth pulling is skills, not servers. That measurement is four days old and worth re-running after any harness update.</p>
   </section>
 
   <footer>
     <div class="ver">
       <div>
-        <h3>Verified live today</h3>
+        <h3>Verified by running it</h3>
         <ul>
-          <li>Every figure in the table above — each one re-derived from <code>~/.claude.json</code>, the Nix modules or a live <code>claude mcp list</code>.</li>
-          <li>Connector health, including the three needing authentication and GoDaddy's 30-second timeout.</li>
-          <li>That <code>~/.claude/agents</code> and <code>~/.claude/hooks</code> are home-manager symlinks, so that half of the environment is already reproducible.</li>
+          <li><code>just test</code> green on both releases, including the new tier assertions — and mutation-checked: lowering the version floor, dropping the settings key authority and neutering the local-scope prune each produce failures, so the tests bite.</li>
+          <li>The Atlassian server against the real site: it works, and the "shared website board" does not exist yet.</li>
+          <li>That the floating overlay really omits <code>ref</code>, by replaying the module's own logic through <code>nix eval</code> rather than trusting the code to read correctly.</li>
         </ul>
       </div>
       <div>
-        <h3>Taken on trust</h3>
+        <h3>Not yet true</h3>
         <ul>
-          <li>Nothing. This is the first run, so <code>docs/project-state.yaml</code> was created today and every fact in it was measured rather than inherited.</li>
-          <li>The goal and feature names came out of conversation, not from code — worth a read-through before they harden.</li>
+          <li>Nothing on this board is live. <code>/etc/nixos</code> is locked to <code>3dbbd93</code>, seven commits back.</li>
+          <li>That a friend can follow the guide unaided — written carefully, tested by nobody.</li>
+          <li>That the module behaves on KDE. Checked by reading, not by running.</li>
         </ul>
       </div>
     </div>
-    <p class="stamp">docs/project-state.yaml · 15 features · 26 facts · 0 open questions · created 2026-11-13, updated 2026-11-16</p>
+    <p class="stamp">docs/project-state.yaml · 15 features · 31 facts · 3 open questions · created 2026-11-13, updated 2026-11-20</p>
   </footer>
 
 </div>
