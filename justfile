@@ -30,6 +30,12 @@ _eval dir:
       nix eval --raw {{overrides}} "path:$PWD#nixosConfigurations.guard.config.environment.etc.\"claude-code/managed-settings.json\".source.outPath" {{quiet}} && echo
     @cd {{dir}} && test "$(nix eval --json {{overrides}} "path:$PWD#homeConfigurations.base.config.home.file" --apply 'f: builtins.length (builtins.filter (n: builtins.match ".claude/skills/(dashboard|council)/.*" n != null) (builtins.attrNames f))' {{quiet}})" = 0 \
       && echo "{{dir}}  base has no claude-mode skills: ok"
+    @# The tier split, which is only visible in the resolved MCP server set: a base friend must
+    @# get no company server, and the Blitsol tier must get it. Opt-in modules stay off in both.
+    @cd {{dir}} && test "$(nix eval --raw {{overrides}} "path:$PWD#homeConfigurations.base.config.claude-env.mcp.declared" --apply 's: builtins.concatStringsSep "," (builtins.attrNames s)' {{quiet}})" = "atlassian,context7,playwright" \
+      && echo "{{dir}}  base tier: atlassian, context7, playwright only: ok"
+    @cd {{dir}} && test "$(nix eval --raw {{overrides}} "path:$PWD#homeConfigurations.blitsol.config.claude-env.mcp.declared" --apply 's: builtins.concatStringsSep "," (builtins.attrNames s)' {{quiet}})" = "atlassian,cloudflare,context7,playwright" \
+      && echo "{{dir}}  blitsol tier: adds cloudflare: ok"
 
 # The PreToolUse guard's own cases (allow / ask / deny).
 test-guard:

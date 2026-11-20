@@ -70,7 +70,7 @@
     allowed-tools: Read, Bash, Glob, Grep, WebSearch, WebFetch
     ---
     Research $ARGUMENTS.
-    - Library/framework docs: the context7 MCP server (user scope; run `just setup-mcp` if missing).
+    - Library/framework docs: the context7 MCP server, registered at user scope by the flake.
     - Web articles and current facts: WebSearch, then WebFetch the best sources.
     - Existing patterns: search the codebase with Grep/Glob (or `rg`).
     Compile a concise report: findings first, each with its source link; mark anything unverified.

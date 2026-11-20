@@ -341,6 +341,91 @@ assert_contains "plugins-check: flags the off-store link"        "link outside t
 assert_contains "plugins-check: names the pack that loads nothing" "register nothing: a-pack" "$out"
 assert_lacks    "plugins-check: leaves Claude Code's own synced dir alone" "synced" "$out"
 
+# ── claude-mcp: the declarative MCP block ────────────────────────────────────
+#
+# ~/.claude.json is Claude Code's own state file — account details, per-project trust, caches —
+# and the module rewrites one key inside it. So the tests that matter are about what it does
+# *not* touch, and about the file never being left half-written.
+
+MCP_SH="$HERE/claude-mcp.sh"
+
+cat > "$TMP/mcp-declared.json" <<'EOF'
+{ "mcpServers": {
+  "context7": { "type": "http", "url": "https://mcp.context7.com/mcp" },
+  "atlassian": { "type": "http", "url": "https://mcp.atlassian.com/v2/mcp" } } }
+EOF
+
+mk_claude_json() {
+  cat > "$1" <<'EOF'
+{
+  "oauthAccount": { "emailAddress": "someone@example.com" },
+  "firstStartTime": "2026-01-01T00:00:00.000Z",
+  "mcpServers": {
+    "context7": { "type": "http", "url": "https://old.example.com/mcp" },
+    "obsidian": { "type": "stdio", "command": "npx", "args": ["-y", "@bitbonsai/mcpvault", "/home/x/V"] }
+  },
+  "projects": {
+    "/home/x": { "allowedTools": [], "mcpServers": {
+      "memory": { "command": "npx" },
+      "context7": { "type": "http", "url": "https://old.example.com/mcp" },
+      "something-mine": { "command": "my-server" } } },
+    "/home/x/other": { "allowedTools": [] }
+  }
+}
+EOF
+}
+
+mcp() { HOME="$TMP/mcphome" bash "$MCP_SH" "$1" "$TMP/mcp-declared.json" memory todoist 2>&1; }
+
+f="$TMP/claude-ok.json"; mk_claude_json "$f"
+mkdir -p "$TMP/mcphome"
+out="$(mcp "$f")"; rc=$?
+after="$(jq -c . "$f")"
+assert_rc       "mcp: writes the declared set"                0 "$rc"
+assert_contains "mcp: the declared servers are there"         '"atlassian"' "$after"
+assert_contains "mcp: a stale url is replaced, not merged"    "mcp.context7.com" "$after"
+assert_lacks    "mcp: the stale url is gone"                  "old.example.com" "$after"
+assert_lacks    "mcp: an undeclared user server is removed"   '"obsidian"' "$after"
+assert_contains "mcp: it says what it removed"                "remove user   obsidian" "$out"
+assert_contains "mcp: it says where the removed ones went"    "removed-mcp-servers.json" "$out"
+assert_contains "mcp: the removed server is recoverable"      "mcpvault" "$(cat "$TMP/mcphome/.claude/removed-mcp-servers.json")"
+
+# The two local-scope cases: a duplicate of something declared, and a dropped name, both go;
+# anything else is left alone, because someone may have added it on purpose.
+assert_lacks    "mcp: a local duplicate of a declared server goes" '"context7":{"type":"http","url":"https://old' "$after"
+assert_contains "mcp: a local server nobody listed survives"       "something-mine" "$after"
+assert_contains "mcp: it reports what it kept locally"             "keep local    something-mine" "$out"
+assert_lacks    "mcp: a dropped local server goes"                 '"memory"' "$after"
+
+# Everything else in the file is somebody's account and session state.
+assert_contains "mcp: the account block survives"          "someone@example.com" "$after"
+assert_contains "mcp: unrelated project keys survive"      '"allowedTools"' "$after"
+assert_contains "mcp: a project with no servers survives"  "/home/x/other" "$after"
+[[ "$(stat -c '%a' "$f")" == "600" ]] && ok || bad "mcp: the file stays private" 600 "$(stat -c '%a' "$f")"
+
+# Idempotence: a second run must be a no-op, not a second round of removals.
+out2="$(mcp "$f")"
+assert_rc    "mcp: a second run still succeeds" 0 "$?"
+assert_lacks "mcp: nothing left to remove"      "remove user" "$out2"
+[[ "$(jq -c . "$f")" == "$after" ]] && ok || bad "mcp: second run changed the file" "$after" "$(jq -c . "$f")"
+
+f="$TMP/claude-broken.json"; printf '{ "mcpServers": \n' > "$f"
+before="$(cat "$f")"
+out="$(mcp "$f")"; rc=$?
+assert_rc       "mcp: invalid JSON is reported, not repaired" 3 "$rc"
+assert_contains "mcp: points at Claude Code's own backups"    "backups" "$out"
+[[ "$(cat "$f")" == "$before" ]] && ok || bad "mcp: broken file left untouched" "$before" "$(cat "$f")"
+
+# A machine that has never started Claude Code has no state file, and inventing one would
+# produce an account-less config. Say so and wait.
+out="$(mcp "$TMP/claude-absent.json")"; rc=$?
+assert_rc       "mcp: a missing state file is not a failure" 0 "$rc"
+assert_contains "mcp: tells you to start Claude Code once"   "start Claude Code once" "$out"
+[[ ! -e "$TMP/claude-absent.json" ]] && ok || bad "mcp: no state file was invented" "no file" "a file"
+
+out="$(bash "$MCP_SH" "$TMP/claude-ok.json" 2>&1)"; rc=$?
+assert_rc "mcp: too few arguments is a usage error" 2 "$rc"
+
 # ── vendored trees carry their attribution ───────────────────────────────────
 #
 # skills.nix declares each vendored skill by whole-directory source precisely so the LICENSE

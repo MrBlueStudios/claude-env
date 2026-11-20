@@ -17,14 +17,14 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T09:40"
+updated: "2026-11-20T10:30"
 suite:
   command: just test
   result: green
   as_of: 2026-11-20
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
-    26.05 (tests/eval-*), then runs the 58 guard cases and 108 helper-script tests. Nothing is
+    26.05 (tests/eval-*), then runs the 58 guard cases and 134 helper-script tests. Nothing is
     built or switched. `just plugins-check` is deliberately not part of it: it reports the state
     of the machine it runs on, which is not a property of the repo.
 artifacts:
@@ -33,31 +33,39 @@ artifacts:
 features:
   - id: mcp-consolidate
     name: Consolidate the 36 scattered MCP servers
-    status: planned
+    status: done
     note: >-
-      Servers are split across three local scopes plus user and project scope; 24 of them are
+      Servers were split across three local scopes plus user and project scope; 24 of them were
       reachable only by cd-ing into ~/projects/fastsdcpu or ~, which is why the web-design
-      toolkit is invisible everywhere else.
+      toolkit was invisible everywhere else.
     remaining: >-
-      Verdicts are written: docs/mcp-audit.md (16 Nov) — 39 registrations, 23 dropped, 8 dead
-      placeholders of which 2 are fixed via agenix. Apply through mcp-declarative, then run the
-      prune once.
+      Done 2026-11-20, as part of mcp-declarative rather than as a separate one-off: the prune
+      is a clause in the same activation script, so it cannot be half-run or forgotten. Any
+      local-scope copy of a declared or dropped server is removed from every projects[<dir>]
+      entry on every switch; a local server nobody listed is kept and reported, because it may
+      be deliberate. The drop list is 23 names with the audit's reason beside each, now
+      including overheid-apis, which turned out not to exist on npm at all.
     paths:
-      - /etc/nixos/modules/home/claude/mcp.nix
+      - /home/leon-new/Projects/claude-env/modules/home/mcp.nix
+      - /home/leon-new/Projects/claude-env/modules/home/scripts/claude-mcp.sh
     refs:
       - "mcp.nix lines 11-15 — the CLI-first policy comment, now confirmed as the truth"
   - id: mcp-declarative
     name: Make mcp.nix the single source of truth
-    status: planned
+    status: done
     note: >-
-      Today mcp.nix ships a setup-claude-mcp.sh that must be run by hand, so user-scope servers
-      drift the moment anyone types `claude mcp add`. That drift is what produced the current mess.
+      mcp.nix used to ship a setup-claude-mcp.sh that had to be run by hand, so user-scope
+      servers drifted the moment anyone typed `claude mcp add`. That drift is what produced the
+      39 registrations the audit found.
     remaining: >-
-      Write the mcpServers block of ~/.claude.json from Nix on activation, merging rather than
-      replacing, the same way settings.nix already merges settings.json.
+      Done 2026-11-20. The script is gone; scripts/claude-mcp.sh writes the declared block on
+      activation and prunes the local scopes, and ct-mcp-declarative has the detail. The
+      settings half landed the same day (ct-plugin-channel): settings.nix now owns
+      enabledPlugins and extraKnownMarketplaces outright for the same reason.
     paths:
-      - /etc/nixos/modules/home/claude/mcp.nix
-      - /etc/nixos/modules/home/claude/settings.nix
+      - /home/leon-new/Projects/claude-env/modules/home/mcp.nix
+      - /home/leon-new/Projects/claude-env/modules/home/scripts/claude-mcp.sh
+      - /home/leon-new/Projects/claude-env/modules/home/settings.nix
   - id: extract-flake
     name: Extract modules/home/claude into its own flake
     status: done
@@ -81,20 +89,21 @@ features:
       - /home/leon-new/Projects/claude-env/tests/eval-25.05/flake.nix
   - id: tiers
     name: Base and Blitsol tiers
-    status: planned
+    status: done
     note: >-
       One option, claude-env.tier = "base" | "blitsol", decides whether a machine gets the
-      company connectors and secrets on top of the shared toolkit.
+      company servers on top of the shared toolkit.
     remaining: >-
-      The option exists (modules/home/options.nix, base by default) but nothing reads it yet:
-      mcp.nix, the secrets and the connector list still ship the same set to everyone. Wire the
-      Blitsol servers from docs/mcp-audit.md behind tier = "blitsol", and add the opt-in modules
-      the audit named (nix, roblox, legal, trading, seo, firecrawl, sentry) plus the HyperFrames
-      suite behind their own enable flags.
+      Done 2026-11-20 and asserted by `just test` on both releases: base resolves to atlassian,
+      context7 and playwright exactly; blitsol adds cloudflare. Six opt-in modules are wired and
+      all default off. No separate tiers.nix: the tier is read where it has an effect, which is
+      mcp.nix and the CLAUDE.md header, and a file that only re-exports a boolean would be a
+      layer with nothing in it. ct-tiers records what the tier can and cannot contain now that
+      Moneybird is gone, and the HyperFrames suite stays in tools.nix, where it is packaging
+      rather than a tier. The secrets half waits on mt-collect-keys.
     paths:
       - /home/leon-new/Projects/claude-env/modules/home/options.nix
-    absent_paths:
-      - /home/leon-new/Projects/claude-env/modules/home/tiers.nix
+      - /home/leon-new/Projects/claude-env/modules/home/mcp.nix
   - id: secrets-delivery
     name: Shared Blitsol secrets via agenix
     status: planned
@@ -130,8 +139,10 @@ features:
       away). The crew-memory dedup pipeline uses bge-small plus Laya instead
       (research/dedup-without-clm.md); the CLM hosting write-up stays ready for when a box appears.
     remaining: >-
-      Fold Laya into mcp.nix at user scope with absolute paths. Register CLM only when a tailnet
-      clm-serve host resolves, so a dead tool is never in the list.
+      The mechanism landed 2026-11-20: claude-env.mcp.layaPath registers the Laya server at user
+      scope with absolute paths, and CLM is deliberately not registrable, because a server whose
+      backend is parked is a tool that always fails. What is left is one line in /etc/nixos
+      setting layaPath to the checkout — Léon's, since the path is his.
     paths:
       - /home/leon-new/Projects/Laya_And_CLM-MCPs/register-decision-mcps.sh
       - /home/leon-new/Projects/Laya_And_CLM-MCPs/.mcp.json
@@ -512,16 +523,55 @@ claude_todos:
       to a store path in the built generation.
   - id: ct-tiers
     text: Add the claude-env.tier option with base as the default
-    status: next
+    status: done
     done_when: >-
       A test build with tier = "base" produces no Blitsol connector or secret, and tier =
       "blitsol" produces both
+    note: >-
+      Done 2026-11-20, and `just test` now asserts it on both releases rather than leaving it to
+      a reading of the module: base resolves to atlassian, context7 and playwright exactly, and
+      blitsol adds cloudflare. The assertion reads claude-env.mcp.declared, an internal
+      read-only option mcp.nix sets, which is the only way to check the split without switching.
+      .
+      The done_when overstates what the Blitsol tier can contain, and the honest version is
+      worth writing down: it adds one MCP server, not a secret. moneybird was the one server
+      that read a Blitsol secret, and on 17 Nov Blitsol left Moneybird for AdministratieX, which
+      has no MCP server. cloudflare is per-person OAuth. HubSpot and Stripe are claude.ai
+      connectors bound to an account, so no flake can ship them — they are invites
+      (connector-invites, blocked on Léon). So the secret half of the tier has nothing to carry
+      until blitsol-secrets exists, which is mt-collect-keys.
+      .
+      The seven opt-in modules the audit named are also wired, all off by default:
+      claude-env.mcp.modules.{nix,legal,trading,seo,sentry,firecrawl}. roblox is not among them,
+      because Roblox_Studio is a project-scope server and belongs in the repo that uses it.
+      firecrawl moved from base to opt-in: it was being shipped to everyone, agenix dependency
+      included, for a server the audit scoped to whoever wants their own free key.
   - id: ct-mcp-declarative
     text: Write the mcpServers block of ~/.claude.json from Nix on activation, merging not replacing
-    status: later
+    status: done
     done_when: >-
       `claude mcp list` shows exactly the declared set after a rebuild, and a hand-added server
       survives the next rebuild only if it was added to the module
+    note: >-
+      Done 2026-11-20. mcp.nix declares the set and ./scripts/claude-mcp.sh writes it into
+      ~/.claude.json on activation. It owns exactly two things: the top-level `mcpServers`
+      object becomes the declared set, and local-scope copies of a declared or dropped server
+      are removed from every `projects[<dir>]` entry — which is the one-time prune the
+      mcp-consolidate feature wanted, made idempotent instead. Everything else in that file is
+      Claude Code's own state (account, per-project trust, caches) and is left alone; 14 tests
+      pin that, including that a project entry with no servers survives.
+      .
+      "Merging not replacing" is the one part of the done_when this deliberately does not do, on
+      the second half's authority: a hand-added server survives only if it is declared. Removals
+      are named on stderr and the whole server definition is written to
+      ~/.claude/removed-mcp-servers.json first, so recovery is a copy-paste rather than an
+      archaeology. claude-env.mcp.personal is where a server that points into one person's home
+      belongs. The setup-claude-mcp.sh that had to be run by hand is gone, with it the drift it
+      caused; README and the research skill no longer mention it.
+      .
+      Léon's own machine needs one edit before his next switch or he loses two working servers:
+      add obsidian and (if he wants to keep it) vies-vat to claude-env.mcp.personal in
+      /etc/nixos. Both are already on disk, so the removal file would hold them either way.
   - id: ct-atlassian-ask
     text: Make Jira and Confluence writes ask, in managed settings
     status: done
@@ -1087,4 +1137,33 @@ questions:
     blocks: []
     blocks_note: >-
       Not blocking: the marketplace is pinned either way, and only the plugin's own bytes float.
+    answer: null
+  - id: q-vies-vat
+    question: >-
+      The vies-vat MCP server is a clone of someone else's template repo running from a path in
+      Léon's home. Package it, keep it personal, or replace it with a CLI?
+    options:
+      - Replace it with a small vat-check CLI in tools.nix, and drop the server
+      - Keep it personal — claude-env.mcp.personal on Léon's machine only
+      - Package the upstream repo with buildNpmPackage and declare it at base tier
+    recommendation: >-
+      The first. The audit recorded this one as "Léon's own build, must be built by Nix", and
+      it is neither: it is Jazib-but/check-vat-vies-mcp-Jazib, MIT, with an api-server.js, a
+      Dockerfile, a Coolify deployment guide and placeholder hosts (your-n8n-instance.com,
+      railway.app) still in it. `just vet` clears it — no hooks, no keys, and the only real
+      outbound host is ec.europa.eu, which is the VIES API itself — so this is not a safety
+      objection. It is a value one: the whole server is a SOAP call to one government endpoint,
+      and a server costs its tool descriptions in every session on four laptops, where a CLI
+      costs nothing until it is run. CLAUDE.md already says to prefer a CLI where one does the
+      job. Forty lines of Python against the VIES REST endpoint, in tools.nix next to
+      compliance-scan, is both cheaper and reproducible, which packaging the repo would not be
+      (its dist/ is committed and its lockfile would have to be vendored).
+      .
+      Until this is decided the server is undeclared, which means Léon's next switch removes it
+      from user scope and saves it to ~/.claude/removed-mcp-servers.json. Option two is one line
+      in /etc/nixos if he wants it back untouched.
+    blocks: []
+    blocks_note: >-
+      Not blocking: invoicing does not wait on this, and the removal is recoverable from the
+      file the switch writes.
     answer: null

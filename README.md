@@ -34,8 +34,11 @@ inputs.claude-env.inputs.claude-web-stack.follows = "claude-web-stack";
 }
 ```
 
-Then `claude mcp list` after the first switch; `setup-claude-mcp` registers the user-scope
-servers that have to live in `~/.claude.json`.
+Then `claude mcp list` after the first switch: the module writes the user-scope `mcpServers`
+block of `~/.claude.json` itself, so there is nothing to run by hand. The set depends on
+`claude-env.tier` and the `claude-env.mcp.modules.*` flags; anything registered by hand is
+removed and saved to `~/.claude/removed-mcp-servers.json`. `just plugins-check` reports the
+same kind of drift for plugins and skills.
 
 ## What is in here
 
