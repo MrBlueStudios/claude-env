@@ -165,6 +165,182 @@ assert_lacks    "vet: never tries to read the directory"      "Is a directory" "
 out="$(vet "$EMPTY_EX" "$TMP/does-not-exist")"; rc=$?
 assert_rc       "vet: a missing path is a usage error, not a pass" 2 "$rc"
 
+# ── claude-settings: the plugin channel ──────────────────────────────────────
+#
+# Two things here are easy to get wrong in ways nobody notices for weeks. A commit pin that an
+# older Claude Code can't load takes the plugin down with it, so the version gate decides
+# whether the machine gets pins at all. And the repo owning enabledPlugins means a switch
+# *deletes* entries — which has to be exactly the undeclared ones, and has to be said out loud.
+
+SETTINGS_SH="$HERE/claude-settings.sh"
+
+cat > "$TMP/base.json" <<'EOF'
+{
+  "theme": "custom:cyberpunk_dark",
+  "enabledPlugins": { "superpowers@superpowers-marketplace": true, "svelte@svelte": true }
+}
+EOF
+cat > "$TMP/pinned.json" <<'EOF'
+{ "extraKnownMarketplaces": { "svelte": { "source": {
+  "source": "github", "repo": "sveltejs/ai-tools",
+  "ref": "61061d4704a5e61781e6415dd802e9d9aff89dbe" } } } }
+EOF
+cat > "$TMP/floating.json" <<'EOF'
+{ "extraKnownMarketplaces": { "svelte": { "source": {
+  "source": "github", "repo": "sveltejs/ai-tools" } } } }
+EOF
+
+mkdir -p "$TMP/cbin"
+fake_claude() { # version-string
+  printf '#!/usr/bin/env bash\necho "%s (Claude Code)"\n' "$1" > "$TMP/cbin/claude"
+  chmod +x "$TMP/cbin/claude"
+}
+
+merge() { # settings-file
+  PATH="$TMP/cbin:$PATH" bash "$SETTINGS_SH" "$1" \
+    "$TMP/base.json" "$TMP/pinned.json" "$TMP/floating.json" 2>&1
+}
+
+# The version actually on this machine today: older than the first that can load a pin.
+fake_claude 2.1.278
+s="$TMP/settings-old.json"; printf '{}\n' > "$s"
+out="$(merge "$s")"; rc=$?
+assert_rc       "settings: an old Claude Code is not a failure"   0 "$rc"
+assert_contains "settings: says which version it found"           "2.1.278" "$out"
+assert_contains "settings: names the version pins need"           "2.1.324" "$out"
+assert_lacks    "settings: writes no ref it cannot load"          '"ref"' "$(cat "$s")"
+assert_contains "settings: still registers the marketplace"       "sveltejs/ai-tools" "$(cat "$s")"
+
+# Exactly the version that gained SHA pinning, and one past it.
+for v in 2.1.324 2.1.400; do
+  fake_claude "$v"
+  s="$TMP/settings-$v.json"; printf '{}\n' > "$s"
+  out="$(merge "$s")"
+  assert_contains "settings: $v writes the pin" \
+    '"ref":"61061d4704a5e61781e6415dd802e9d9aff89dbe"' "$(jq -c . "$s")"
+  assert_lacks    "settings: $v says nothing about the gate" "2.1.324, the first" "$out"
+done
+
+# A machine where `claude` can't be found: unpinned and loud, never pinned on a guess.
+rm -f "$TMP/cbin/claude"
+s="$TMP/settings-noclaude.json"; printf '{}\n' > "$s"
+out="$(CLAUDE_BIN="$TMP/cbin/claude" merge "$s")"
+assert_contains "settings: says it could not read a version" "no Claude Code version" "$out"
+assert_lacks    "settings: unpinned when the version is unknown" '"ref"' "$(cat "$s")"
+
+# The authority rule, which is the whole point of the channel.
+fake_claude 2.1.400
+s="$TMP/settings-drift.json"
+cat > "$s" <<'EOF'
+{
+  "editorMode": "vim",
+  "permissions": { "allow": ["Bash(npm run test *)"] },
+  "mcpServers": { "leftover": { "command": "x", "env": { "TOKEN": "plaintext" } } },
+  "enabledPlugins": { "svelte@svelte": true, "brag@latent-spaces": true },
+  "extraKnownMarketplaces": { "latent-spaces": { "source": { "source": "github", "repo": "latent-spaces/brag" } } }
+}
+EOF
+out="$(merge "$s")"; rc=$?
+after="$(jq -c . "$s")"
+assert_rc       "settings: a drifting file still merges"            0 "$rc"
+assert_contains "settings: names the plugin it removed"             "brag@latent-spaces" "$out"
+assert_contains "settings: names the marketplace it removed"        "marketplace  latent-spaces" "$out"
+assert_contains "settings: says where to declare it instead"        "claude-env.plugins.personal" "$out"
+assert_lacks    "settings: the undeclared plugin is gone"           "brag@latent-spaces" "$after"
+assert_lacks    "settings: the undeclared marketplace is gone"      "latent-spaces" "$after"
+assert_contains "settings: a declared plugin survives"              "svelte@svelte" "$after"
+assert_contains "settings: a declared plugin it did not have is added" "superpowers@superpowers-marketplace" "$after"
+assert_contains "settings: an unrelated key the user set survives"  '"editorMode":"vim"' "$after"
+assert_contains "settings: a permission the user granted survives"  "npm run test" "$after"
+assert_lacks    "settings: mcpServers is dropped with its token"    "plaintext" "$after"
+
+# A file worth more than the merge: never half-write it.
+s="$TMP/settings-broken.json"; printf '{ "theme": \n' > "$s"
+before="$(cat "$s")"
+out="$(merge "$s")"; rc=$?
+assert_rc       "settings: invalid JSON reports rather than merges" 3 "$rc"
+assert_contains "settings: says the file is not valid JSON"         "not valid JSON" "$out"
+[[ "$(cat "$s")" == "$before" ]] && ok || bad "settings: broken file left untouched" "$before" "$(cat "$s")"
+
+s="$TMP/fresh/settings.json"
+out="$(merge "$s")"; rc=$?
+assert_rc       "settings: a missing file is created"      0 "$rc"
+assert_contains "settings: the new file has the base keys" "cyberpunk_dark" "$(cat "$s")"
+
+out="$(PATH="$TMP/cbin:$PATH" bash "$SETTINGS_SH" "$TMP/base.json" 2>&1)"; rc=$?
+assert_rc       "settings: wrong argument count is a usage error" 2 "$rc"
+assert_contains "settings: prints the usage line"                 "usage: claude-settings.sh" "$out"
+
+# ── claude-plugins-check ─────────────────────────────────────────────────────
+#
+# It reports drift, so the test that matters is that it reports none when there is none, and
+# exits non-zero when there is. Fixtures stand in for ~/.claude so the result doesn't depend on
+# whichever plugins this machine happens to have installed today.
+
+CHECK_SH="$HERE/claude-plugins-check.sh"
+
+mk_claude_dir() { # dir declared-ref installed-sha
+  mkdir -p "$1/plugins/marketplaces/svelte" "$1/plugins/cache"
+  git -C "$1/plugins/marketplaces/svelte" init -q 2>/dev/null
+  git -C "$1/plugins/marketplaces/svelte" -c user.email=t@t -c user.name=t \
+    commit -q --allow-empty -m 'fixture' 2>/dev/null
+  head="$(git -C "$1/plugins/marketplaces/svelte" rev-parse HEAD)"
+  cat > "$1/settings.json" <<EOF
+{ "enabledPlugins": { "svelte@svelte": true },
+  "extraKnownMarketplaces": { "svelte": { "source": {
+    "source": "github", "repo": "sveltejs/ai-tools", "ref": "${2:-$head}" } } } }
+EOF
+  cat > "$1/plugins/installed_plugins.json" <<EOF
+{ "version": 2, "plugins": { "svelte@svelte": [ { "scope": "user", "version": "1.0.11",
+  "gitCommitSha": "${3:-$head}" } ] } }
+EOF
+}
+
+check() { CLAUDE_CONFIG_DIR="$1" bash "$CHECK_SH" 2>&1; }
+
+mk_claude_dir "$TMP/cfg-clean"
+out="$(check "$TMP/cfg-clean")"; rc=$?
+assert_rc       "plugins-check: no drift exits 0"        0 "$rc"
+assert_contains "plugins-check: says so plainly"         "no drift" "$out"
+
+mk_claude_dir "$TMP/cfg-drift" "0123456789abcdef0123456789abcdef01234567"
+out="$(check "$TMP/cfg-drift")"; rc=$?
+assert_rc       "plugins-check: a marketplace off its pin exits 1" 1 "$rc"
+assert_contains "plugins-check: names the declared commit"         "0123456789ab" "$out"
+
+mkdir -p "$TMP/cfg-drift/plugins/cache/ponytail"
+out="$(check "$TMP/cfg-drift")"
+assert_contains "plugins-check: reports a leftover cache" "left over from a removed marketplace" "$out"
+
+mk_claude_dir "$TMP/cfg-unused"
+printf '{ "enabledPlugins": {}, "extraKnownMarketplaces": {} }\n' > "$TMP/cfg-unused/settings.json"
+out="$(check "$TMP/cfg-unused")"; rc=$?
+assert_rc       "plugins-check: installed but not enabled exits 1" 1 "$rc"
+assert_contains "plugins-check: names the quiet case"              "installed but not enabled" "$out"
+
+out="$(CLAUDE_CONFIG_DIR="$TMP/does-not-exist" bash "$CHECK_SH" 2>&1)"; rc=$?
+assert_rc       "plugins-check: no settings file is a setup error" 2 "$rc"
+
+# The skills half. A declared skill is a link into the store, so the four cases are: declared,
+# machine-only and loading, machine-only and loading nothing, and linked somewhere off-store.
+mk_claude_dir "$TMP/cfg-skills"
+mkdir -p "$TMP/cfg-skills/skills" "$TMP/elsewhere/mine"
+store_path="$(dirname "$(dirname "$(readlink -f "$(command -v jq)")")")"
+ln -sfn "$store_path" "$TMP/cfg-skills/skills/declared"
+mkdir -p "$TMP/cfg-skills/skills/mine" && printf -- '---\nname: mine\n---\n' > "$TMP/cfg-skills/skills/mine/SKILL.md"
+mkdir -p "$TMP/cfg-skills/skills/a-pack/skills/inner"
+printf -- '---\nname: inner\n---\n' > "$TMP/cfg-skills/skills/a-pack/skills/inner/SKILL.md"
+printf -- '---\nname: linked\n---\n' > "$TMP/elsewhere/mine/SKILL.md"
+ln -sfn "$TMP/elsewhere/mine" "$TMP/cfg-skills/skills/linked"
+mkdir -p "$TMP/cfg-skills/skills/synced/whatever"
+
+out="$(check "$TMP/cfg-skills")"
+assert_contains "plugins-check: counts the declared skills"      "1 declared by the module" "$out"
+assert_contains "plugins-check: names the machine-only skill"    "reach no other laptop: mine" "$out"
+assert_contains "plugins-check: flags the off-store link"        "link outside the store" "$out"
+assert_contains "plugins-check: names the pack that loads nothing" "register nothing: a-pack" "$out"
+assert_lacks    "plugins-check: leaves Claude Code's own synced dir alone" "synced" "$out"
+
 # ── vendored trees carry their attribution ───────────────────────────────────
 #
 # skills.nix declares each vendored skill by whole-directory source precisely so the LICENSE

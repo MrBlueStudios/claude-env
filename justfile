@@ -45,3 +45,9 @@ test-scripts:
 vet path:
     @bash {{ root }}/modules/home/scripts/claude-vet.sh \
       --exemptions {{ root }}/docs/vet-exemptions.md {{ path }}
+
+# Where this machine's plugins have drifted from what the repo declares: a marketplace off its
+# pin, a plugin enabled but never installed (or installed and never enabled), a cache left over
+# from an uninstall. Pass --remote to also ask GitHub how far behind each pin now is.
+plugins-check *args:
+    @bash {{ root }}/modules/home/scripts/claude-plugins-check.sh {{ args }}

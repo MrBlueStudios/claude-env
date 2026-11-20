@@ -148,6 +148,24 @@ let
     ];
     text = builtins.readFile ./scripts/claude-vet.sh;
   };
+
+  # The other half of the vetting story: claude-vet says what a tree would bring, this says
+  # whether what the machine is actually running is still what the repo declares. `gh` is
+  # optional — only --remote uses it — so it is not a runtime input.
+  pluginsCheck = pkgs.writeShellApplication {
+    name = "claude-plugins-check";
+    runtimeInputs = with pkgs; [
+      jq
+      git
+      coreutils
+      findutils
+    ];
+    bashOptions = [
+      "nounset"
+      "pipefail"
+    ];
+    text = builtins.readFile ./scripts/claude-plugins-check.sh;
+  };
 in
 {
   home.packages = [
@@ -165,6 +183,7 @@ in
     artifactsPick
     complianceScan
     claudeVet
+    pluginsCheck
     playwrightCli
     hyperframes
     ttsPython

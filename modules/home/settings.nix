@@ -19,6 +19,79 @@ let
     command = "${home}/.claude/hooks/${script}";
   };
 
+  # ── the plugin channel ───────────────────────────────────────────────────────
+  #
+  # Every plugin the four of us load is declared here, with the marketplace commit it came from,
+  # so a fresh laptop gets the same set rather than whatever the marketplaces serve that day.
+  # `rev` is the commit `just vet` cleared; `just plugins-check` reports where the machine has
+  # drifted from it. Raising a pin means re-running the gate, which is the point of having one.
+  #
+  # The revs reach Claude Code as `ref`, which only accepts a SHA from 2.1.324 on, so
+  # ./scripts/claude-settings.sh picks the pinned or the floating form by the version it finds.
+  marketplaces = {
+    # Pins the catalog, not the plugin: superpowers-marketplace lists superpowers as a `url`
+    # source on obra/superpowers.git with no ref of its own, so the plugin still tracks main
+    # (installed 7.0.0, upstream 7.0.2 as of 2026-11-20). Closing that needs the catalog
+    # replaced by an inline `settings` source carrying the plugin's own `sha`, which changes
+    # how the plugin resolves and wants one supervised reinstall — see docs/project-state.yaml.
+    superpowers-marketplace = {
+      repo = "obra/superpowers-marketplace";
+      rev = "2cf27fa76667afa0ba724ad8141a6938a3834e32";
+    };
+
+    # /brag: turns the current project into a launch video via HeyGen's Hyperframes renderer
+    # (Puppeteer + FFmpeg). Untested on NixOS yet — Hyperframes may hit the same "npm-downloaded
+    # browsers don't run on NixOS" issue playwright-cli works around in ./tools.nix; if /brag's
+    # render step fails on a missing/incompatible Chromium, point it at pkgs.chromium the same way.
+    # Its catalog entry is a relative path, so this rev pins the plugin's own files too.
+    brag = {
+      repo = "latent-spaces/brag";
+      rev = "669ab9286aa28b6c3ee30e75f181ee74319d012a";
+    };
+
+    # The Svelte team's own plugin: MCP docs server plus the svelte-file-editor agent. Also a
+    # relative-path entry, so the rev pins the plugin.
+    svelte = {
+      repo = "sveltejs/ai-tools";
+      rev = "61061d4704a5e61781e6415dd802e9d9aff89dbe";
+    };
+  }
+  // config.claude-env.plugins.personalMarketplaces;
+
+  # One source per marketplace, with the ref the caller asks for.
+  sources =
+    withRev:
+    lib.mapAttrs (_: m: {
+      source = {
+        source = "github";
+        repo = m.repo;
+      }
+      // lib.optionalAttrs (withRev && m.rev != null) { ref = m.rev; };
+    }) marketplaces;
+
+  marketplacesPinned = pkgs.writeText "claude-marketplaces-pinned.json" (
+    builtins.toJSON { extraKnownMarketplaces = sources true; }
+  );
+  marketplacesFloating = pkgs.writeText "claude-marketplaces-floating.json" (
+    builtins.toJSON { extraKnownMarketplaces = sources false; }
+  );
+
+  settingsMerge = pkgs.writeShellApplication {
+    name = "claude-settings";
+    runtimeInputs = with pkgs; [
+      jq
+      coreutils
+      gnugrep
+    ];
+    # no errexit: this is a merge whose failure paths all end in a warning and an exit code the
+    # activation script reads, not in a half-written settings file
+    bashOptions = [
+      "nounset"
+      "pipefail"
+    ];
+    text = builtins.readFile ./scripts/claude-settings.sh;
+  };
+
   base = {
     "$schema" = "https://json.schemastore.org/claude-code-settings.json";
     theme = "custom:cyberpunk_dark";
@@ -54,22 +127,19 @@ let
       Stop = [ { hooks = [ (hook "notify-done.sh") ]; } ];
     };
 
-    extraKnownMarketplaces.superpowers-marketplace.source = {
-      source = "github";
-      repo = "obra/superpowers-marketplace";
-    };
-    enabledPlugins."superpowers@superpowers-marketplace" = true;
+    # The marketplaces these come from are above; the sources themselves are written to a
+    # separate file so the pinned and floating forms can be chosen at activation time.
+    enabledPlugins = {
+      "superpowers@superpowers-marketplace" = true;
+      "brag@brag" = true;
+      "svelte@svelte" = true;
 
-    # /brag: turns the current project into a launch video via HeyGen's Hyperframes renderer
-    # (Puppeteer + FFmpeg). Verified repo: github.com/latent-spaces/brag. Untested on NixOS yet —
-    # Hyperframes may hit the same "npm-downloaded browsers don't run on NixOS" issue playwright-cli
-    # works around in ./tools.nix; if /brag's render step fails on a missing/incompatible Chromium,
-    # point it at pkgs.chromium the same way.
-    extraKnownMarketplaces.brag.source = {
-      source = "github";
-      repo = "latent-spaces/brag";
-    };
-    enabledPlugins."brag@brag" = true;
+      # claude-plugins-official is built in, so it needs no marketplace entry — and Claude Code
+      # refuses a commit pin on a reserved marketplace name, so this one necessarily floats.
+      # It is Anthropic's own marketplace, which is the only reason that is acceptable here.
+      "frontend-design@claude-plugins-official" = true;
+    }
+    // config.claude-env.plugins.personal;
   };
 
   baseFile = pkgs.writeText "claude-settings-base.json" (builtins.toJSON base);
@@ -121,25 +191,18 @@ in
 {
   home.file.".claude/themes/cyberpunk_dark.json".text = builtins.toJSON theme;
 
+  # The merge, the two keys the repo owns and the version gate live in ./scripts/claude-settings.sh
+  # so they can be tested without a rebuild (modules/home/scripts/tests.sh). The script reads a
+  # Claude Code version to decide whether the marketplaces can be pinned; claude-code is the
+  # consumer's package, not this flake's, so look for it rather than assuming activation's PATH
+  # has it. Not finding one is handled — it falls back to unpinned and says so.
   home.activation.claudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    settings="$HOME/.claude/settings.json"
-    run mkdir -p "$HOME/.claude"
-    if [ ! -s "$settings" ]; then
-      run sh -c 'echo "{}" > "$1"' _ "$settings"
-    fi
-    if ${pkgs.jq}/bin/jq empty "$settings" 2>/dev/null; then
-      tmp="$(mktemp)"
-      # base wins on its own keys; `mcpServers` is not a settings key (MCP lives in ~/.claude.json
-      # and .mcp.json) and the old setup script left plaintext tokens in it, so it is dropped
-      if ${pkgs.jq}/bin/jq -s '(.[0] * .[1]) | del(.mcpServers)' "$settings" ${baseFile} > "$tmp" && [ -s "$tmp" ]; then
-        run mv "$tmp" "$settings"
-        run chmod 600 "$settings"
-      else
-        rm -f "$tmp"
-        warnEcho "merging Nix's Claude Code settings into $settings failed; file left untouched."
-      fi
-    else
-      warnEcho "$settings is not valid JSON; left untouched. Fix it, then switch again."
-    fi
+    claudeBin="$(command -v claude || true)"
+    for candidate in "$HOME/.nix-profile/bin/claude" /run/current-system/sw/bin/claude; do
+      if [ -z "$claudeBin" ] && [ -x "$candidate" ]; then claudeBin="$candidate"; fi
+    done
+    run env CLAUDE_BIN="$claudeBin" ${settingsMerge}/bin/claude-settings \
+      "$HOME/.claude/settings.json" ${baseFile} ${marketplacesPinned} ${marketplacesFloating} \
+      || warnEcho "Nix's Claude Code settings were not merged into ~/.claude/settings.json; see above."
   '';
 }

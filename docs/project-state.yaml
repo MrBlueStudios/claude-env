@@ -17,15 +17,16 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-19T18:55"
+updated: "2026-11-20T09:40"
 suite:
   command: just test
   result: green
-  as_of: 2026-11-19
+  as_of: 2026-11-20
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
-    26.05 (tests/eval-*), then runs the 58 guard cases and 17 helper-script tests. Nothing is built
-    or switched.
+    26.05 (tests/eval-*), then runs the 58 guard cases and 108 helper-script tests. Nothing is
+    built or switched. `just plugins-check` is deliberately not part of it: it reports the state
+    of the machine it runs on, which is not a property of the repo.
 artifacts:
   status: https://claude.ai/code/artifact/71c33b0d-0713-44c6-a94c-bf3312635352
   todo: https://claude.ai/code/artifact/e3563a45-ca0e-44d9-b157-56b3b202b2f6
@@ -643,10 +644,37 @@ claude_todos:
       grilling (MIT, Matt Pocock) and performance-optimization (MIT, Addy Osmani), four skills
       and ~256 tokens against ~4,200 for both packs whole. Also repomix from nixpkgs as a CLI
       only. Left: accessibility-engineering, because web-design-guidelines already carries 25
-      concrete WCAG rules written against this crew's own stack. Still open — the imperative
-      plugins that remain (superpowers, brag, svelte, frontend-design) are enabled through
-      settings.nix but their versions are not pinned by the flake, so a fresh laptop gets
-      whatever the marketplace serves that day.
+      concrete WCAG rules written against this crew's own stack.
+      .
+      The plugin half closed on 2026-11-20. All four plugins are now declared in settings.nix
+      (svelte and frontend-design were only ever on Léon's machine), and the three
+      non-built-in marketplaces carry the commit `just vet` cleared. settings.nix no longer
+      merges those two keys: ./scripts/claude-settings.sh deletes `enabledPlugins` and
+      `extraKnownMarketplaces` from the file before merging, so an undeclared plugin is removed
+      at the next switch and named while it goes. claude-env.plugins.personal and
+      .personalMarketplaces are the escape hatch for a plugin that is genuinely one person's.
+      .
+      Pinning has a version floor: `ref` accepts a commit SHA only from Claude Code 2.1.324, and
+      an older version refuses to load a marketplace pinned that way, taking its plugins with
+      it. This machine is on 2.1.278 (nixpkgs master is at 2.1.328, so a nixpkgs update crosses
+      it). So the module writes both forms and the script picks by the version it finds, warning
+      while it is the floating one. The pins start applying with no edit here.
+      .
+      One plugin cannot be pinned and one must not be. superpowers-marketplace lists superpowers
+      as a `url` source on obra/superpowers.git with no ref, so pinning the catalog does not pin
+      the plugin — it still tracks main, and the machine is on 7.0.0 against 7.0.2 upstream.
+      Closing that means replacing the catalog with an inline `settings` source carrying the
+      plugin's own `sha`, which changes how superpowers resolves and wants one supervised
+      reinstall: a question for Léon, not a thing to do while he is away.
+      frontend-design@claude-plugins-official is on Anthropic's built-in marketplace, whose
+      reserved name refuses a commit pin by design.
+      .
+      The skills half is the bigger gap and is still open. `just plugins-check` counts it: 20
+      skills load from ~/.claude/skills on this machine only, 7 more are symlinks into
+      ~/Projects/Claude_testing/skills/ and so break on any other laptop, and 3 directories
+      (anthropic-skills, obsidian-skills and a second whole copy of superpowers) have no
+      SKILL.md of their own and therefore register nothing at all. Which of the 27 are crew
+      skills and which are personal is Léon's call — see the question at the end of this file.
   - id: ct-tool-trials
     text: >-
       Run the six time-boxed trials from the 40-repo review and record each verdict here
@@ -990,10 +1018,6 @@ questions:
       The flake supports both releases and Léon upgrades to 26.05. Léon confirmed on 2026-11-16,
       after research/nixos-version-matrix.md showed the modules evaluate on both releases with one
       guarded fix and that the 25.05 branch is end-of-life.
-    blocks_note: >-
-      The flake's input structure (module-only versus pinned home-manager) is decided by this,
-      and that structure is the first line of flake.nix.
-    answer: null
   - id: q-blitsol-friends
     question: Which friends get the Blitsol tier?
     options:
@@ -1009,3 +1033,58 @@ questions:
       Only those already working on Blitsol client work, which is all four of the current crew —
       Almar, Ryan, Kish and Léon. Named 2026-11-13. Friends added later get the base tier only,
       with no Blitsol access, so the tier split earns its keep from the first new person.
+  - id: q-personal-skills
+    question: >-
+      27 skills load from ~/.claude/skills on Léon's laptop and reach nobody else. Which of them
+      are crew skills that belong in the flake?
+    options:
+      - Migrate the ones the crew would use, leave the rest personal and declared as personal
+      - Migrate all 27, on the grounds that a shared environment should be the same everywhere
+      - Leave them all personal; the flake carries only what was written for the crew
+    recommendation: >-
+      The first, and the split is mostly obvious from the names. Crew candidates: review, deploy,
+      ship, research, design, full-visual and the three Claude_testing audits that are about
+      client work (legal-audit, security-audit, site-analytics) — those are the ones another
+      laptop would miss. Personal: roblox, media-use, normal, rapid, style-sampling, slideshow,
+      reverse-any-video, remotion-to-hyperframes, figma, my-todo, project-status,
+      prompt-optimizer, and the three hyperframes skills, which drive a renderer only Léon has
+      set up. council and dashboard are already in the flake as claude-mode skills, so the
+      copies in ~/.claude/skills are stale duplicates and should go either way.
+      .
+      Three more things to do while migrating, none of which need a decision. The seven symlinks
+      into ~/Projects/Claude_testing/skills/ break on any other laptop whatever is decided, so
+      each one either gets vendored or gets its own repo as claude-web-stack did.
+      anthropic-skills, obsidian-skills and a second whole copy of superpowers have no SKILL.md
+      of their own, so they have been registering nothing: delete them or wire them up.
+      ~/.claude/plugins/cache/ponytail and .../cursor-plugins are 20.6 MB left over from the
+      uninstalls and can be removed.
+    blocks:
+      - ct-plugin-channel
+    blocks_note: >-
+      The plugin half of ct-plugin-channel closed on 2026-11-20; the skills half is this
+      question, because which skills are the crew's is not something the repo can infer.
+    answer: null
+  - id: q-superpowers-pin
+    question: >-
+      superpowers is the one plugin the flake cannot pin, because its catalog entry fetches a
+      branch. Replace the catalog with our own pinned one?
+    options:
+      - Leave it floating; re-vet when a new version shows up in `just plugins-check`
+      - Declare an inline `settings` marketplace under the same name, pinning the plugin's own sha
+      - Fork obra/superpowers-marketplace and pin the fork
+    recommendation: >-
+      The second, but not unsupervised. An inline `settings` source keeps the plugin id
+      (superpowers@superpowers-marketplace), so no skill prefix changes, and its catalog entry
+      can carry the plugin's own `sha` — which is the only way to pin the bytes. The cost is
+      that it changes how the plugin resolves, so the next session re-fetches it, and if that
+      goes wrong the one plugin the transcripts show being used stops loading. Worth one
+      supervised switch rather than a surprise. It is also the only option that needs no Claude
+      Code 2.1.324, since the version floor is on marketplace pins, not plugin ones.
+      .
+      Option three works too and costs a repo to maintain forever. Option one is what is in
+      place now, and the drift it allows is real but small: 7.0.0 installed against 7.0.2
+      upstream, both from the same named author.
+    blocks: []
+    blocks_note: >-
+      Not blocking: the marketplace is pinned either way, and only the plugin's own bytes float.
+    answer: null
