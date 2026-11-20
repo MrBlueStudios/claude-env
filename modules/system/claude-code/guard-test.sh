@@ -80,9 +80,17 @@ run allow "$P" 'set -a; source .env; set +a; pytest'
 # git
 run deny  "$P" 'git push --force origin main'
 run deny  "$P" 'git push -f origin master'
+run deny  "$P" 'git push origin +main:main'
+run deny  "$P" 'git switch main && git push -f'
 run ask   "$P" 'git push --force-with-lease origin feature/x'
+run ask   "$P" 'git push --force-with-lease=feature/x:abc123 origin feature/x'
 run allow "$P" 'git push -u origin claude/feature'
 run allow "$P" 'git commit -m "remove main loop; rm -rf note"'
+# the force flags belong to the push, not to whatever ran before it in the same string
+run allow "$P" 'rm -f old.log && git push origin main'
+run allow "$P" 'jj describe -m "delta +0" && jj git push --bookmark main'
+run allow "$P" 'git commit -m "add -f flag" && git push origin main'
+run allow "$P" 'git push origin main && echo "done, no --force needed"'
 # NixOS activation
 run ask   "$P" 'nh os switch .'
 run ask   "$P" 'sudo nixos-rebuild switch --flake .#mr-blue'

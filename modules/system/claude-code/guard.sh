@@ -41,7 +41,17 @@ has "${reader}(^|[\\s/'\"])\\.env(?!\\.(example|sample|template|dist)\\b)(\\.[\\
   deny "reading a .env file (use .env.example, or ask Léon for the value)"
 
 # Force-push: never to main/master, ask otherwise.
-if has '\bgit\s+push\b' && has '(\s-f\b|\s--force\b|\s--force-with-lease\b|\s\+\S)'; then
+#
+# The force flags are looked for in the `git push` command itself, not anywhere in the string.
+# Reading the whole string as one blob called `rm -f old.log && git push origin main` a force-push
+# to main, and so was any commit message containing a space and a + — `jj describe -m 'delta +0'
+# && jj git push --bookmark main` was blocked as a force-push, because `\s\+\S` matched the
+# message. The branch name is still looked for in the whole command, because `git switch main &&
+# git push -f` really is one.
+# `|| true`: no match is the common case, and the guard runs under errexit.
+push_seg="$(grep -oP '\bgit\s+push\b[^;&|]*' <<<"$cmd" || true)"
+if [ -n "$push_seg" ] &&
+  grep -qP -- '(^|\s)(-f|--force|--force-with-lease)(\s|=|$)|\s\+[\w./*-]+(:|\s|$)' <<<"$push_seg"; then
   has '\b(main|master)\b' && deny "force-push to main/master"
   ask "force-push rewrites remote history"
 fi
