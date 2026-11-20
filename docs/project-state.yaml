@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T15:20"
+updated: "2026-11-20T15:53"
 suite:
   command: just test
   result: green
@@ -431,6 +431,29 @@ facts:
       bge-small-en-v1.5 via fastembed on Léon's CPU: 500 paragraphs in 38.8 s, one new paragraph
       101 ms, ranking against 500 stored vectors 2.8 ms. This is the dedup design now that CLM is
       parked.
+  - key: bge_small_cosine_unrelated_floor
+    value: 0.667
+    source: >-
+      crew-memory: crew-memory dedup --all --ranker embedding --min 0
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Measured on the real four-note vault, not assumed. Unrelated short notes sit at 0.665–0.667
+      rather than near zero, because bge-small has a high similarity floor on short English text;
+      a genuine collision scored 0.794. The shipped threshold is 0.70, which the first draft had
+      at 0.62 — below the floor, so every pair would have matched.
+  - key: laya_collision_confidence
+    value: 0.474
+    source: >-
+      crew-memory: evaluate_laya_decision on the top-ranked pair
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Disproves the dedup design's central claim. Asked "are these the same piece of work?", Laya
+      returns 0.136 true for an unrelated pair — a confident no — but 0.474 for a real collision,
+      which is a shrug; rephrasing to "should these two talk first" gave 0.418, so prompting is
+      not the fix. The checkpoints are zero-shot and this is outside their calibration. Shipped
+      pipeline: the ranker shortlists, Laya drops confident negatives, the person decides.
   - key: claude_mode_kitty_refs
     value: 35
     source: >-

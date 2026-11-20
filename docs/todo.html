@@ -303,12 +303,12 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">7</span>
+        <span class="figure">8</span>
         <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
       </div>
       <div class="vital">
         <span class="figure">14</span>
-        <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked</span>
+        <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
         <span class="figure">3</span>
@@ -318,13 +318,13 @@
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p>Three features landed on 20 November and <strong>none of them is live</strong>: the tier split, the declarative MCP block and the pinned plugin channel are all on <code>main</code>, seven commits ahead of what <code>/etc/nixos</code> is locked to. One switch turns all of it on, and it is the first card below.</p>
+      <p>Three features landed on 20 November and <strong>none of them is live</strong>: the tier split, the declarative MCP block and the pinned plugin channel are all on <code>main</code>, ten commits ahead of what <code>/etc/nixos</code> is locked to. One switch turns all of it on, and it is the first card below.</p>
       <p><strong>Do the five-minute card above it first.</strong> <code>mcp.nix</code> now owns the user-scope server list, so the two servers nobody declared — <code>obsidian</code> and <code>vies-vat</code> — are removed by that switch unless you declare them. They are recoverable either way, but it is less annoying to decide before than to restore after.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 7 open, 1 pair of decisions, 1 blocked on Atlassian</span></h2>
+    <h2>Your queue <span class="tally">— 8 open, 1 pair of decisions, 1 blocked on Atlassian</span></h2>
     <p class="rationale">The order changed at the top only: two short cards now come before the Jira work, because both are prerequisites for it being worth doing. CLM stays parked by your decision of 17 November. One item is paused and not shown: the GPU check on your and Almar's spare machines, which hangs off the same early-December revisit.</p>
 
     <article class="task">
@@ -346,10 +346,10 @@
 
     <article class="task" style="border-top-color: var(--warn);">
       <div class="task-head">
-        <h3>Run one switch — seven commits are on <code>main</code> and none of it is live</h3>
+        <h3>Run one switch — ten commits are on <code>main</code> and none of it is live</h3>
         <span class="why">two commands, no decisions · everything on this board turns on here</span>
       </div>
-      <p class="rationale"><code>/etc/nixos/flake.lock</code> pins <code>claude-env</code> at <code>3dbbd93</code>. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, and the guide and enrolment runbook. That is seven commits, and the only thing between them and your laptop is this.</p>
+      <p class="rationale"><code>/etc/nixos/flake.lock</code> pins <code>claude-env</code> at <code>3dbbd93</code>. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, the guide and enrolment runbook, and a fix for a guard rule that was denying ordinary pushes. That is ten commits, and the only thing between them and your laptop is this.</p>
       <p class="rationale">Your 19 November switch reporting <code>0 paths added, 0 paths removed, delta +0</code> was correct and is worth remembering: the input resolves from <code>github:MrBlueStudios/claude-env</code>, so a local edit in <code>~/Projects/claude-env</code> changes nothing until it is committed, pushed and re-locked.</p>
       <ol class="steps">
         <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
@@ -462,6 +462,25 @@
 
     <article class="task">
       <div class="task-head">
+        <h3>Send the crew-memory questionnaire — the vault is empty until it comes back</h3>
+        <span class="why">fifteen minutes each · one message · the answers come back to me</span>
+      </div>
+      <p class="rationale">crew-memory's collision check works as of 20 November, and right now it has four ideas to rank against, all mine. A check over an empty <code>Ideas/</code> is a check over nothing, so the one thing standing between a working system and a useful one is other people's answers. This is also the one chance to ask all four of you at once; after this it is four separate conversations.</p>
+      <p class="rationale">The questions are deliberately few and every one of them maps onto a field the schema already holds — asking something the stores cannot keep wastes the ask. Section 5 ("what do you want to get better at") is the deliberate exception: it becomes no note, it goes to you, and you use it when handing work out.</p>
+      <ol class="steps">
+        <li><b>Read it first:</b> <code>~/Projects/crew-memory/docs/questionnaire.md</code>. It is written to be pasted into a chat as-is, so if a section asks something you would not want to answer yourself, cut it before sending rather than after.
+          <span class="done-when"><b>Done when</b> you are happy that all six sections are worth fifteen minutes of Almar's, Ryan's and Kish's time.</span></li>
+        <li>Send it to the three of them, however you normally talk. Say the honest version of why: so that two of you do not spend a fortnight building the same thing, and so the dead ends stop evaporating.
+          <span class="done-when"><b>Done when</b> all three have it. Worth saying out loud that this is <b>not</b> a status report and nothing in it is tracked — the design calls anything that reads as surveillance the thing that kills capture.</span></li>
+        <li>Paste each set of answers back to me, naming whose they are. I turn them into notes with the CLI, set <code>owner</code> to the person who answered and <code>source: human</code>, and run the collision check as I go.
+          <span class="done-when"><b>Done when</b> <code>just cm query --store Ideas</code> in <code>~/Projects/crew-memory</code> lists ideas owned by more than one person, and <code>just sweep</code> has a real corpus to rank against.</span></li>
+        <li>Answer it yourself too, last — your own ideas are the ones most likely to already be half-written somewhere else on this board.</li>
+      </ol>
+      <p class="trap"><b>One rule about other people's words:</b> I tighten grammar, never meaning, and never upgrade a hedge into a commitment — "I might do X" becomes an idea with <code>status: raw</code>, not <code>doing</code>. If an answer carries a client name under NDA or a credential, the note gets the shape and not the value. Say so when you send it, so nobody has to trust that I will.</p>
+    </article>
+
+    <article class="task">
+      <div class="task-head">
         <h3>Invite the Blitsol-tier friends into HubSpot, Cloudflare, Stripe and AdministratieX</h3>
         <span class="why">GUI invites in four billing accounts · after the bookkeeping switch</span>
       </div>
@@ -502,7 +521,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 14 done, 2 in progress and both waiting on you, 1 parked</span></h2>
+    <h2>My queue <span class="tally">— 14 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -545,6 +564,10 @@
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Fixed a guard false positive that blocked ordinary pushes</span></div>
         <p class="dw">The force-push rule read the whole command string, so a commit message containing <code>+0</code> looked like a <code>+ref</code> refspec, and a <code>-f</code> belonging to an earlier <code>rm</code> looked like a force flag. Both denied an ordinary push to main. The flags are now looked for inside the push command itself, while the branch name is still looked for in the whole string, because switching to main and then force-pushing really is one act. Seven cases added, 58 → 65. <b>It is not on your machine until the switch</b> — the guard runs from <code>/etc/claude-code/</code>.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">crew-memory's collision check works, and the design claim it rested on does not</span></div>
+        <p class="dw"><code>crew-memory dedup</code> and <code>crew-memory link</code> in <code>~/Projects/crew-memory</code>, plus <code>just collide "…"</code> and <code>just sweep</code>. <code>bge-small-en-v1.5</code> through FastEmbed ranks a new idea against every stored idea and live project, caching each note's vector by content hash so a new idea costs one embedding; <code>fastembed</code> is in nixpkgs on both releases, so no pip. Without it the ranker falls back to word overlap and says so on its first line. 12 tests added, 27 → 39. <b>The part that failed:</b> Laya was meant to give the calibrated yes/no, and measured on a real vault it gives 0.136 for an unrelated pair — a confident no — but 0.474 for a genuine collision, which is a shrug; rephrasing gave 0.418, so a better prompt is not the fix. So Laya drops the confident negatives and <em>you</em> decide. Both attempts are written into <code>Attempts/</code>, which is the system doing its job on itself. The seeding questionnaire is written too — <code>docs/questionnaire.md</code>, six sections, fifteen minutes, every question mapped to a field the schema holds. Sending it is in your queue; until it goes out, a collision check runs over an empty vault.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">Research track — all 16 answered and filed</span></div>
@@ -691,13 +714,13 @@
   </section>
 
   <footer>
-    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · 7 commits waiting on one switch</p>
+    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · 10 commits waiting on one switch</p>
     <p>input · github:MrBlueStudios/claude-env, so a module change needs commit, push, nix flake update, switch</p>
     <p>suite · just test green on 25.05 and 26.05 · 65 guard cases · 134 script tests</p>
     <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 31 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
-    <p>crew-memory · v0 runs at ~/Projects/crew-memory, committed locally and not pushed — the repo is yours to create</p>
+    <p>crew-memory · the collision check and the questionnaire landed 20 Nov · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
     <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>
   </footer>
 

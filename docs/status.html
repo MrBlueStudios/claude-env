@@ -305,7 +305,7 @@
         <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05 · 65 guard cases · 134 script tests · 20 Nov</span>
       </div>
       <div class="vital is-warn">
-        <span class="figure">7</span>
+        <span class="figure">10</span>
         <span class="sub">commits not live — <code>/etc/nixos</code> is locked to <code>3dbbd93</code>; everything below ships on the next <code>nix flake update claude-env</code></span>
       </div>
       <div class="vital">
@@ -522,7 +522,7 @@
         <div class="meta">
           <div class="meta-row"><span class="k">Done</span><span class="v">Laya is declared in <code>mcp.nix</code> and appears at user scope as soon as <code>claude-env.mcp.layaPath</code> points at the checkout — it is small, calibrated and fine on CPU, so it waits on nothing else. CLM stays unregistered on purpose: a dead tool in the list is worse than no tool.</span></div>
           <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — one line: <code>claude-env.mcp.layaPath = "/home/leon-new/Projects/Laya_And_CLM-MCPs";</code></span></div>
-          <div class="meta-row"><span class="k">Settled</span><span class="v"><strong>CLM is parked</strong> (16 Nov): the bf16 path needs a 24 GB NVIDIA card, no crew laptop has more than 6 GB, and the two spare machines are weeks away. crew-memory dedup uses <code>bge-small</code> plus Laya instead — 101 ms per idea on Léon's CPU. Revisit around 8 Dec.</span></div>
+          <div class="meta-row"><span class="k">Settled</span><span class="v"><strong>CLM is parked</strong> (16 Nov): the bf16 path needs a 24 GB NVIDIA card, no crew laptop has more than 6 GB, and the two spare machines are weeks away. crew-memory dedup uses <code>bge-small</code> instead — 101 ms per idea on Léon's CPU — and was built on 20 Nov. Laya was to give the calibrated yes/no on the shortlist; measured, it returns 0.136 for an unrelated pair but only 0.474 for a genuine collision, so it now drops confident negatives and the person decides. Revisit CLM around 8 Dec.</span></div>
         </div>
       </article>
 
@@ -676,6 +676,14 @@
             <td class="src">research/dedup-without-clm.md — the CPU path crew-memory uses instead</td><td class="when">2026-11-16</td>
           </tr>
           <tr>
+            <td class="key">bge_small_cosine_unrelated_floor</td><td class="val">0.667</td>
+            <td class="src">crew-memory dedup on the real vault — unrelated short notes sit at 0.665–0.667, not near zero; a genuine collision scored 0.794, so the threshold ships at 0.70</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr class="conflict">
+            <td class="key">laya_collision_confidence</td><td class="val">0.474</td>
+            <td class="src">evaluate_laya_decision on the top-ranked pair — 0.136 for an unrelated pair is a confident no, 0.474 for a real collision is a shrug; it drops negatives, the person decides</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
             <td class="key">nixos_releases_in_crew</td><td class="val">2</td>
             <td class="src">hardware-inventory.md — 25.05 and 26.05, Hyprland and KDE; both are evaluated on every test run</td><td class="when">2026-11-15</td>
           </tr>
@@ -699,13 +707,13 @@
       <div>
         <h3>Not yet true</h3>
         <ul>
-          <li>Nothing on this board is live. <code>/etc/nixos</code> is locked to <code>3dbbd93</code>, seven commits back.</li>
+          <li>Nothing on this board is live. <code>/etc/nixos</code> is locked to <code>3dbbd93</code>, ten commits back; <code>main</code> is at <code>0b8fc8e</code>.</li>
           <li>That a friend can follow the guide unaided — written carefully, tested by nobody.</li>
           <li>That the module behaves on KDE. Checked by reading, not by running.</li>
         </ul>
       </div>
     </div>
-    <p class="stamp">docs/project-state.yaml · 15 features · 31 facts · 3 open questions · created 2026-11-13, updated 2026-11-20</p>
+    <p class="stamp">docs/project-state.yaml · 15 features · 33 facts · 3 open questions · created 2026-11-13, updated 2026-11-20</p>
   </footer>
 
 </div>
