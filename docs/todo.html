@@ -323,7 +323,7 @@
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 7 open, in your stated order</span></h2>
+    <h2>Your queue <span class="tally">— 8 open, in your stated order</span></h2>
     <p class="rationale">CLM is parked by your decision of 17 November and has moved to Settled. One item stays paused and is not shown here: the GPU check on your and Almar's spare machines. It only ever mattered for CLM, so it now hangs off the same early-December revisit rather than waiting on nothing in particular.</p>
 
     <article class="task">
@@ -358,18 +358,32 @@
 
     <article class="task" style="border-top-color: var(--warn);">
       <div class="task-head">
-        <h3>Push the Atlassian ask rules, so the guardrail actually exists on the machine</h3>
-        <span class="why">a consequence of the GitHub input · one commit, one push, one switch</span>
+        <h3>Run one switch — everything is on <code>main</code> and none of it is live yet</h3>
+        <span class="why">a consequence of the GitHub input · two commands, no decisions</span>
       </div>
-      <p class="rationale">You switched and you moved the repo to GitHub on 17 November, both verified. That combination has a side effect worth internalising: local edits in the working copy no longer reach the system. <code>/etc/claude-code/managed-settings.json</code> on your running machine has the five deny rules and <strong>no</strong> <code>permissions.ask</code>, because the nine Atlassian write rules are still an uncommitted change here while the input resolves from GitHub.</p>
-      <p class="rationale">So the guardrail exists in the repo and not on the laptop. Until this lands, a Jira write is gated only by the ordinary per-project prompt, which is exactly the thing an approve-and-remember click switched off once already.</p>
+      <p class="rationale">You ran <code>nix flake update claude-env &amp;&amp; nh os switch .</code> on 19 November and it reported <code>0 paths added, 0 paths removed, delta +0</code>. That was correct: the input resolves from <code>github:MrBlueStudios/claude-env</code>, and at that moment the work was still sitting uncommitted in your working copy. Nothing was wrong with the command — there was simply nothing new on <code>main</code> to fetch.</p>
+      <p class="rationale">It is all pushed now: the nine Atlassian <code>ask</code> rules, the plugin audit, the <code>claude-vet</code> gate and the four adopted skills. <code>main</code> is at <code>454df05</code>. Until you run this, <code>/etc/claude-code/managed-settings.json</code> still has five deny rules and no <code>permissions.ask</code>, so a Jira write is gated only by the ordinary per-project prompt — the thing an approve-and-remember click switched off once already.</p>
       <ol class="steps">
-        <li>Commit and push <code>modules/system/guard.nix</code>.
-          <span class="done-when"><b>Done when</b> the ask rules are on <code>main</code> at MrBlueStudios/claude-env.</span></li>
-        <li><code>nix flake update claude-env</code> in <code>/etc/nixos</code>, then switch.
-          <span class="done-when"><b>Done when</b> <code>jq '.permissions.ask | length' /etc/claude-code/managed-settings.json</code> prints 9.</span></li>
+        <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
+          <span class="done-when"><b>Done when</b> the closure actually changes. If it says <code>delta +0</code> again, the update did not take — check <code>jq -r '.nodes["claude-env"].locked.rev' /etc/nixos/flake.lock</code> against <code>454df05</code>.</span></li>
+        <li>Check the guardrail landed: <code>jq '.permissions.ask | length' /etc/claude-code/managed-settings.json</code>
+          <span class="done-when"><b>Done when</b> it prints <code>9</code>.</span></li>
+        <li>Check the new tooling landed: <code>claude-vet --help</code> and <code>repomix --version</code>
+          <span class="done-when"><b>Done when</b> both run. <code>repomix</code> will be 0.3.3 on 25.05 and 1.15.0 on 26.05 — only the 26.05 one has the token-measuring flags.</span></li>
       </ol>
-      <p class="trap"><b>Worth doing once, properly:</b> this is the first time the GitHub input has bitten. Every future module change now needs commit, push, <code>nix flake update claude-env</code>, switch. A local edit that appears to do nothing is this, not a broken module.</p>
+      <p class="trap"><b>Worth internalising, since it has now cost one wasted switch:</b> every module change needs commit, push, <code>nix flake update claude-env</code>, switch. A local edit that appears to do nothing is this, not a broken module. The clue is <code>delta +0</code>.</p>
+    </article>
+
+    <article class="task" style="border-top-color: var(--warn);">
+      <div class="task-head">
+        <h3>Two calls on the tool trials, now that all four candidates are vetted</h3>
+        <span class="why">both change what the crew runs · neither can be answered from the repo</span>
+      </div>
+      <p class="rationale">The six trials from the 40-repo plan went as far as they can without you: installing any third-party tool is denied here as <em>Untrusted Code Integration</em>, which is the guardrail working. So each candidate was cloned and run through <code>just vet</code> instead, and two of the answers want a decision rather than a next step.</p>
+      <p class="rationale"><b>Beads fails the gate.</b> It declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code on every session and every prompt. The plan's note about installing with <code>--stealth</code> is about <em>git</em> hooks, not Claude Code's lifecycle, so that does not help. It is the most invasive thing on the list, and it is also the only candidate that would give the four of you a git-mergeable shared work graph. Either write it an exemption in <code>docs/vet-exemptions.md</code> with an honest reason, or drop it and keep Jira.</p>
+      <p class="rationale"><b>The compressors are not packaged.</b> RTK and Headroom are the only two entries of the forty with a real token-saving mechanism, and the plan said both were in nixpkgs. They are not, under any name — <code>haskellPackages.headroom</code> is an unrelated licence-header manager. So both would have to be installed imperatively, which is the exact drift this repo exists to stop, for a saving their own README puts at roughly 20%.</p>
+      <p class="trap"><b>My recommendation on the second one:</b> skip both. <code>research/context-budget.md</code> finding 9 is the argument — session start is 26,825 tokens and all MCP servers together are 4,670 of it, so the compressors would be fighting for a slice of the small half while costing the reproducibility rule. Revisit only if a measurement shows command output is actually where your tokens go.</p>
+      <p class="rationale">The other two need nothing from you yet. <b>Claude HUD</b> is the cleanest thing on the list: MIT, named author, no hooks declared, one skill. <b>wshobson/agents</b> is 185 skills and a projected 11,840 always-on tokens — about 44% of session start — which settles it: raid two or three plugins, never install the catalogue.</p>
     </article>
 
     <article class="task">
@@ -451,12 +465,25 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 2 ready, 5 queued, 4 done</span></h2>
+    <h2>My queue <span class="tally">— 1 ready, 5 queued, 7 done</span></h2>
     <div class="rows">
       <div class="row">
-        <div class="row-top"><span class="pill next">Next</span><span class="txt">Research track — your 16 answered and filed, two of mine left</span></div>
-        <p class="dw">Léon's three are answered and filed under <code>research/</code> (16 Nov): the modules were evaluated on both releases rather than read about, every agenix claim was reproduced in a scratch repo, and the Arc 140T was benchmarked. Still mine: <code>context-budget</code> and <code>memory-schema-prior-art</code>, both local. <b>Done when</b> every item is ticked with a write-up in the deliverable format. Four can reopen settled decisions: <code>atlassian-mcp-auth</code>, <code>booking-stack-licences</code>, <code>nixos-version-matrix</code>, <code>dedup-without-clm</code>.</p>
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">Research track — all 16 answered and filed</span></div>
+        <p class="dw">Closed 19 Nov. My last two landed (<code>context-budget</code>, <code>memory-schema-prior-art</code>) and section D handed over: crew-memory is a real project now, so it owns the sync, schema and dashboard follow-ups rather than this board. Four of the sixteen can still reopen settled decisions if anyone re-reads them: <code>atlassian-mcp-auth</code>, <code>booking-stack-licences</code>, <code>nixos-version-matrix</code>, <code>dedup-without-clm</code>.</p>
       </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">Plugin audit, the <code>claude-vet</code> gate, and four adopted skills</span></div>
+        <p class="dw">19 Nov. ponytail and pstack removed; ponytail's ruleset vendored as <code>rules/lazy-senior/</code>. <code>just vet</code> blocks a plugin that runs on its own unless an exemption with a reason is written down — it fails ponytail and Beads, passes superpowers through an exemption, and clears brag, frontend-design, svelte and all three skill packs. Adopted repomix plus <code>writing-for-agents</code>, <code>domain-modeling</code>, <code>grilling</code> and <code>performance-optimization</code>: 256 tokens taken, ~4,200 declined. <b>The audit's real finding:</b> neither removed plugin was ever in <code>enabledPlugins</code>, so neither ever cost a token or ran a hook. Installed is not enabled, and nothing in the repo could have told us which — that is what the declarative channel fixes.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done</span><span class="txt">crew-memory v0 — it exists and runs</span></div>
+        <p class="dw">19 Nov, at <code>~/Projects/crew-memory</code>. The four stores are real: schema, CLI (<code>lint</code>, <code>index</code>, <code>query</code>, <code>capture</code>, <code>touch</code>), the vault skeleton, and a capture skill. 27 tests, standard library only, flake8 clean. Seeded with three real dead ends from the same day's work rather than fixtures. <b>Two deviations, both written up:</b> capture is a model-invoked skill rather than a session-end hook, because <code>just vet</code> blocks that hook shape and exempting our own new system on day one would be a poor precedent; and <code>.gitattributes</code> sets no <code>merge=union</code>, because one file per session means two sessions never touch the same path. Committed locally, <b>not pushed</b> — <code>~/Projects</code> had 116 unrelated pending changes, so that one is yours.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Package crew-memory through the flake, once it is its own repo</span></div>
+        <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
+      </div>
+      <div class="row"></div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">Keep / drop / tier table for every MCP server and connector</span></div>
         <p class="dw"><code>docs/mcp-audit.md</code>, 16 Nov: 39 registrations, 12 connectors and the Svelte plugin each with a verdict and a reason. Base keeps context7, playwright, svelte, atlassian, laya and vies-vat; Blitsol adds cloudflare, the bookkeeping connector and the HubSpot/Stripe connectors; seven groups become opt-in modules; 23 are dropped. The bookkeeping row said Moneybird when it was written; as of 17 Nov that is AdministratieX, and whether it has a connector at all is unchecked.</p>
