@@ -307,7 +307,7 @@
         <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">14</span>
+        <span class="figure">16</span>
         <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
@@ -521,7 +521,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 14 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
+    <h2>My queue <span class="tally">— 16 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -568,6 +568,14 @@
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">crew-memory's collision check works, and the design claim it rested on does not</span></div>
         <p class="dw"><code>crew-memory dedup</code> and <code>crew-memory link</code> in <code>~/Projects/crew-memory</code>, plus <code>just collide "…"</code> and <code>just sweep</code>. <code>bge-small-en-v1.5</code> through FastEmbed ranks a new idea against every stored idea and live project, caching each note's vector by content hash so a new idea costs one embedding; <code>fastembed</code> is in nixpkgs on both releases, so no pip. Without it the ranker falls back to word overlap and says so on its first line. 12 tests added, 27 → 39. <b>The part that failed:</b> Laya was meant to give the calibrated yes/no, and measured on a real vault it gives 0.136 for an unrelated pair — a confident no — but 0.474 for a genuine collision, which is a shrug; rephrasing gave 0.418, so a better prompt is not the fix. So Laya drops the confident negatives and <em>you</em> decide. Both attempts are written into <code>Attempts/</code>, which is the system doing its job on itself. The seeding questionnaire is written too — <code>docs/questionnaire.md</code>, six sections, fifteen minutes, every question mapped to a field the schema holds. Sending it is in your queue; until it goes out, a collision check runs over an empty vault.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">crew-memory now notices that a session happened, so the dead end can be logged afterwards</span></div>
+        <p class="dw">The design wanted capture to be a byproduct of working. It cannot be fully automatic — "which approach was abandoned, and why" is a judgement — so it is split: <code>crew-memory session-end</code> is a <code>SessionEnd</code> hook that spools one pointer per finished session in <b>45 ms</b>, and <code>crew-memory pending</code> is what the skill reads at the start of the next one to decide which of them deserves a note. 13 tests, 39 → 52. <b>It is off by default and installed nowhere</b>, because it needs the flake, which needs crew-memory to be its own repo; the exact Nix block is written down in its README so it is one paste when the repo exists. Written up in <code>research/session-capture-hooks.md</code> from reading <code>claude-mem</code> without installing it, which is what the plan asked for. Three numbers decided the shape: <code>SessionEnd</code> hooks share a <b>1.5 s</b> budget, your transcripts run to <b>100 MB</b> (588 of them, 617 MB), and a <code>Stop</code> hook that exits non-zero <em>prevents Claude from stopping</em> — that last one is how claude-mem turned one error into a loop that drains usage. Also corrected a claim I had written in crew-memory's README: <code>just vet</code> does <b>not</b> block this hook shape, it blocks <code>SessionStart</code>, <code>UserPromptSubmit</code> and <code>SubagentStart</code>. And fixed a <code>.gitignore</code> that ignored <code>.embeddings/</code> while the embedding cache has always been written to <code>.crew-memory/</code> — the first <code>git add</code> in the shared vault would have committed it.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">The last verification item: watched a session instead of reading its code</span></div>
+        <p class="dw">The plan ended with "confirm no adopted item writes outside <code>~/.claude</code> or makes a network call at session start". Done by observation. <b>Network:</b> one <code>claude -p</code> run with no MCP servers opens 13 internet sockets, and every remote address is <code>160.79.104.10</code> or <code>2607:6bc0::10</code> — both resolve to <code>api.anthropic.com</code>. No third-party endpoint, no beacon from any adopted skill or plugin. <b>Filesystem:</b> two paths outside <code>~/.claude</code>, both ours — <code>~/.claude.json</code>, and <code>~/.local/state/claude-cost/</code> written by this repo's own statusline, which follows XDG rather than hiding state in <code>~/.claude</code>. Everything else the sweep caught belongs to Firefox and your zen widget, which were running anyway. So the claim holds with one declared exception, which is better than claiming it holds absolutely.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done</span><span class="txt">Research track — all 16 answered and filed</span></div>
@@ -720,7 +728,7 @@
     <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 31 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
-    <p>crew-memory · the collision check and the questionnaire landed 20 Nov · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
+    <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
     <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>
   </footer>
 

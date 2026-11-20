@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T15:53"
+updated: "2026-11-20T16:40"
 suite:
   command: just test
   result: green
@@ -454,6 +454,30 @@ facts:
       which is a shrug; rephrasing to "should these two talk first" gave 0.418, so prompting is
       not the fix. The checkpoints are zero-shot and this is outside their calibration. Shipped
       pipeline: the ranker shortlists, Laya drops confident negatives, the person decides.
+  - key: session_network_endpoints
+    value: 1
+    source: >-
+      strace -f -e trace=connect claude -p '...' --strict-mcp-config
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      The plan's last verification item, done by observation rather than by reading code. A
+      one-shot session with no MCP servers opens 13 AF_INET sockets and 5 AF_UNIX ones, and
+      every remote address is 160.79.104.10 or 2607:6bc0::10 — both of which resolve to
+      api.anthropic.com. No third-party endpoint, no beacon, nothing from any adopted skill or
+      plugin. Re-run it after adopting anything with code in it.
+  - key: session_writes_outside_claude_dir
+    value: 2
+    source: >-
+      find ~ -xdev -newer <stamp> -type f, around one claude -p session
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Both are ours and intended: ~/.claude.json, and ~/.local/state/claude-cost/ written by
+      this repo's own statusline, which follows XDG rather than hiding state in ~/.claude. The
+      other files the sweep found belong to Firefox and the zen widget, which were running
+      anyway. So "no adopted item writes outside ~/.claude" holds; "nothing does" does not, and
+      the one exception is declared.
   - key: claude_mode_kitty_refs
     value: 35
     source: >-

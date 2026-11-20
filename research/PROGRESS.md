@@ -267,3 +267,14 @@ What you did not look at and why.
 | **Almar** | atlassian-mcp-auth · booking-stack-licences · memory-dashboard-options |
 | **Claude, here** | context-budget · memory-schema-prior-art |
 | **Unassigned** | trading-free-data · srs-algorithms |
+
+## Written after the track closed
+
+The sixteen above are the track, and it is finished. `research/` has since gained notes that came
+out of building rather than out of a question somebody was handed. They are listed here so the
+folder does not accumulate items nobody can account for.
+
+- **session-capture-hooks** — 20 Nov, Claude here. What a session-end capture hook has to get
+  right, read out of `claude-mem` (Apache-2.0) without installing it, which is what the 40-repo
+  plan's Phase 4 asked for. Picks `SessionEnd` over `Stop` and is the reason `crew-memory` spools
+  a pointer rather than writing a note inside the hook.
