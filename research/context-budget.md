@@ -4,7 +4,7 @@
 
 **Answer:** About 28,500 tokens before the first word is typed, measured by running one-shot sessions and reading the usage report; MCP servers account for only about 5,600 of that, because Claude Code lists their tool names and defers the schemas until a tool is needed. The ten most expensive items are not servers at all but the fixed system prompt plus the 124 skill descriptions (about 6,900 tokens); the servers marked for pruning save about 520 tokens together and the HyperFrames suite about 320. Prune for security and clarity, not for context.
 
-**Re-measured 19 November 2026** (same method): **26,825 tokens with every server connected, 22,155 with none**, so the MCP share is now 4,670. Two things that were estimated on 16 November are now measured: tool deferral is real, and a skill costs about 64 tokens. One thing that was assumed is wrong — see finding 11, where two plugins counted in the 124 turned out never to have been enabled.
+**Re-measured 20 November 2026** (same method): **27,344 tokens with every server connected, 22,263 with none**, so the MCP share is 5,081 — one more server than on 19 November, and still nothing from the flake, because none of it is live yet (finding 14). On 19 November it was 26,825 and 22,155, a share of 4,670. Two things that were estimated on 16 November are now measured: tool deferral is real, and a skill costs about 64 tokens. One thing that was assumed is wrong — see finding 11, where two plugins counted in the 124 turned out never to have been enabled.
 
 **Confidence:** high for the totals and, since 19 November, high for the per-skill cost too (finding 10 measures it instead of estimating it).
 
@@ -62,6 +62,22 @@
     either whole would have cost ~2,500 or ~1,700 tokens for skills that largely duplicate
     superpowers. Léon's rule for this round was measure and report, not cap, and 1 % needs no
     decision from him. Source: local measurement plus the per-skill rate in finding 10.
+
+14. **20 November, same method: 27,344 with every server connected, 22,263 with none.** The MCP
+    share is 5,081, up 411 from 19 November, and the no-MCP arm moved 108, which is inside the
+    noise of a changing `CLAUDE.md`. The 411 is one more server: user scope now holds ten
+    registrations rather than nine. Nothing that landed in the flake on 20 November is in either
+    number, because none of it is live — `/etc/nixos` is still locked to a commit from before the
+    tier split, the declarative MCP block and the plugin channel. So this is the **before** figure
+    for that switch, and the honest "after" is one `claude -p` run once it has happened. Deferral
+    still holds: five thousand tokens for ten servers plus twelve connectors is not a prompt
+    carrying their schemas. Source: local measurement, same command as finding 1.
+
+    What to expect from the switch, as a prediction worth checking rather than a claim: the
+    declared set is smaller than the live one (three at base tier, four on this laptop, plus
+    whatever is declared as personal), so the MCP share should fall by a few hundred tokens,
+    while the skills total rises by the 256 of finding 13. A move of more than about 10 % either
+    way means something unintended landed, and is worth reading the activation output for.
 
 ## Not checked
 

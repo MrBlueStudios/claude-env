@@ -7,6 +7,13 @@ Per domain: what is covered today, what is missing, and the one change that clos
 gap. Verdicts are about the *shared* environment — a tool that exists only on Léon's laptop,
 or only inside one directory, counts as missing for everyone else.
 
+> **Read the paths as of 13 November.** Every `modules/...` path below is where that file sat in
+> Léon's nix-config before the extraction. In this repo the home module is `modules/home/` and
+> the guard is `modules/system/guard.nix` with `modules/system/claude-code/guard.sh`. Finding 1,
+> that the guard does not ship with the flake, was closed on 20 November: `nixosModules.default`
+> carries it and `docs/guide.md` §1 says to import both modules. Finding 2, Roblox, stands — that
+> toolchain is still nix-config's alone.
+
 ---
 
 ## Summary

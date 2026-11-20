@@ -126,3 +126,25 @@ context7 · playwright (nixpkgs) · svelte plugin · atlassian (`https://mcp.atl
 ## How this is applied
 
 Not by hand. Feature `mcp-declarative` writes the `mcpServers` block of `~/.claude.json` from Nix on activation (merging, not replacing, so personal local-scope entries survive), and `mcp-consolidate` runs the prune once. The `legacy` list in `mcp.nix` grows by the dropped names above; `playwright` and `svelte` come off that list because they stay.
+
+## What actually shipped — 20 November
+
+Wiring the audit changed five of its answers. Everything above is the audit as written on
+16 November; this section is what `modules/home/mcp.nix` declares today, and why it differs.
+Where the two disagree, the module is right — it is the thing that runs.
+
+| Audit said | Shipped | Why it changed |
+|---|---|---|
+| Base: context7, playwright, svelte, atlassian, laya, vies-vat | Base: **context7, atlassian, playwright** | `svelte` is a plugin rather than an entry in `mcpServers`, so it is declared in `settings.nix` with the other plugins and does not belong in this table's base row. `laya` is declared but conditional on `claude-env.mcp.layaPath`, because a server pointed at a checkout that does not exist on a friend's laptop is a tool that always fails. `vies-vat` is held pending `q-vies-vat`. |
+| Blitsol adds cloudflare and moneybird | Blitsol adds **cloudflare** only | Moneybird turned out to be trial-only (17 Nov), so the books move to AdministratieX and there is no Moneybird server to fix. Whether AdministratieX has an MCP server or connector at all is unchecked. |
+| Opt-in `legal`: eu-law **and overheid-apis** | Opt-in `legal`: **eu-law** only | `overheid-apis` does not exist on npm under that name. The registration on the machine was pointing at nothing, which is why it never worked. |
+| Opt-in modules include `roblox` | Six modules: **nix, legal, trading, seo, sentry, firecrawl** | The Roblox toolchain is a package set rather than an MCP server, and `coverage.md` already records it as the least shareable domain. It stays out of the MCP block entirely. |
+| vies-vat is "Léon's own build, must be built by Nix" | Not declared; a question instead | It is not Léon's build. It is `Jazib-but/check-vat-vies-mcp-Jazib`, MIT, still carrying an `api-server.js`, a Dockerfile and placeholder deployment hosts. `just vet` clears it on safety — the only outbound host is `ec.europa.eu` — so the open question is value, not risk: one SOAP call to one endpoint is what a CLI is for. |
+
+Two things the audit got right and are worth repeating, because they are the reason the numbers
+are small: 23 registrations are dropped with one reason each, and the module prunes them from the
+local scopes too, so the web-design toolkit stranded in `~/projects/fastsdcpu` goes with them.
+
+The `legacy` list is now called `dropped`, and it is no longer advisory: `claude-mcp` removes
+anything on it, and anything not declared, at activation — naming each removal and saving it to
+`~/.claude/removed-mcp-servers.json` first.
