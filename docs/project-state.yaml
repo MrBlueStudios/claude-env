@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T10:30"
+updated: "2026-11-20T11:20"
 suite:
   command: just test
   result: green
@@ -593,35 +593,97 @@ claude_todos:
       - /home/leon-new/Projects/claude-env/modules/system/guard.nix
   - id: ct-jira-mcp
     text: Add the Atlassian remote MCP to the base tier for the shared board
-    status: later
+    status: done
     done_when: >-
       `claude mcp list` shows the Atlassian server connected and a test query returns an issue
       from the shared website board
     note: >-
       Unblocked by mt-atlassian-test on 2026-11-17: the server, the auth flow and a write are all
-      proven to work, so this is now only the module wiring.
+      proven to work, so this was only the module wiring, which landed 2026-11-20 — atlassian is
+      base tier in mcp.nix and its nine write operations are behind the managed `ask` rule.
+      .
+      Half of the done_when cannot be met yet and it is not the module's half. A query does
+      return an issue: blitsol.atlassian.net answers, and `created > -365d ORDER BY updated DESC`
+      returns KAN-1 "test issue". But that is the only issue on the site and KAN (named "test")
+      is the only project, so there is no shared website board to query. Creating it shapes how
+      the crew works, so it is Léon's call rather than something to do while he is away.
   - id: ct-enrolment
     text: Write the agenix enrolment runbook for adding and removing a Blitsol friend
-    status: later
+    status: done
     done_when: >-
       The runbook takes one SSH public key to a re-keyed secret the friend can decrypt, and names
       the exact steps to revoke it again
+    note: >-
+      docs/enrolment.md, 2026-11-20. Every command says which directory it runs in and on whose
+      machine, because half of them are run by the friend and half by Léon.
+      .
+      Three things in it were checked against the real setup rather than written from memory. The
+      recipient you need is the friend's *host* key, not their personal one, because agenix
+      decrypts during their activation as root — their personal key only matters if they will
+      edit secrets. The key must be the raw ssh-ed25519 line and not the ssh-to-age form, which
+      /etc/nixos/secrets/secrets.nix already warns about at length because it has cost someone an
+      evening. And the verification step is a recipient count from the age header
+      (`grep -ac '^-> '`, where -a is not optional because the file is binary and plain grep -c
+      prints nothing at all); every file in /etc/nixos/secrets currently reads 3, so after one
+      person is added every file must read 4 and a file left at 3 is the one they cannot open.
+      .
+      The revoke half has four steps and the fourth is the only one that is security rather than
+      bookkeeping: re-keying does not un-leak. They had the plaintext and may still hold an old
+      clone whose ciphertext their key opens, so each value has to be rotated at its source,
+      worst first.
+      .
+      The runbook cannot be executed yet: blitsol-secrets does not exist (mt-collect-keys), so it
+      opens with how to create it. Worth knowing before trusting that repo as an inventory:
+      secrets.nix declares sixteen secrets and four .age files exist, firecrawl-api-key.age among
+      the missing twelve — which is why the firecrawl wrapper warns at startup.
   - id: ct-guide
     text: Write the friend-facing guide to the environment
-    status: later
+    status: done
     done_when: >-
       docs/guide.md covers install, the two tiers, what each MCP and skill is for, the guardrails,
       and the first-hour walkthrough — and a friend can follow it without asking Léon a question
+    note: >-
+      docs/guide.md, 2026-11-20, nine sections: install and how to check it took, the two tiers
+      and the six opt-in modules, the inventory (servers, CLIs, skills, agents, plugins, hooks),
+      how to declare something of your own, the guardrails, how to vet anything new, the first
+      hour as seven ordered steps that each prove a different part works, a symptom table, and
+      the four house rules.
+      .
+      Two sections exist because of what this phase found rather than because the done_when asked
+      for them. "Your own machine, your own additions" is there because the repo now removes
+      undeclared plugins and servers at the next switch, and a friend who loses something without
+      being told why will not trust the next switch either — so the guide explains the rule
+      before they meet it. And the symptom table's first row is the one everyone will hit: the
+      module writes into ~/.claude.json, which Claude Code creates on first run, so a machine
+      that has never started Claude Code gets no servers and the fix is to start it once.
+      .
+      It also states the absences as deliberate — no GitHub, filesystem or memory server, and no
+      hook on SessionStart or UserPromptSubmit — because an absence nobody explains reads as an
+      oversight and gets "fixed".
+      .
+      One rough edge was fixed while writing it: claude-vet's exemption path defaults to the
+      relative docs/vet-exemptions.md, which means nothing when the shipped command is run from
+      somewhere else, and its block message named that path anyway. It now resolves the path when
+      the file exists and otherwise says where one would have to go.
     paths:
       - /home/leon-new/Projects/claude-env/docs/guide.md
   - id: ct-laya-clm
     text: >-
       Fold Laya into the module at user scope, with CLM registered only when a tailnet host
       resolves
-    status: later
+    status: in_progress
     done_when: >-
       `claude mcp list` run from ~/projects/testing shows Laya connected, and CLM is absent by
       construction rather than present and broken
+    note: >-
+      The mechanism landed 2026-11-20: claude-env.mcp.layaPath registers laya-mcp-server at user
+      scope with absolute paths, built from the invocation the project's own .mcp.json uses (uv
+      run --project <path>/laya-mcp-server --frozen --quiet laya-decision-mcp, with
+      LAYA_MCP_MODEL=auto and LAYA_MCP_PRELOAD=english). CLM is absent by construction rather
+      than conditional on a tailnet lookup — a Nix build cannot resolve a host, and a
+      registration that depended on one would mean a server appearing or vanishing depending on
+      whether the laptop was on the tailnet at build time, which is worse than parked. What is
+      left is one line in /etc/nixos setting layaPath, which is Léon's because the path is his.
   - id: ct-research-track
     text: >-
       Work the research/PROGRESS.md items, filing each result as research/<slug>.md and ticking
@@ -975,6 +1037,33 @@ my_todos:
       ever mattered for CLM, so it should be picked up as part of that revisit rather than tracked
       as its own loose end. If CLM is dropped for good at that revisit, close this with it.
 
+  - id: mt-jira-board
+    text: >-
+      Create the shared website board in Jira, so the crew has somewhere to work other than the
+      KAN test project
+    status: open
+    why: >-
+      The Atlassian MCP server is wired at base tier and answers — a JQL query returns KAN-1
+      "test issue" — but KAN, literally named "test", is the only project on
+      blitsol.atlassian.net and that issue is the only issue. So every friend who follows
+      docs/guide.md and tries the board finds a sandbox. Creating a project decides how the crew
+      works (one board or one per client, which issue types, whether Almar and Ryan are
+      administrators), which is why Claude did not create it.
+    size: twenty minutes in the Jira UI, once the shape is decided
+  - id: mt-declare-personal-servers
+    text: >-
+      Add obsidian and vies-vat to claude-env.mcp.personal in /etc/nixos before the next switch,
+      or accept losing them
+    status: open
+    why: >-
+      mcp.nix now owns the user-scope mcpServers block, so a server that is not declared is
+      removed at the next switch. Two of the ten currently registered are undeclared on purpose:
+      obsidian points at ~/Obsidian/ZEN-Vault, which is personal, and vies-vat runs from a path
+      in ~/projects (q-vies-vat argues for replacing it with a CLI). Both are recoverable — the
+      switch writes them to ~/.claude/removed-mcp-servers.json — so this is a convenience, not a
+      risk. The other six removals (memory, github, filesystem, sentry, cloudflare at base tier,
+      playwright's old npx form) are all deliberate.
+    size: one Nix block, five minutes
 questions:
   - id: q-mcp-philosophy
     question: >-

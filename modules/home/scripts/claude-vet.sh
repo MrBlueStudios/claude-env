@@ -27,6 +27,17 @@ fi
 ROOT="$(cd "$ROOT" && pwd)"
 FAILURES=0
 
+# The default is relative, so running this from outside a claude-env checkout — which is the
+# normal case for the shipped command — would otherwise point people at a path that means
+# nothing from where they are standing. Resolve it, and when there is no such file say where one
+# would have to go rather than naming a file that is not there.
+if [ -f "$EXEMPTIONS" ]; then
+  EXEMPTIONS="$(cd "$(dirname "$EXEMPTIONS")" && pwd)/$(basename "$EXEMPTIONS")"
+  WHERE="$EXEMPTIONS"
+else
+  WHERE="docs/vet-exemptions.md in a claude-env checkout (or the file in CLAUDE_VET_EXEMPTIONS)"
+fi
+
 # Hooks that fire without the user doing anything: the whole session, or every prompt, or every
 # subagent. A plugin with one of these runs code on input it was never handed deliberately, so it
 # is the one thing that blocks rather than warns.
@@ -95,7 +106,7 @@ if [ -n "$LIC" ]; then
 elif [ -f "$EXEMPTIONS" ] && rg -q "^\s*-?\s*\`?$NAME\`?\s+LICENSE\b.{10,}" "$EXEMPTIONS" 2>/dev/null; then
   echo "  LICENSE: none in this tree, exempted in $EXEMPTIONS"
 else
-  high "No LICENSE anywhere above this tree. This repo is public, so vendoring an unlicensed tree is a real problem, not a formality. If the licence lives in the upstream repo root, record it as \"$NAME LICENSE — <where it is>\" in $EXEMPTIONS."
+  high "No LICENSE anywhere above this tree. This repo is public, so vendoring an unlicensed tree is a real problem, not a formality. If the licence lives in the upstream repo root, record it as \"$NAME LICENSE — <where it is>\" in $WHERE."
 fi
 
 if [ -n "$MANIFEST" ] && [ "$(jq -r '(.author.name // .author // "") | length' "$MANIFEST")" = 0 ]; then
@@ -139,7 +150,7 @@ else
       if [ -f "$EXEMPTIONS" ] && rg -q "^\s*-?\s*\`?$NAME\`?\s+$ev\b.{10,}" "$EXEMPTIONS" 2>/dev/null; then
         echo "  ($ev is exempted in $EXEMPTIONS)"
       else
-        high "$ev hook: runs on its own, on input nobody handed it. Write an exemption in $EXEMPTIONS (\"$NAME $ev — <reason>\") or do not install this."
+        high "$ev hook: runs on its own, on input nobody handed it. Write an exemption in $WHERE (\"$NAME $ev — <reason>\") or do not install this."
       fi
     fi
   done

@@ -47,6 +47,8 @@ same kind of drift for plugins and skills.
 | `modules/home/` | home-manager module: hooks, settings, tools, MCP servers, agents, skills, modes, CLAUDE.md |
 | `modules/home/options.nix` | the knobs: `claude-env.tier`, `claude-env.modes.enable`, `claude-env.user.*` |
 | `modules/system/guard.nix` | NixOS module writing `/etc/claude-code/managed-settings.json` |
+| `docs/guide.md` | the friend-facing guide: install, the tiers, what everything is for, the first hour |
+| `docs/enrolment.md` | adding and removing a Blitsol-tier friend, including how to revoke properly |
 | `docs/mcp-audit.md` | which MCP servers made it into base, blitsol or an opt-in module, and why |
 | `docs/project-state.yaml` | source of truth for the build board |
 | `research/` | the decisions behind the design, one file per question |
