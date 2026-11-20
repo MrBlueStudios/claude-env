@@ -298,7 +298,7 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">claude-env · queue · 20 Nov 2026 · Almar · Ryan · Kish · Léon</p>
+    <p class="eyebrow">claude-env · queue · 21 Nov 2026 · Almar · Ryan · Kish · Léon</p>
     <h1>What's on you, what's on me</h1>
 
     <div class="vitals">
@@ -307,7 +307,7 @@
         <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">17</span>
+        <span class="figure">18</span>
         <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
@@ -523,7 +523,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 17 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
+    <h2>My queue <span class="tally">— 18 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -532,7 +532,7 @@
       </div>
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">The skills half of the plugin channel</span></div>
-        <p class="dw">The plugin half closed on 20 Nov. The skills half is a question rather than work: <code>claude-plugins-check</code> counts 20 skills that load from <code>~/.claude/skills</code> on your laptop only, 7 more that are symlinks into <code>~/Projects/Claude_testing/skills/</code> and therefore break on anyone else's machine, and 3 directories with no <code>SKILL.md</code> that register nothing at all. <b>Done when</b> every skill a crew laptop loads is either declared in the repo or deliberately listed as personal.</p>
+        <p class="dw">The plugin half closed on 20 Nov. The skills half is a question rather than work, and on 21 Nov it got much smaller: the report that sized it was wrong. It called a skill declared only when its <em>directory</em> was a store symlink, which misses the shape <code>home.file.".claude/skills/X/SKILL.md".text</code> produces — a real directory holding a store symlink, which is how every skill written inline in <code>skills.nix</code> and <code>modes.nix</code> lands. Eleven declared skills were being reported as yours alone. True counts: <b>16 declared</b>, 9 machine-only directories that are the entire HyperFrames video toolchain, 7 symlinks into <code>~/Projects/Claude_testing/skills/</code>, and 3 directories holding 13.6 MB that register nothing. <b>So the decision is about 7 skills, not 27</b>, and <code>docs/skills-inventory.md</code> is the per-skill table with my verdict on each. <b>Done when</b> every skill a crew laptop loads is either declared in the repo or deliberately listed as personal.</p>
         <p class="gate">q-personal-skills — the split is at the bottom of this board with my recommendation</p>
       </div>
       <div class="row">
@@ -544,6 +544,10 @@
         <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
       </div>
       <div class="row">
+        <div class="row-top"><span class="pill settled">Done 21 Nov</span><span class="txt">Counted the skills properly, which shrank your open question from 27 to 7</span></div>
+        <p class="dw"><code>claude-plugins-check</code> was reporting eleven skills the module already declares as yours alone, because it only recognised one of the two shapes a declaration takes: it read the <em>directory</em>'s symlink, and <code>home.file.".claude/skills/X/SKILL.md".text</code> makes a real directory holding a store symlink. Fixed, with two tests that fail when the fix is reverted. The corrected picture: 16 declared, 9 machine-only (the whole HyperFrames toolchain, ~678 tokens of descriptions), 7 symlinks into a <b>private</b> repo, 3 directories holding 13.6 MB that register nothing at all. Written up per skill, with the cost of each group and my verdict, in <code>docs/skills-inventory.md</code> — the question card near the bottom of this board now matches it.</p>
+      </div>
+      <div class="row">
         <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Fixed the build that broke your switch, and the gap in <code>just test</code> that let it through</span></div>
         <p class="dw">Your failed switch, diagnosed rather than guessed at: <code>writeShellApplication</code> wraps each helper script and runs <code>bash -n</code> plus <code>shellcheck</code> in its check phase, which <code>nix eval</code> never reaches — so the suite was green while the build was broken. The sandbox has no locale, so shellcheck died printing a diagnostic containing an em dash and exited 2. Fixed with scoped <code>shellcheck disable</code> directives, each carrying its reason, in <code>claude-plugins-check.sh</code> and <code>claude-vet.sh</code>. <b>The real fix is the suite:</b> <code>just test</code> now runs <code>test-shellcheck</code> (the same tool with the same default flags, over all 8 packaged scripts) and <code>test-build</code>, which actually builds the base home-manager generation on 25.05 and 26.05 — the thing <code>nh os switch</code> builds. Mutation-checked: reverting either fix makes the suite fail. <code>just test-fast</code> is the old, seconds-long set for the inner loop, and it is exactly what was green while your laptop was not.</p>
       </div>
@@ -553,7 +557,7 @@
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">Nix writes the MCP server list, and <code>setup-claude-mcp.sh</code> is gone</span></div>
-        <p class="dw">The drift fix. A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it — your account block, project trust decisions and history are untouched. Removals are named on stderr and saved to <code>~/.claude/removed-mcp-servers.json</code> first. It refuses to create the file if it does not exist, because inventing an account-less state file is worse than waiting. 44 of the 142 script tests are this one helper.</p>
+        <p class="dw">The drift fix. A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it — your account block, project trust decisions and history are untouched. Removals are named on stderr and saved to <code>~/.claude/removed-mcp-servers.json</code> first. It refuses to create the file if it does not exist, because inventing an account-less state file is worse than waiting. 44 of the 144 script tests are this one helper.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 20 Nov</span><span class="txt">The plugin channel is declared, pinned and checkable</span></div>
@@ -673,15 +677,16 @@
     <h2>Open questions <span class="tally">— 3, none of them urgent, all of them yours</span></h2>
 
     <article class="q">
-      <h3>27 skills load from <code>~/.claude/skills</code> on your laptop and reach nobody else. Which of them are crew skills?</h3>
+      <h3>Seven skills on your laptop link into a private repo, and nine more are local to it. Which are crew skills?</h3>
       <p class="qid">q-personal-skills · blocks the skills half of the plugin channel</p>
       <ul class="opts">
         <li class="rec">Migrate the ones the crew would use; leave the rest personal and declared as personal</li>
-        <li>Migrate all 27, on the grounds that a shared environment should be the same everywhere</li>
+        <li>Migrate all 16 undeclared ones, on the grounds that a shared environment should be the same everywhere</li>
         <li>Leave them all personal; the flake carries only what was written for the crew</li>
       </ul>
-      <p class="rec-why"><b>My recommendation: the first, and the split is mostly obvious from the names.</b> Crew: <code>review</code>, <code>deploy</code>, <code>ship</code>, <code>research</code>, <code>design</code>, <code>full-visual</code>, and the three <code>Claude_testing</code> audits that are about client work — <code>legal-audit</code>, <code>security-audit</code>, <code>site-analytics</code>. Those are the ones another laptop would miss. Personal: <code>roblox</code>, <code>media-use</code>, <code>normal</code>, <code>rapid</code>, <code>style-sampling</code>, <code>slideshow</code>, <code>reverse-any-video</code>, <code>remotion-to-hyperframes</code>, <code>figma</code>, <code>my-todo</code>, <code>project-status</code>, <code>prompt-optimizer</code>, and the three hyperframes skills, which drive a renderer only you have set up.</p>
-      <p class="rationale"><b>Three things to know before you answer.</b> <code>council</code> and <code>dashboard</code> are already in the flake as claude-mode skills, so the copies in <code>~/.claude/skills</code> are stale duplicates and should go whatever you decide. Seven skills are symlinks into <code>~/Projects/Claude_testing/skills/</code>, so they are already broken for everyone but you — migrating them means copying the directory into the repo, not linking it. And three directories register nothing at all because they have no <code>SKILL.md</code> of their own, including a second whole copy of superpowers.</p>
+      <p class="rec-why"><b>My recommendation: the first — vendor four, keep three.</b> Vendor <code>legal-audit</code>, <code>security-audit</code>, <code>design-review</code> and <code>site-analytics</code> into <code>modules/home/skills/</code> the way the four adopted skills landed, with <code>site-analytics</code> reading its domains from an option instead of hard-coding them. Keep <code>project-status</code>, <code>my-todo</code> and <code>prompt-optimizer</code> personal: the first two are how <em>you</em> report rather than how the crew works, and <code>my-todo</code> writes into <code>~/project-brain/Inbox</code> on one laptop. That adds ~261 tokens to a crew session and needs no new repo. The nine HyperFrames skills stay personal by their nature — they drive a renderer and asset accounts only you have.</p>
+      <p class="rationale"><b>The part that decides how rather than whether.</b> <code>~/Projects/Claude_testing</code>'s remote is <code>MrBlueStudios/claude-lab</code> and it is <b>private</b>, so pinning it as a <code>flake = false</code> input the way <code>claude-web-stack</code> is pinned would make <code>claude-env</code> unbuildable for a friend. That checkout is also <b>8 commits ahead of its remote on a detached HEAD</b>, with <code>legal-audit</code> edited since the last push — so the current version of a skill the crew would depend on exists nowhere but your laptop. And <code>claude-env</code> is public: vendoring <code>site-analytics</code> as written publishes <code>blitsol.com</code>, <code>blitsol.nl</code> and <code>blitsolhq.com</code> as the domains being measured. Not a secret, but a choice.</p>
+      <p class="rationale"><b>Three things that need no decision.</b> <code>anthropic-skills</code> (12.6 MB) and a second whole copy of <code>superpowers</code> (0.9 MB) hold their <code>SKILL.md</code> files one level too deep, so they have never registered anything, and both duplicate something already installed — delete them. <code>obsidian-skills</code> is the exception: <code>defuddle</code> and <code>obsidian-bases</code> are not duplicated anywhere, and the second is one of the three candidates for crew-memory's parked dashboard question, so those are worth wiring up rather than deleting. And the 20.6 MB of marketplace caches plus 7.9 MB of <code>.trash</code> are free to remove whenever you like.</p>
       <p class="blocks"><b>Blocks:</b> nothing of yours. It is the last open half of my plugin-channel work.</p>
     </article>
 
@@ -728,10 +733,10 @@
   </section>
 
   <footer>
-    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed · nothing live until one switch</p>
+    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · nothing live until one switch</p>
     <p>input · github:MrBlueStudios/claude-env, so a module change needs commit, push, nix flake update, switch</p>
-    <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both · 65 guard cases · 142 script tests · 8 scripts shellchecked</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 37 facts, 3 open questions</p>
+    <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 38 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>

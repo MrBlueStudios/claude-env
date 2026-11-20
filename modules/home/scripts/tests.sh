@@ -342,11 +342,22 @@ printf -- '---\nname: inner\n---\n' > "$TMP/cfg-skills/skills/a-pack/skills/inne
 printf -- '---\nname: linked\n---\n' > "$TMP/elsewhere/mine/SKILL.md"
 ln -sfn "$TMP/elsewhere/mine" "$TMP/cfg-skills/skills/linked"
 mkdir -p "$TMP/cfg-skills/skills/synced/whatever"
+# The second shape of a declared skill, and the one this report used to miss: home.file with a
+# `.text` writes the SKILL.md as a store symlink inside a *real* directory. Eleven skills on
+# Léon's laptop are this shape, and all eleven were being reported as machine-only.
+mkdir -p "$TMP/cfg-skills/skills/inline"
+ln -sfn "$store_path/bin/jq" "$TMP/cfg-skills/skills/inline/SKILL.md"
+# And its off-store twin, which is a real finding rather than a false one.
+mkdir -p "$TMP/cfg-skills/skills/inline-elsewhere"
+ln -sfn "$TMP/elsewhere/mine/SKILL.md" "$TMP/cfg-skills/skills/inline-elsewhere/SKILL.md"
 
 out="$(check "$TMP/cfg-skills")"
-assert_contains "plugins-check: counts the declared skills"      "1 declared by the module" "$out"
+assert_contains "plugins-check: counts both shapes of a declared skill" "2 declared by the module" "$out"
+assert_lacks    "plugins-check: an inline-declared skill is not machine-only" "laptop: inline" "$out"
 assert_contains "plugins-check: names the machine-only skill"    "reach no other laptop: mine" "$out"
 assert_contains "plugins-check: flags the off-store link"        "link outside the store" "$out"
+assert_contains "plugins-check: flags an off-store SKILL.md inside a real directory" \
+  "inline-elsewhere ->" "$out"
 assert_contains "plugins-check: names the pack that loads nothing" "register nothing: a-pack" "$out"
 # `skills/synced` is Claude Code's own, so it must not be counted as a skill this machine added.
 # Asserted on the count rather than on the word "synced", which now also appears in the report's

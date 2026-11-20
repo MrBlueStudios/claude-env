@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T17:25"
+updated: "2026-11-21T00:40"
 suite:
   command: just test
   result: green
@@ -559,13 +559,28 @@ facts:
       All pass. 58 until 2026-11-20, when the force-push rule was scoped to the push command
       itself and seven cases were added around it. Recheck: just test-guard
   - key: helper_script_tests
-    value: 142
+    value: 144
     source: modules/home/scripts/tests.sh
     source_kind: command
-    as_of: 2026-11-20
+    as_of: 2026-11-21
     note: >-
       All pass. 17 on 2026-11-16, then +117 for claude-settings (the version gate), claude-mcp
-      (the declarative server block) and claude-plugins-check. Recheck: just test-scripts
+      (the declarative server block) and claude-plugins-check, then +2 on 2026-11-21 for the two
+      shapes a declared skill arrives in. Recheck: just test-scripts
+
+  - key: skills_machine_only
+    value: 16
+    source: claude-plugins-check
+    source_kind: command
+    as_of: 2026-11-21
+    note: >-
+      Corrected on 2026-11-21, and the earlier figure of 20 was wrong. The report called a skill
+      declared only when ~/.claude/skills/<name> was itself a store symlink, which misses the
+      shape `home.file.".claude/skills/X/SKILL.md".text` produces: a real directory holding a
+      store symlink. Eleven declared skills were being counted as personal. The true split is 16
+      declared by the module, 9 real directories that are all HyperFrames video skills, and 7
+      symlinks into ~/Projects/Claude_testing/skills that break on any other laptop. Per-skill
+      verdicts and cost: docs/skills-inventory.md
   - key: claude_code_version_installed
     value: "2.1.278"
     source: claude --version
@@ -932,12 +947,21 @@ claude_todos:
       frontend-design@claude-plugins-official is on Anthropic's built-in marketplace, whose
       reserved name refuses a commit pin by design.
       .
-      The skills half is the bigger gap and is still open. `just plugins-check` counts it: 20
-      skills load from ~/.claude/skills on this machine only, 7 more are symlinks into
-      ~/Projects/Claude_testing/skills/ and so break on any other laptop, and 3 directories
-      (anthropic-skills, obsidian-skills and a second whole copy of superpowers) have no
-      SKILL.md of their own and therefore register nothing at all. Which of the 27 are crew
-      skills and which are personal is Léon's call — see the question at the end of this file.
+      The skills half is still open but is far smaller than it looked, because the report that
+      sized it was wrong. Corrected 2026-11-21: `just plugins-check` only recognised a declared
+      skill when the directory itself was a store symlink, missing the eleven that are a real
+      directory holding a store-symlinked SKILL.md — the shape every skill written inline in
+      skills.nix and modes.nix takes. The true counts are 16 declared, 9 machine-only real
+      directories (all HyperFrames video skills, personal by their nature), 7 symlinks into
+      ~/Projects/Claude_testing/skills/ that break on any other laptop, and 3 directories
+      (anthropic-skills, obsidian-skills and a second whole copy of superpowers) with no
+      SKILL.md of their own, so they register nothing at all and hold 13.6 MB.
+      .
+      So the decision is about 7 skills rather than 27, and docs/skills-inventory.md has the
+      per-skill verdict, the token cost of each group and the three facts that decide how rather
+      than whether: Claude_testing's remote is the *private* claude-lab, the local checkout is 8
+      commits ahead of it on a detached HEAD with one of the seven edited since, and claude-env
+      is public, so vendoring site-analytics publishes the three Blitsol domains it measures.
   - id: ct-tool-trials
     text: >-
       Run the six time-boxed trials from the 40-repo review and record each verdict here
@@ -1352,29 +1376,51 @@ questions:
       with no Blitsol access, so the tier split earns its keep from the first new person.
   - id: q-personal-skills
     question: >-
-      27 skills load from ~/.claude/skills on Léon's laptop and reach nobody else. Which of them
-      are crew skills that belong in the flake?
+      7 skills load from ~/.claude/skills on Léon's laptop by symlink into a private repo, and 9
+      more are local to it. Which of them are crew skills that belong in the flake?
     options:
       - Migrate the ones the crew would use, leave the rest personal and declared as personal
       - Migrate all 27, on the grounds that a shared environment should be the same everywhere
       - Leave them all personal; the flake carries only what was written for the crew
     recommendation: >-
-      The first, and the split is mostly obvious from the names. Crew candidates: review, deploy,
-      ship, research, design, full-visual and the three Claude_testing audits that are about
-      client work (legal-audit, security-audit, site-analytics) — those are the ones another
-      laptop would miss. Personal: roblox, media-use, normal, rapid, style-sampling, slideshow,
-      reverse-any-video, remotion-to-hyperframes, figma, my-todo, project-status,
-      prompt-optimizer, and the three hyperframes skills, which drive a renderer only Léon has
-      set up. council and dashboard are already in the flake as claude-mode skills, so the
-      copies in ~/.claude/skills are stale duplicates and should go either way.
+      The first, and the question got much smaller on 2026-11-21. The earlier version of this
+      recommendation listed review, deploy, ship, research, design and full-visual as crew
+      candidates; all six are already declared in skills.nix, and so are council, dashboard,
+      normal, rapid and roblox from modes.nix. They were reported as personal only because
+      claude-plugins-check read the wrong kind of symlink. 16 skills are declared, and nothing
+      about them needs deciding.
       .
-      Three more things to do while migrating, none of which need a decision. The seven symlinks
-      into ~/Projects/Claude_testing/skills/ break on any other laptop whatever is decided, so
-      each one either gets vendored or gets its own repo as claude-web-stack did.
-      anthropic-skills, obsidian-skills and a second whole copy of superpowers have no SKILL.md
-      of their own, so they have been registering nothing: delete them or wire them up.
-      ~/.claude/plugins/cache/ponytail and .../cursor-plugins are 20.6 MB left over from the
-      uninstalls and can be removed.
+      Of what is left, the 9 real directories are the whole HyperFrames video toolchain —
+      hyperframes, -cli, -registry, media-use, remotion-to-hyperframes, reverse-any-video,
+      style-sampling, slideshow, figma. They drive a renderer and asset accounts only Léon has,
+      so they stay personal; the only thing worth deciding is whether their ~678 tokens of
+      descriptions are a fair price on a day of Nix work, which is a measurement rather than a
+      migration.
+      .
+      The real question is the 7 symlinks into ~/Projects/Claude_testing/skills/.
+      Recommendation: vendor legal-audit, security-audit, design-review and site-analytics into
+      modules/home/skills/ as the four adopted skills landed, with site-analytics taking its
+      domains from an option instead of hard-coding blitsol.com, blitsol.nl and blitsolhq.com
+      into a public repo. Keep project-status, my-todo and prompt-optimizer personal and declare
+      them as personal: the first two are how Léon reports rather than how the crew works, and
+      my-todo writes into ~/project-brain/Inbox on one laptop. That adds ~261 tokens to a crew
+      session and needs no new repo.
+      .
+      The reason not to reach for the claude-web-stack pattern here: Claude_testing's remote is
+      MrBlueStudios/claude-lab and it is *private*, so a `flake = false` input pointing at it
+      makes claude-env unbuildable for a friend. The local checkout is also 8 commits ahead of
+      that remote on a detached HEAD, with legal-audit edited since the last push — the current
+      version of a skill the crew would depend on exists nowhere but this laptop. A small public
+      repo holding just those four is the cleaner alternative if the set grows.
+      .
+      Three things to do while migrating, none of which need a decision. anthropic-skills (12.6
+      MB) and a second whole copy of superpowers (0.9 MB) hold their SKILL.md files one level
+      too deep, so they have never registered anything and both duplicate something already
+      installed: delete them. obsidian-skills is the exception — defuddle and obsidian-bases are
+      not duplicated anywhere, and the second is a candidate for crew-memory's parked dashboard
+      question, so wire those up rather than deleting them. ~/.claude/plugins/cache/ponytail and
+      .../cursor-plugins are 20.6 MB left over from the uninstalls and can be removed, as can
+      7.9 MB in Claude Code's own .trash. Full per-skill table: docs/skills-inventory.md
     blocks:
       - ct-plugin-channel
     blocks_note: >-

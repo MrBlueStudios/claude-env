@@ -142,11 +142,19 @@ done < <(jq -rs '
 
 # ── skills ───────────────────────────────────────────────────────────────────
 #
-# A skill the module declares arrives as a symlink into /nix/store, because skills.nix sets
-# home.file.<...>.source. So the test needs no list to compare against: anything in
-# ~/.claude/skills that is a real directory, or a link to somewhere else, is on this machine
-# only. That is fine for a scratch skill and not fine for one the crew depends on, and the
-# difference is invisible until it is counted.
+# A skill the module declares arrives as a symlink into /nix/store, so the test needs no list to
+# compare against. But it arrives in *two* shapes, and reading only the first is how this report
+# claimed 20 machine-only skills on a machine that had 9:
+#
+#   - home.file.".claude/skills/X".source = ./skills/X  links the whole directory, as the four
+#     vendored packs and the two web-design skills do;
+#   - home.file.".claude/skills/X/SKILL.md".text = ''…''  leaves X a *real* directory holding a
+#     store symlink, which is how every skill written inline in skills.nix and modes.nix lands —
+#     eleven of them on the first machine that looked.
+#
+# So the declaration test is the symlink target of the directory or of its SKILL.md, and only
+# what fails both is on this machine alone. That is fine for a scratch skill and not fine for one
+# the crew depends on, and the difference is invisible until it is counted.
 
 if [ -d "$CLAUDE_DIR/skills" ]; then
   echo "skills"
@@ -160,14 +168,23 @@ if [ -d "$CLAUDE_DIR/skills" ]; then
     # by syncClaudeAiSkills rather than by any repo.
     [ "$name" = "synced" ] && continue
 
+    # The link to read is the directory's if it is one, otherwise its SKILL.md's. Checked with
+    # -L before -f, because -f follows a link and would read a dangling one as absent.
+    target=""
     if [ -L "$dir" ]; then
-      case "$(readlink "$dir")" in
+      target="$(readlink "$dir")"
+    elif [ -L "$dir/SKILL.md" ]; then
+      target="$(readlink "$dir/SKILL.md")"
+    fi
+
+    if [ -n "$target" ]; then
+      case "$target" in
         /nix/store/*)
           declared=$((declared + 1))
           continue
           ;;
         *)
-          elsewhere+=("$name -> $(readlink "$dir")")
+          elsewhere+=("$name -> $target")
           continue
           ;;
       esac

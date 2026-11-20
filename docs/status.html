@@ -291,7 +291,7 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">Build board · updated 20 Nov 2026 · tiers, declarative MCP and the plugin channel landed · nothing live until the switch</p>
+    <p class="eyebrow">Build board · updated 21 Nov 2026 · tiers, declarative MCP and the plugin channel landed · nothing live until the switch</p>
     <h1>claude-env</h1>
     <p class="tagline">One NixOS flake that gives Léon and his friends the same Claude Code environment — every MCP server, skill, agent and guardrail available in every project folder — with a Blitsol tier for the people who also work on the company.</p>
 
@@ -302,7 +302,7 @@
       </div>
       <div class="vital">
         <span class="figure">green</span>
-        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then the base generation is <em>built</em> on both · 65 guard cases · 142 script tests · 8 scripts shellchecked · 20 Nov</span>
+        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then the base generation is <em>built</em> on both · 65 guard cases · 144 script tests · 8 scripts shellchecked · 20 Nov</span>
       </div>
       <div class="vital is-warn">
         <span class="figure">0</span>
@@ -405,7 +405,7 @@
         </div>
         <p class="note"><code>mcp.nix</code> used to ship a <code>setup-claude-mcp.sh</code> that had to be run by hand, so user-scope servers drifted the moment anyone typed <code>claude mcp add</code>. That drift is exactly what happened — twice.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Done</span><span class="v">A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it. The script is deleted. 44 of the 142 script tests cover this one helper.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it. The script is deleted. 44 of the 144 script tests cover this one helper.</span></div>
           <div class="meta-row"><span class="k">Escape hatch</span><span class="v">Removals are named on stderr and written to <code>~/.claude/removed-mcp-servers.json</code> before they go, so "it worked yesterday" has an answer. Keeping one means declaring it — in the module for all four laptops, or <code>claude-env.mcp.personal</code> for one.</span></div>
           <div class="meta-row"><span class="k">Careful</span><span class="v">It declines to create a missing <code>~/.claude.json</code>, because inventing an account-less state file is worse than waiting: start Claude Code once, then switch again.</span></div>
         </div>
@@ -536,7 +536,7 @@
         <div class="meta">
           <div class="meta-row"><span class="k">Done</span><span class="v">Three marketplaces pinned to full commit SHAs, four plugins enabled from Nix, and <code>claude-plugins-check</code> reports where the machine has drifted from what the repo declares. <code>frontend-design</code> cannot be pinned: it comes from <code>claude-plugins-official</code>, a reserved name Claude Code refuses to let a config pin.</span></div>
           <div class="meta-row"><span class="k">Version gate</span><span class="v">SHA pinning needs Claude Code 2.1.324 and this laptop runs 2.1.278, so activation picks the floating overlay and says why. The check is made at activation rather than in Nix, so the pins start applying on the first switch after the upgrade with no repo edit.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">q-personal-skills — which of the 27 personal skills become crew skills, and which stay on Léon's laptop</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">q-personal-skills — which of the 7 skills that link into a private repo become crew skills. Corrected on 21 Nov: the other sixteen were already declared, and the nine left are the HyperFrames toolchain. docs/skills-inventory.md has the per-skill table</span></div>
         </div>
       </article>
     </div>
@@ -649,8 +649,8 @@
             <td class="src">modules/system/claude-code/guard-test.sh — all pass; seven added with the force-push fix</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
-            <td class="key">helper_script_tests</td><td class="val">142</td>
-            <td class="src">modules/home/scripts/tests.sh — 17 on 16 Nov, +117 for the settings gate, the MCP block and the drift check</td><td class="when">2026-11-20</td>
+            <td class="key">helper_script_tests</td><td class="val">144</td>
+            <td class="src">modules/home/scripts/tests.sh — 17 on 16 Nov, +117 for the settings gate, the MCP block and the drift check, +2 for the two shapes a declared skill arrives in</td><td class="when">2026-11-21</td>
           </tr>
           <tr>
             <td class="key">eval_matrix</td><td class="val">green</td>
@@ -687,6 +687,10 @@
           <tr class="conflict">
             <td class="key">eval_green_but_build_broken</td><td class="val">2</td>
             <td class="src">a failed <code>nh os switch</code> — two scripts reached <code>main</code> while the suite was green, because <code>writeShellApplication</code> runs shellcheck in a check phase no <code>nix eval</code> reaches; <code>just test</code> now builds</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr class="conflict">
+            <td class="key">skills_machine_only</td><td class="val">16</td>
+            <td class="src">claude-plugins-check — the earlier 20 was wrong: eleven skills the module declares inline were read as personal. 9 real directories, all HyperFrames, plus 7 symlinks into a private repo; per-skill verdicts in docs/skills-inventory.md</td><td class="when">2026-11-21</td>
           </tr>
           <tr>
             <td class="key">account_synced_plugins</td><td class="val">38</td>
@@ -731,7 +735,7 @@
         </ul>
       </div>
     </div>
-    <p class="stamp">docs/project-state.yaml · 15 features · 37 facts · 3 open questions · created 2026-11-13, updated 2026-11-20</p>
+    <p class="stamp">docs/project-state.yaml · 15 features · 38 facts · 3 open questions · created 2026-11-13, updated 2026-11-21</p>
   </footer>
 
 </div>
