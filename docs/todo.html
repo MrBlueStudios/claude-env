@@ -349,7 +349,7 @@
         <h3>Run one switch — everything on this board is on <code>main</code>, and none of it is live</h3>
         <span class="why">two commands, no decisions · everything on this board turns on here</span>
       </div>
-      <p class="rationale"><code>/etc/nixos/flake.lock</code> pins <code>claude-env</code> at <code>3dbbd93</code>. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, the guide and enrolment runbook, and a fix for a guard rule that was denying ordinary pushes. That is about a dozen commits, roughly half of them code and half these boards, and the only thing between them and your laptop is this.</p>
+      <p class="rationale"><code>/etc/nixos/flake.lock</code> pins <code>claude-env</code> at <code>3dbbd93</code>. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, the guide and enrolment runbook, and a fix for a guard rule that was denying ordinary pushes. That is every commit since <code>3dbbd93</code> — the features, and the boards that describe them — and the only thing between them and your laptop is this.</p>
       <p class="rationale">Your 19 November switch reporting <code>0 paths added, 0 paths removed, delta +0</code> was correct and is worth remembering: the input resolves from <code>github:MrBlueStudios/claude-env</code>, so a local edit in <code>~/Projects/claude-env</code> changes nothing until it is committed, pushed and re-locked.</p>
       <ol class="steps">
         <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
