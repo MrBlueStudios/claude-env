@@ -17,14 +17,14 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-20T16:40"
+updated: "2026-11-20T17:05"
 suite:
   command: just test
   result: green
   as_of: 2026-11-20
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
-    26.05 (tests/eval-*), then runs the 65 guard cases and 134 helper-script tests. Nothing is
+    26.05 (tests/eval-*), then runs the 65 guard cases and 142 helper-script tests. Nothing is
     built or switched. `just plugins-check` is deliberately not part of it: it reports the state
     of the machine it runs on, which is not a property of the repo.
 artifacts:
@@ -454,6 +454,21 @@ facts:
       which is a shrug; rephrasing to "should these two talk first" gave 0.418, so prompting is
       not the fix. The checkpoints are zero-shot and this is outside their calibration. Shipped
       pipeline: the ranker shortlists, Laya drops confident negatives, the person decides.
+  - key: account_synced_plugins
+    value: 38
+    source: >-
+      claude-plugins-check — ~/.claude/plugins/synced/*/*.meta.json
+    source_kind: command
+    as_of: 2026-11-20
+    note: >-
+      Found while checking that the guide's commands actually work. The claude.ai account has
+      pushed 38 plugins carrying 331 skills and 17 MB onto this laptop from six first-party
+      marketplaces (knowledge-work-plugins 21, claude-for-legal 9, claude-tag-plugins 4,
+      life-sciences 2, claude-for-financial-services 1, anthropic-plugin-directory 1). Every one
+      reads installation_preference "available" and none is in enabledPlugins, so none loads and
+      none costs a token — the audit's "installed is not enabled" finding from the other
+      direction. No repo declares any of it and no flake can: it is account-side. The drift
+      report now counts it and says so loudly if one ever flips to "installed".
   - key: session_network_endpoints
     value: 1
     source: >-
@@ -523,7 +538,7 @@ facts:
       All pass. 58 until 2026-11-20, when the force-push rule was scoped to the push command
       itself and seven cases were added around it. Recheck: just test-guard
   - key: helper_script_tests
-    value: 134
+    value: 142
     source: modules/home/scripts/tests.sh
     source_kind: command
     as_of: 2026-11-20

@@ -189,6 +189,15 @@ Four, pinned in the flake: `superpowers` (the process skills Claude uses most), 
 project into a launch video), `svelte` (the Svelte team's own docs server and file editor), and
 `frontend-design`. You do not install these; they arrive with the switch.
 
+`/plugin` will show you many more than four, and that is not drift. Your claude.ai account
+downloads Anthropic's own plugin marketplaces onto the machine — on Léon's laptop that is 38
+plugins, 331 skills and 17 MB under `~/.claude/plugins/synced/`, from `knowledge-work-plugins`,
+`claude-for-legal` and four others. They sit there **offered rather than installed**, which is
+the distinction that matters: a skill costs tokens in every session only once its plugin is
+enabled, and none of these is. No flake can declare or remove them, because that is account
+state rather than machine state. `claude-plugins-check` counts them in a section of their own so
+the number is not a mystery, and turns it into a finding if one ever flips to installed.
+
 ### Hooks
 
 Three, and it is worth knowing what runs without being asked:

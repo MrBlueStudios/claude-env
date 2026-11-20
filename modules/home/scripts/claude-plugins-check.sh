@@ -202,6 +202,43 @@ if [ -d "$PLUGINS/cache" ]; then
   done < <(find "$PLUGINS/cache" -mindepth 1 -maxdepth 1 -type d | sort)
 fi
 
+if [ -d "$PLUGINS/.trash" ] && [ -n "$(find "$PLUGINS/.trash" -mindepth 1 -maxdepth 1 2>/dev/null)" ]; then
+  note "$PLUGINS/.trash ($(du -sh "$PLUGINS/.trash" 2>/dev/null | cut -f1)) is Claude Code's own \
+trash from uninstalls; nothing reads it"
+fi
+
+# ── what the account pushed, which is not drift but is worth seeing ──────────
+#
+# ~/.claude/plugins/synced holds plugins the claude.ai account offers: first-party marketplaces
+# such as knowledge-work-plugins and claude-for-legal, downloaded whether or not anyone asked.
+# Each carries a .meta.json whose `installation_preference` is "available" until it is installed.
+# Reported as a count, not as a finding, because no repo declares it and nothing here is wrong —
+# but it was 38 plugins and 331 skills on the first machine that looked, which is worth knowing
+# before anyone wonders where 16 MB and a long `/plugin` list came from. The number that matters
+# is the enabled one: a skill costs tokens only once its plugin is enabled, and none of these is.
+echo "account-synced"
+synced_meta=()
+if [ -d "$PLUGINS/synced" ]; then
+  while IFS= read -r f; do synced_meta+=("$f"); done \
+    < <(find "$PLUGINS/synced" -mindepth 2 -maxdepth 2 -name '*.meta.json' 2>/dev/null | sort)
+fi
+if [ "${#synced_meta[@]}" -eq 0 ]; then
+  echo "  none: nothing from the claude.ai account on this machine"
+else
+  synced_skills="$(find "$PLUGINS/synced" -name SKILL.md 2>/dev/null | wc -l)"
+  synced_size="$(du -sh "$PLUGINS/synced" 2>/dev/null | cut -f1)"
+  printf '  %d plugin(s), %s skill(s), %s — offered by the account, not by any repo\n' \
+    "${#synced_meta[@]}" "$synced_skills" "${synced_size:-?}"
+  # An "installed" preference means it is more than an offer, so it belongs in the report above.
+  installed_synced="$(grep -l '"installation_preference": *"installed"' "${synced_meta[@]}" 2>/dev/null |
+    sed 's|.*/||; s|\.meta\.json$||' | tr '\n' ' ')"
+  if [ -n "$installed_synced" ]; then
+    note "account-synced and installed, so declared by nobody: $installed_synced"
+  else
+    echo "  all offered rather than installed, so none of them loads or costs a token"
+  fi
+fi
+
 echo
 if [ "$findings" -eq 0 ]; then
   echo "no drift: every declared plugin is installed and every marketplace is where it should be"

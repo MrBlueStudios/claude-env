@@ -312,6 +312,15 @@ mkdir -p "$TMP/cfg-drift/plugins/cache/ponytail"
 out="$(check "$TMP/cfg-drift")"
 assert_contains "plugins-check: reports a leftover cache" "left over from a removed marketplace" "$out"
 
+# Claude Code's own uninstall trash. An empty .trash is not worth a line; a full one is, because
+# it was 7.9 MB of nothing on the first machine that looked.
+mkdir -p "$TMP/cfg-drift/plugins/.trash"
+out="$(check "$TMP/cfg-drift")"
+assert_lacks    "plugins-check: an empty trash is not a finding" "own trash from uninstalls" "$out"
+mkdir -p "$TMP/cfg-drift/plugins/.trash/1791271554812-removed/skills"
+out="$(check "$TMP/cfg-drift")"
+assert_contains "plugins-check: reports Claude Code's uninstall trash" "own trash from uninstalls" "$out"
+
 mk_claude_dir "$TMP/cfg-unused"
 printf '{ "enabledPlugins": {}, "extraKnownMarketplaces": {} }\n' > "$TMP/cfg-unused/settings.json"
 out="$(check "$TMP/cfg-unused")"; rc=$?
@@ -339,7 +348,33 @@ assert_contains "plugins-check: counts the declared skills"      "1 declared by 
 assert_contains "plugins-check: names the machine-only skill"    "reach no other laptop: mine" "$out"
 assert_contains "plugins-check: flags the off-store link"        "link outside the store" "$out"
 assert_contains "plugins-check: names the pack that loads nothing" "register nothing: a-pack" "$out"
-assert_lacks    "plugins-check: leaves Claude Code's own synced dir alone" "synced" "$out"
+# `skills/synced` is Claude Code's own, so it must not be counted as a skill this machine added.
+# Asserted on the count rather than on the word "synced", which now also appears in the report's
+# account-synced section — a check that forbids a substring forbids it everywhere.
+assert_contains "plugins-check: leaves Claude Code's own synced dir out of the count" \
+  "1 skill(s) load on this machine" "$out"
+
+# ── the account-synced section ───────────────────────────────────────────────
+#
+# Not drift: nobody declares what the claude.ai account offers. It is reported because 38
+# plugins and 331 skills appeared on the first machine that looked, and because the only
+# number that costs tokens is the installed one.
+out="$(check "$TMP/cfg-clean")"
+assert_contains "plugins-check: says so when the account pushed nothing" \
+  "none: nothing from the claude.ai account" "$out"
+
+mkdir -p "$TMP/cfg-clean/plugins/synced/acct/offered" "$TMP/cfg-clean/plugins/synced/acct/taken"
+printf -- '---\nname: s\n---\n' > "$TMP/cfg-clean/plugins/synced/acct/offered/SKILL.md"
+printf '{ "installation_preference": "available" }\n' > "$TMP/cfg-clean/plugins/synced/acct/offered.meta.json"
+out="$(check "$TMP/cfg-clean")"; rc=$?
+assert_rc       "plugins-check: an offered plugin is not drift"  0 "$rc"
+assert_contains "plugins-check: counts what the account offers"  "1 plugin(s), 1 skill(s)" "$out"
+assert_contains "plugins-check: says an offer costs nothing"     "none of them loads" "$out"
+
+printf '{ "installation_preference": "installed" }\n' > "$TMP/cfg-clean/plugins/synced/acct/taken.meta.json"
+out="$(check "$TMP/cfg-clean")"; rc=$?
+assert_rc       "plugins-check: an installed one is drift"       1 "$rc"
+assert_contains "plugins-check: names the installed one"         "declared by nobody: taken" "$out"
 
 # ── claude-mcp: the declarative MCP block ────────────────────────────────────
 #

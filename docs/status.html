@@ -302,7 +302,7 @@
       </div>
       <div class="vital">
         <span class="figure">green</span>
-        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05 · 65 guard cases · 134 script tests · 20 Nov</span>
+        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05 · 65 guard cases · 142 script tests · 20 Nov</span>
       </div>
       <div class="vital is-warn">
         <span class="figure">0</span>
@@ -404,7 +404,7 @@
         </div>
         <p class="note"><code>mcp.nix</code> used to ship a <code>setup-claude-mcp.sh</code> that had to be run by hand, so user-scope servers drifted the moment anyone typed <code>claude mcp add</code>. That drift is exactly what happened — twice.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Done</span><span class="v">A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it. The script is deleted. 44 of the 134 script tests cover this one helper.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">A <code>claude-mcp</code> helper rewrites the <code>mcpServers</code> block of <code>~/.claude.json</code> from Nix on activation and prunes local-scope duplicates, merging the rest of the file rather than replacing it. The script is deleted. 44 of the 142 script tests cover this one helper.</span></div>
           <div class="meta-row"><span class="k">Escape hatch</span><span class="v">Removals are named on stderr and written to <code>~/.claude/removed-mcp-servers.json</code> before they go, so "it worked yesterday" has an answer. Keeping one means declaring it — in the module for all four laptops, or <code>claude-env.mcp.personal</code> for one.</span></div>
           <div class="meta-row"><span class="k">Careful</span><span class="v">It declines to create a missing <code>~/.claude.json</code>, because inventing an account-less state file is worse than waiting: start Claude Code once, then switch again.</span></div>
         </div>
@@ -648,7 +648,7 @@
             <td class="src">modules/system/claude-code/guard-test.sh — all pass; seven added with the force-push fix</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
-            <td class="key">helper_script_tests</td><td class="val">134</td>
+            <td class="key">helper_script_tests</td><td class="val">142</td>
             <td class="src">modules/home/scripts/tests.sh — 17 on 16 Nov, +117 for the settings gate, the MCP block and the drift check</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
@@ -682,6 +682,10 @@
           <tr class="conflict">
             <td class="key">laya_collision_confidence</td><td class="val">0.474</td>
             <td class="src">evaluate_laya_decision on the top-ranked pair — 0.136 for an unrelated pair is a confident no, 0.474 for a real collision is a shrug; it drops negatives, the person decides</td><td class="when">2026-11-20</td>
+          </tr>
+          <tr>
+            <td class="key">account_synced_plugins</td><td class="val">38</td>
+            <td class="src">~/.claude/plugins/synced — 331 skills and 17 MB pushed by the claude.ai account from six first-party marketplaces; all <code>available</code>, none enabled, so none costs a token</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
             <td class="key">session_network_endpoints</td><td class="val">1</td>
@@ -721,7 +725,7 @@
         </ul>
       </div>
     </div>
-    <p class="stamp">docs/project-state.yaml · 15 features · 35 facts · 3 open questions · created 2026-11-13, updated 2026-11-20</p>
+    <p class="stamp">docs/project-state.yaml · 15 features · 36 facts · 3 open questions · created 2026-11-13, updated 2026-11-20</p>
   </footer>
 
 </div>
