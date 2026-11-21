@@ -291,7 +291,7 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">Build board · updated 21 Nov 2026 · tiers, declarative MCP and the plugin channel landed · nothing live until the switch</p>
+    <p class="eyebrow">Build board · updated 21 Nov 2026 · live on mr-blue since 01:31 · tiers, declarative MCP and the plugin channel are running</p>
     <h1>claude-env</h1>
     <p class="tagline">One NixOS flake that gives Léon and his friends the same Claude Code environment — every MCP server, skill, agent and guardrail available in every project folder — with a Blitsol tier for the people who also work on the company.</p>
 
@@ -304,9 +304,9 @@
         <span class="figure">green</span>
         <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then three things are <em>built</em> on both — a base generation, the module with every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked · 20 Nov</span>
       </div>
-      <div class="vital is-warn">
-        <span class="figure">0</span>
-        <span class="sub">of this board is live — the 20 Nov switch failed on a build error of mine, now fixed; <code>/etc/nixos</code> is locked to <code>6e9f917</code>, which does not build, and one more <code>nix flake update claude-env</code> moves it past that</span>
+      <div class="vital">
+        <span class="figure">live</span>
+        <span class="sub">switched 21 Nov 01:31 on <code>83ee425</code> after one failed attempt on a build error of mine — user-scope MCP servers went 10 → 4, the guard's 9 <code>ask</code> rules are in <code>/etc/claude-code/</code>, and the four adopted skills load</span>
       </div>
       <div class="vital">
         <span class="figure">3</span>
@@ -317,8 +317,9 @@
     <div class="next-up">
       <p class="eyebrow">What changed on 20 Nov</p>
       <p><strong>The tier is real:</strong> <code>base</code> resolves to atlassian, context7 and playwright exactly, <code>blitsol</code> adds cloudflare, and <code>just test</code> asserts both on both releases. <strong>Nix now writes the MCP server block</strong> of <code>~/.claude.json</code> on every activation — hand-added servers are removed, named on stderr and saved to <code>~/.claude/removed-mcp-servers.json</code> first. <strong>The plugin channel is declared and pinned</strong> to three commit SHAs, behind a runtime version gate because SHA pinning needs Claude Code 2.1.324 and this laptop is on 2.1.278. And the two documents a friend actually needs exist: <code>docs/guide.md</code> and <code>docs/enrolment.md</code>.</p>
-      <p>The one thing standing between this board and reality is a switch: <code>nix flake update claude-env &amp;&amp; nh os switch .</code> in <code>/etc/nixos</code>. Declare <code>obsidian</code> under <code>claude-env.mcp.personal</code> before it, or activation will remove it.</p>
-      <p><strong>That switch was attempted at 16:56 and failed, and the fault was mine.</strong> <code>claude-plugins-check.drv</code> exited 2: <code>writeShellApplication</code> runs shellcheck in a check phase, the Nix sandbox sets no locale, and shellcheck died printing a diagnostic whose context line held an em dash — so a style warning took down the whole system closure. Two scripts are fixed, and the reason the suite missed it is fixed too: <code>just test</code> now <em>builds</em> the generation on both releases instead of only evaluating it, and the pushed revision was built from <code>github:MrBlueStudios/claude-env</code> before this sentence was written. Re-run the same command.</p>
+      <p><strong>It is live.</strong> The switch ran at 01:31 on 21 November, after failing twice at 16:56 on a build error of mine — <code>claude-plugins-check.drv</code> exited 2 because <code>writeShellApplication</code> runs shellcheck in a check phase, the sandbox sets no locale, and shellcheck died printing a diagnostic whose context line held an em dash. Fixed, and the reason the suite missed it is fixed too: <code>just test</code> now <em>builds</em> three configurations on each release rather than only evaluating them.</p>
+      <p><strong>What the activation actually did:</strong> user-scope MCP servers went from 10 to 4, with <code>filesystem</code>, <code>github</code>, <code>memory</code>, <code>obsidian</code>, <code>sentry</code> and <code>vies-vat</code> written to <code>~/.claude/removed-mcp-servers.json</code> first; twelve local-scope registrations were pruned from <code>~/projects/fastsdcpu</code> and <code>~</code>; <code>brag</code> moved to its declared marketplace name; and the four adopted skills landed, taking the module's declared skills from 16 to 20. Five local-scope servers were deliberately left alone and reported, because they are the opt-in modules nobody declared and nobody dropped.</p>
+      <p><strong>One real defect came out of the log, and it is fixed on <code>main</code> rather than on the laptop.</strong> The marketplace version gate printed "no Claude Code version to read" on a machine running 2.1.278: it looked in <code>command -v</code>, <code>~/.nix-profile/bin</code> and <code>/run/current-system/sw/bin</code>, and home-manager-as-a-NixOS-module installs into <code>/etc/profiles/per-user/&lt;user&gt;/bin</code>, which is on none of them. Its fallback is "leave marketplaces unpinned", so it failed quietly — and would never have begun pinning once Claude Code crossed 2.1.324, which is exactly what this board promised would happen by itself. The next switch picks the fix up, and the warning should then read "2.1.278 is older than 2.1.324".</p>
     </div>
 
     <div class="scope-key" style="font-size: 13.5px;">
@@ -354,7 +355,7 @@
       <span><i class="dot off"></i> opt-in modules, all off by default — nix, legal, trading, seo, sentry, firecrawl</span>
     </div>
 
-    <p class="note" style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">The red block was the problem this project existed to solve: 25 registrations reachable only by <code>cd</code>-ing into <code>~/projects/fastsdcpu</code>, <code>~</code> or <code>/etc/nixos</code>, including the entire web-design toolkit stranded inside a Stable Diffusion repo. <strong>Twenty-three of the 39 are dropped</strong>, each with a one-line reason in the module, and activation prunes them from every local scope. The <code>sentry</code> module is called out on its own because it costs 1,089 tokens — more than every other server put together — so it is for the week you are chasing a production error, not a habit. Until the switch runs, the live file still reads 10 at user scope and 25 at local: the drift is unchanged, not yet fixed.</p>
+    <p class="note" style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">The red block was the problem this project existed to solve: 25 registrations reachable only by <code>cd</code>-ing into <code>~/projects/fastsdcpu</code>, <code>~</code> or <code>/etc/nixos</code>, including the entire web-design toolkit stranded inside a Stable Diffusion repo. <strong>Twenty-three of the 39 are dropped</strong>, each with a one-line reason in the module, and activation prunes them from every local scope. The <code>sentry</code> module is called out on its own because it costs 1,089 tokens — more than every other server put together — so it is for the week you are chasing a production error, not a habit. The switch ran at 01:31 on 21 November, so this is now the live file rather than the intention: <strong>4 at user scope and 5 at local</strong>, and the five that are left are the opt-in modules — declared by nobody and dropped by nobody, so the prune reports them and leaves them alone.</p>
   </section>
 
   <section>
@@ -611,7 +612,7 @@
     <div class="conflict-note" style="border-color: var(--ok); background: var(--ok-soft);">
       <h3 style="color: var(--ok);">Document versus code — settled by making Nix the document</h3>
       <p>The finding this project turned on was that <code>mcp.nix</code> declared two servers while nine ran at user scope, and that <code>firecrawl</code>, which the module <em>did</em> declare, was not registered at user scope at all. The module's intent and the live configuration had fully diverged.</p>
-      <p><strong>Closed 20 Nov.</strong> There is no longer a document to disagree with the code: the module writes the server list on activation, so the only way to keep a server is to declare it. The same fix is now applied one layer up to plugins. What remains is not drift but a switch — until <code>nh os switch</code> runs in <code>/etc/nixos</code>, the live file is still the old one, and the numbers in the first two rows below are still true.</p>
+      <p><strong>Closed 20 Nov, and live since 01:31 on 21 Nov.</strong> There is no longer a document to disagree with the code: the module writes the server list on activation, so the only way to keep a server is to declare it. The same fix is applied one layer up to plugins. The activation proved it on the machine the finding came from — 10 user-scope servers became 4, 25 local-scope registrations became 5, and every removal was named on the way out.</p>
     </div>
 
     <div class="table-scroll">
@@ -621,12 +622,12 @@
         </thead>
         <tbody>
           <tr>
-            <td class="key">user_scope_mcps</td><td class="val">10</td>
-            <td class="src">jq -r '.mcpServers | keys | length' ~/.claude.json — 9 at the audit, one added since</td><td class="when">2026-11-20</td>
+            <td class="key">user_scope_mcps</td><td class="val">4</td>
+            <td class="src">jq -r '.mcpServers | keys | length' ~/.claude.json — 9 at the audit, 10 before the switch, 4 after it; the six removals are in ~/.claude/removed-mcp-servers.json</td><td class="when">2026-11-21</td>
           </tr>
           <tr>
-            <td class="key">local_scope_mcps</td><td class="val">25</td>
-            <td class="src">jq '[.projects[].mcpServers // {} | length] | add' ~/.claude.json — unchanged; the prune runs at activation</td><td class="when">2026-11-20</td>
+            <td class="key">local_scope_mcps</td><td class="val">5</td>
+            <td class="src">jq '[.projects[].mcpServers // {} | length] | add' ~/.claude.json — 25 before the switch pruned them. The five left are the opt-in modules: declared by nobody, dropped by nobody, so reported and left alone</td><td class="when">2026-11-21</td>
           </tr>
           <tr>
             <td class="key">declared_mcp_servers_base</td><td class="val">3</td>
@@ -688,6 +689,10 @@
             <td class="key">eval_green_but_build_broken</td><td class="val">2</td>
             <td class="src">a failed <code>nh os switch</code> — two scripts reached <code>main</code> while the suite was green, because <code>writeShellApplication</code> runs shellcheck in a check phase no <code>nix eval</code> reaches; <code>just test</code> now builds</td><td class="when">2026-11-20</td>
           </tr>
+          <tr>
+            <td class="key">version_gate_found_no_claude</td><td class="val">1</td>
+            <td class="src">journalctl -u home-manager-leon\x2dnew — the gate looked for Claude Code in three places, none of them /etc/profiles/per-user/&lt;user&gt;/bin, so it silently left marketplaces unpinned. Fixed on main; the eval suite now asserts the path</td><td class="when">2026-11-21</td>
+          </tr>
           <tr class="conflict">
             <td class="key">skills_machine_only</td><td class="val">16</td>
             <td class="src">claude-plugins-check — the earlier 20 was wrong: eleven skills the module declares inline were read as personal. 9 real directories, all HyperFrames, plus 7 symlinks into a private repo; per-skill verdicts in docs/skills-inventory.md</td><td class="when">2026-11-21</td>
@@ -730,13 +735,13 @@
       <div>
         <h3>Not yet true</h3>
         <ul>
-          <li>Nothing on this board is live. <code>/etc/nixos</code> is locked to <code>6e9f917</code>, a revision that fails to build, and everything on this page landed before or with the fix for it. The lock is the figure to trust: a commit count goes stale the moment I write it down, which it did twice before I stopped quoting one.</li>
+          <li>The version-gate fix is on <code>main</code> and not on the laptop: the lock points at <code>83ee425</code>, one commit before it. Nothing breaks in the meantime — the marketplaces stay unpinned, which is where the version floor would have left them anyway. The lock is the figure to trust here: a commit count goes stale the moment I write it down, which it did twice before I stopped quoting one.</li>
           <li>That a friend can follow the guide unaided — written carefully, tested by nobody.</li>
           <li>That the module behaves on KDE. Checked by reading, not by running.</li>
         </ul>
       </div>
     </div>
-    <p class="stamp">docs/project-state.yaml · 15 features · 38 facts · 3 open questions · created 2026-11-13, updated 2026-11-21</p>
+    <p class="stamp">docs/project-state.yaml · 15 features · 40 facts · 3 open questions · created 2026-11-13, updated 2026-11-21</p>
   </footer>
 
 </div>

@@ -303,11 +303,11 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">8</span>
-        <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
+        <span class="figure">7</span>
+        <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 9 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">19</span>
+        <span class="figure">20</span>
         <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
@@ -318,51 +318,33 @@
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p>Three features landed on 20 November and <strong>none of them is live</strong>: the tier split, the declarative MCP block and the pinned plugin channel are all on <code>main</code>, past what <code>/etc/nixos</code> is locked to. One switch turns all of it on, and it is the first card below.</p>
-      <p><strong>Do the five-minute card above it first.</strong> <code>mcp.nix</code> now owns the user-scope server list, so the two servers nobody declared — <code>obsidian</code> and <code>vies-vat</code> — are removed by that switch unless you declare them. They are recoverable either way, but it is less annoying to decide before than to restore after.</p>
-      <p><strong>Your 16:56 switch failed, and that was my bug, not yours.</strong> <code>claude-plugins-check</code> would not build. It is fixed on <code>main</code>, together with the reason <code>just test</code> did not catch it, and the card below says what to re-run.</p>
+      <p><strong>You switched at 01:31 and it worked.</strong> Everything this board described is running: the tier split, the declarative MCP block, the pinned plugin channel, the guard's nine <code>ask</code> rules, the four adopted skills and <code>repomix</code>. The two failed attempts at 16:56 were my bug, and both the bug and the reason <code>just test</code> missed it are fixed.</p>
+      <p><strong>What activation removed, so nothing is a surprise:</strong> six user-scope MCP servers — <code>filesystem</code>, <code>github</code>, <code>memory</code>, <code>obsidian</code>, <code>sentry</code>, <code>vies-vat</code> — all of them written to <code>~/.claude/removed-mcp-servers.json</code> first; twelve local-scope registrations in <code>~/projects/fastsdcpu</code> and <code>~</code>; and the <code>brag</code> plugin's old marketplace name, which moved to the declared one. <code>obsidian</code> is the one you said you use, so the first card below is now about putting it back rather than about deciding.</p>
+      <p><strong>One defect came out of your activation log</strong>, found there rather than guessed at: the marketplace version gate could not find Claude Code, because home-manager-as-a-NixOS-module installs it into <code>/etc/profiles/per-user/&lt;user&gt;/bin</code> and the gate looked in three other places. Its fallback is "leave marketplaces unpinned", so it failed quietly — and would never have started pinning once Claude Code crossed 2.1.324, which is what this board promised would happen by itself. Fixed and pushed; it lands at your next switch, whenever that is. Nothing is broken in the meantime.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 8 open, 1 pair of decisions, 1 blocked on Atlassian</span></h2>
+    <h2>Your queue <span class="tally">— 7 open, 1 blocked on Atlassian · the switch is done</span></h2>
     <p class="rationale">The order changed at the top only: two short cards now come before the Jira work, because both are prerequisites for it being worth doing. CLM stays parked by your decision of 17 November. One item is paused and not shown: the GPU check on your and Almar's spare machines, which hangs off the same early-December revisit.</p>
 
     <article class="task">
       <div class="task-head">
-        <h3>Decide about <code>obsidian</code> and <code>vies-vat</code> before you switch</h3>
-        <span class="why">five minutes · one Nix block · do it first or undo it after</span>
+        <h3>Put <code>obsidian</code> back, and decide <code>vies-vat</code></h3>
+        <span class="why">five minutes · one Nix block · both are sitting in the removal file</span>
       </div>
-      <p class="rationale">As of 20 November <code>mcp.nix</code> owns the <code>mcpServers</code> block of <code>~/.claude.json</code>. That is the fix for drift, and it has one edge: a server that is not declared is removed at the next activation. Ten are registered on your laptop right now and two of them are deliberately not in the module — <code>obsidian</code>, which points at <code>~/Obsidian/ZEN-Vault</code> and is personal, and <code>vies-vat</code>, which runs from a path in <code>~/projects</code>.</p>
-      <p class="rationale">Nothing is lost either way: the switch writes whatever it removes to <code>~/.claude/removed-mcp-servers.json</code> with a timestamp, and names each one on stderr while it does it. This card only exists so the removal is a decision rather than a surprise.</p>
+      <p class="rationale"><code>mcp.nix</code> owns the <code>mcpServers</code> block of <code>~/.claude.json</code>, and the 01:31 switch did what it says: a server nobody declared was removed. Six went, and two of them are yours rather than audit casualties — <code>obsidian</code>, which points at <code>~/Obsidian/ZEN-Vault</code>, and <code>vies-vat</code>, which runs from a path in <code>~/projects</code>. The other four (<code>filesystem</code>, <code>github</code>, <code>memory</code>, <code>sentry</code>) are ones the audit dropped on purpose.</p>
+      <p class="rationale">Nothing is lost: every removal was written to <code>~/.claude/removed-mcp-servers.json</code> with a timestamp before it went, and the <code>command</code> and <code>args</code> you need are in there verbatim. <code>jq '.servers.obsidian' ~/.claude/removed-mcp-servers.json</code> in any directory gives you the block to paste.</p>
       <ol class="steps">
-        <li>In <code>/etc/nixos</code>, in the module where you set <code>claude-env.tier</code>, add what you want to keep:
-          <code>claude-env.mcp.personal.obsidian = { type = "stdio"; command = "..."; args = [ ... ]; };</code> — copy the <code>command</code> and <code>args</code> straight out of <code>jq '.mcpServers.obsidian' ~/.claude.json</code>.
-          <span class="done-when"><b>Done when</b> the servers you intend to keep are in that attribute set, and the ones you do not are not.</span></li>
+        <li>In <code>/etc/nixos</code>, in the module where you set <code>claude-env.tier</code>, declare what you want back:
+          <code>claude-env.mcp.personal.obsidian = { type = "stdio"; command = "..."; args = [ ... ]; };</code> — copy the <code>command</code> and <code>args</code> out of <code>jq '.servers.obsidian' ~/.claude/removed-mcp-servers.json</code>, then switch again.
+          <span class="done-when"><b>Done when</b> <code>claude mcp list</code> shows <code>obsidian</code> connected from a directory that is not your vault. Declaring it is also what stops the next switch removing it again.</span></li>
         <li>Decide <code>vies-vat</code> with the question at the bottom of this board rather than here — my recommendation is to drop the server and let me write a <code>vat-check</code> CLI instead.
           <span class="done-when"><b>Done when</b> you have said drop or keep. Saying nothing means it goes at the next switch and can be restored from the removal file.</span></li>
       </ol>
-      <p class="trap"><b>Worth knowing:</b> the same mechanism prunes <em>local</em>-scope copies of anything declared or dropped, which is what finally clears the 25 registrations stranded in <code>~/projects/fastsdcpu</code> and two other directories. A local server that is neither declared nor dropped is left alone and reported, so nothing you added on purpose for one project disappears silently.</p>
+      <p class="trap"><b>What it did to local scope, measured after the fact:</b> 25 stranded registrations became 5. The five left are the opt-in modules — <code>eu-law</code>, <code>firecrawl</code> and <code>mcp-nixos</code> in your home directory, <code>coingecko</code> and <code>gsc</code> in <code>fastsdcpu</code> — which are declared by nobody and dropped by nobody, so the prune reports them and leaves them alone. That is the designed behaviour: nothing you added on purpose for one project disappears silently.</p>
     </article>
 
-    <article class="task" style="border-top-color: var(--warn);">
-      <div class="task-head">
-        <h3>Run one switch — everything on this board is on <code>main</code>, and none of it is live</h3>
-        <span class="why">two commands, no decisions · everything on this board turns on here</span>
-      </div>
-      <p class="trap" style="border-left-color: var(--stop); background: var(--stop-soft);"><b>You already tried this twice and it failed both times. The break was mine.</b> <code>nix flake update</code> moved your lock to <code>6e9f917</code> and that revision does not build: <code>claude-plugins-check.drv</code> exits 2 with <code>cannot encode character '\8212'</code>. Cause, exactly — <code>pkgs.writeShellApplication</code> runs <code>shellcheck</code> in a <em>check</em> phase, the Nix sandbox sets no locale, and a diagnostic whose context line holds an em dash kills shellcheck itself while it prints. The finding being a harmless style warning made no difference: the builder still exited non-zero, and <code>home-manager-generation</code>, <code>user-environment</code>, <code>etc</code> and the system closure all fell over behind it. Two scripts were affected, both are fixed, and <code>just test</code> now builds the generation instead of only evaluating it, so this class cannot reach you again. Run the same command again — a fresh <code>nix flake update claude-env</code> picks up the fix.</p>
-      <p class="rationale">That lock was pinned at <code>3dbbd93</code> before your first attempt. Since then: the Atlassian <code>ask</code> rules, the <code>claude-vet</code> gate, four adopted skills, the tier split, the declarative MCP block, the pinned plugin channel, the guide and enrolment runbook, and a fix for a guard rule that was denying ordinary pushes. That is every commit since <code>3dbbd93</code> — the features, and the boards that describe them — and the only thing between them and your laptop is this.</p>
-      <p class="rationale">Your 19 November switch reporting <code>0 paths added, 0 paths removed, delta +0</code> was correct and is worth remembering: the input resolves from <code>github:MrBlueStudios/claude-env</code>, so a local edit in <code>~/Projects/claude-env</code> changes nothing until it is committed, pushed and re-locked.</p>
-      <ol class="steps">
-        <li>In <code>/etc/nixos</code>: <code>nix flake update claude-env &amp;&amp; nh os switch .</code> — the same command as before, now against a revision that builds.
-          <span class="done-when"><b>Done when</b> the closure actually changes, and <code>jq -r '.nodes["claude-env"].locked.rev' /etc/nixos/flake.lock</code> matches <code>git -C ~/Projects/claude-env rev-parse origin/main</code>. <code>delta +0</code> means the update did not take.</span></li>
-        <li>Read the activation output rather than scrolling past it. It names every MCP server it adds or removes, and every plugin that was installed but is no longer declared.
-          <span class="done-when"><b>Done when</b> the removals are ones you expected. If not, <code>~/.claude/removed-mcp-servers.json</code> has them.</span></li>
-        <li>Check the three things that are new: <code>claude mcp list</code> (atlassian, cloudflare, context7, playwright and whatever you declared as personal), <code>jq '.permissions.ask | length' /etc/claude-code/managed-settings.json</code> (9), and <code>claude-plugins-check</code> (no drift).
-          <span class="done-when"><b>Done when</b> all three agree with the repo. <code>claude-plugins-check</code> is the new one — it is the drift report, and it also lists 20 MB of marketplace caches for plugins nothing declares any more, which you can delete whenever you like.</span></li>
-      </ol>
-      <p class="trap"><b>Expect one warning, and it is not a fault.</b> Pinning marketplaces by commit SHA needs Claude Code 2.1.324 and you are on 2.1.278, so activation writes the unpinned form and says exactly that on stderr. nixpkgs master is already at 2.1.328: the pins start applying by themselves on the first switch after Claude Code updates, with no repo change. That check is made at activation time for precisely this reason.</p>
-    </article>
 
     <article class="task">
       <div class="task-head">
@@ -523,7 +505,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 19 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
+    <h2>My queue <span class="tally">— 20 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -542,6 +524,10 @@
       <div class="row">
         <div class="row-top"><span class="pill next">Next</span><span class="txt">Package crew-memory through the flake, once it is its own repo</span></div>
         <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 21 Nov</span><span class="txt">Checked your switch instead of trusting it, and fixed the one thing that was wrong</span></div>
+        <p class="dw">Your terminal showed the build and the activation, but home-manager's own output goes to the journal, so the interesting half was invisible. Read it: the MCP block was rewritten (10 user-scope → 4, 25 local → 5, every removal named and saved first), <code>brag</code> moved to its declared marketplace name, the guard is live in <code>/etc/claude-code/</code> with 9 <code>ask</code> and 5 <code>deny</code> rules and its hook pointing at a store path, and the module's declared skills went 16 → 20. <b>The defect:</b> "claude-settings: no Claude Code version to read" on a machine running 2.1.278 — the gate looked in <code>command -v</code>, <code>~/.nix-profile/bin</code> and <code>/run/current-system/sw/bin</code>, and home-manager-as-a-NixOS-module installs into <code>/etc/profiles/per-user/&lt;user&gt;/bin</code>. Silent fallback to unpinned, and it would never have started pinning after the 2.1.324 floor. Fixed with the username taken from Nix rather than <code>$USER</code>, which activation does not set, and the eval suite now asserts that path on both releases — remove it and the suite fails.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 21 Nov</span><span class="txt">Finished the job the broken switch started: the suite now builds everything the module can produce</span></div>
@@ -737,10 +723,10 @@
   </section>
 
   <footer>
-    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce · nothing live until one switch</p>
-    <p>input · github:MrBlueStudios/claude-env, so a module change needs commit, push, nix flake update, switch</p>
+    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · switched and verified from the journal · the version gate could not find Claude Code and is fixed · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce </p>
+    <p>input · github:MrBlueStudios/claude-env · live on 83ee425 since 21 Nov 01:31; main is one commit ahead with the version-gate fix</p>
     <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 38 facts, 3 open questions</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 40 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>

@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-21T01:55"
+updated: "2026-11-21T02:10"
 suite:
   command: just test
   result: green
@@ -574,6 +574,21 @@ facts:
       All pass. 17 on 2026-11-16, then +117 for claude-settings (the version gate), claude-mcp
       (the declarative server block) and claude-plugins-check, then +2 on 2026-11-21 for the two
       shapes a declared skill arrives in. Recheck: just test-scripts
+
+  - key: switch_applied
+    value: "2026-11-21T01:31"
+    source: nh os switch on mr-blue — generation built from claude-env 83ee425
+    source_kind: command
+    as_of: 2026-11-21
+    note: >-
+      The first switch that carried any of this work, after two failed attempts on 2026-11-20
+      (see eval_green_but_build_broken). 18 derivations, delta +10 paths, +98.2 MiB. Verified
+      from the activation journal rather than from the terminal, because home-manager's own
+      output goes to the unit's log: user-scope MCP servers 10 -> 4 with six removals saved to
+      ~/.claude/removed-mcp-servers.json first, local scope 25 -> 5, brag moved to its declared
+      marketplace name, the guard live with 9 ask and 5 deny rules, and the module's declared
+      skills 16 -> 20 as the four adopted skills landed. Two of the removed servers are Léon's
+      own rather than audit casualties: obsidian and vies-vat.
 
   - key: version_gate_found_no_claude
     value: 1
