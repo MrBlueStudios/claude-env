@@ -79,6 +79,14 @@ _eval dir:
         printf '%-22s %-8s ' "{{dir}}" "$c"; \
         nix eval --raw {{overrides}} "path:$PWD#homeConfigurations.$c.activationPackage.outPath" {{quiet}} && echo; \
       done
+    @# The activation snippet has to find Claude Code without activation's PATH, and the path it
+    @# missed on 2026-11-21 is the one home-manager-as-a-NixOS-module actually uses. Asserted
+    @# here because the lookup lives in Nix rather than in a script the unit tests can run, and
+    @# because its failure mode is a warning nobody reads plus pins that never apply.
+    @cd {{dir}} && printf '%-22s %-8s ' "{{dir}}" claudebin && \
+      nix eval --raw {{overrides}} "path:$PWD#homeConfigurations.base.config.home.activation.claudeSettings.data" {{quiet}} \
+        | grep -q '/etc/profiles/per-user/kish/bin/claude' \
+      && echo "finds claude in the per-user profile: ok"
     @cd {{dir}} && printf '%-22s %-8s ' "{{dir}}" guard && \
       nix eval --raw {{overrides}} "path:$PWD#nixosConfigurations.guard.config.environment.etc.\"claude-code/managed-settings.json\".source.outPath" {{quiet}} && echo
     @cd {{dir}} && test "$(nix eval --json {{overrides}} "path:$PWD#homeConfigurations.base.config.home.file" --apply 'f: builtins.length (builtins.filter (n: builtins.match ".claude/skills/(dashboard|council)/.*" n != null) (builtins.attrNames f))' {{quiet}})" = 0 \

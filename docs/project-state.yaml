@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-21T00:40"
+updated: "2026-11-21T01:55"
 suite:
   command: just test
   result: green
@@ -574,6 +574,26 @@ facts:
       All pass. 17 on 2026-11-16, then +117 for claude-settings (the version gate), claude-mcp
       (the declarative server block) and claude-plugins-check, then +2 on 2026-11-21 for the two
       shapes a declared skill arrives in. Recheck: just test-scripts
+
+  - key: version_gate_found_no_claude
+    value: 1
+    source: >-
+      journalctl -u 'home-manager-leon\x2dnew.service', 2026-11-21 01:31 — "claude-settings: no
+      Claude Code version to read"
+    source_kind: command
+    as_of: 2026-11-21
+    note: >-
+      Léon's 2026-11-21 switch worked, and its log carried one real defect. The marketplace
+      version gate looked for Claude Code with `command -v claude`, $HOME/.nix-profile/bin and
+      /run/current-system/sw/bin, and found none of them, because home-manager as a NixOS module
+      installs user packages into /etc/profiles/per-user/<user>/bin, which is not on the
+      activation unit's PATH. The gate's no-version fallback is "leave marketplaces unpinned", so
+      it degraded silently and, worse, would never have started pinning after Claude Code crossed
+      2.1.324 — the board promised exactly that it would. Fixed by adding the per-user profile
+      path, taken from config.home.username rather than $USER, which activation does not set. The
+      eval suite now asserts that path is in the activation snippet; removing it fails.
+      Observable after the next switch: the warning changes from "no Claude Code version to read"
+      to "Claude Code 2.1.278 is older than 2.1.324".
 
   - key: skills_machine_only
     value: 16

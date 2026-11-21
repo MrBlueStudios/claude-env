@@ -196,9 +196,22 @@ in
   # Claude Code version to decide whether the marketplaces can be pinned; claude-code is the
   # consumer's package, not this flake's, so look for it rather than assuming activation's PATH
   # has it. Not finding one is handled — it falls back to unpinned and says so.
+  #
+  # The candidate list is the whole fix for a real failure, so each entry is here for a reason.
+  # On 2026-11-21 this printed "no Claude Code version to read" on a machine with Claude Code
+  # 2.1.278 installed, because home-manager-as-a-NixOS-module puts user packages in
+  # /etc/profiles/per-user/<user>/bin, which is neither on the activation unit's PATH nor in the
+  # two paths this used to try. That is worse than it looks: the fallback is "unpinned", so the
+  # pins would never have started applying after the version floor was crossed, and nothing
+  # would have said why. The username comes from Nix rather than $USER, which activation does
+  # not reliably set.
   home.activation.claudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     claudeBin="$(command -v claude || true)"
-    for candidate in "$HOME/.nix-profile/bin/claude" /run/current-system/sw/bin/claude; do
+    for candidate in \
+      "$HOME/.nix-profile/bin/claude" \
+      "/etc/profiles/per-user/${config.home.username}/bin/claude" \
+      /run/current-system/sw/bin/claude \
+      "$HOME/.local/bin/claude"; do
       if [ -z "$claudeBin" ] && [ -x "$candidate" ]; then claudeBin="$candidate"; fi
     done
     run env CLAUDE_BIN="$claudeBin" ${settingsMerge}/bin/claude-settings \
