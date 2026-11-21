@@ -307,7 +307,7 @@
         <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 8 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">18</span>
+        <span class="figure">19</span>
         <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
@@ -523,7 +523,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 18 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
+    <h2>My queue <span class="tally">— 19 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -542,6 +542,10 @@
       <div class="row">
         <div class="row-top"><span class="pill next">Next</span><span class="txt">Package crew-memory through the flake, once it is its own repo</span></div>
         <p class="dw">The CLI needs to be on PATH and the capture skill installed for all four of you, or crew-memory stays one vault on one laptop. The pattern to copy is <code>claude-web-stack</code>: its own repo, pinned as a <code>flake = false</code> input. That needs two repos created first, which is yours: one for crew-memory and one <b>private</b> one for the vault. <b>Done when</b> a fresh laptop that builds the flake gets <code>crew-memory</code> and the skill without being told about them.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 21 Nov</span><span class="txt">Finished the job the broken switch started: the suite now builds everything the module can produce</span></div>
+        <p class="dw">Yesterday's fix built one thing — a base-tier home generation — and that left two derivations no test ever built. <b>The system guard</b> is a <code>writeShellApplication</code> of its own, so the same failure in <code>guard.sh</code> would still have reached your laptop; building the managed-settings file reaches it, because its hook <code>command</code> interpolates the guard's store path and the string context forces Nix to realise the script. <b>And everything behind an off-by-default flag</b> — <code>claude-mode</code>, the six opt-in MCP servers — now builds through a new all-options-on test config, 11 servers resolved. Both mutation-checked by planting the same em-dash finding and watching the suite fail with the exit code 2 your switch failed with. <code>just test</code> is now three builds per release instead of one.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill settled">Done 21 Nov</span><span class="txt">Counted the skills properly, which shrank your open question from 27 to 7</span></div>
@@ -686,7 +690,7 @@
       </ul>
       <p class="rec-why"><b>My recommendation: the first — vendor four, keep three.</b> Vendor <code>legal-audit</code>, <code>security-audit</code>, <code>design-review</code> and <code>site-analytics</code> into <code>modules/home/skills/</code> the way the four adopted skills landed, with <code>site-analytics</code> reading its domains from an option instead of hard-coding them. Keep <code>project-status</code>, <code>my-todo</code> and <code>prompt-optimizer</code> personal: the first two are how <em>you</em> report rather than how the crew works, and <code>my-todo</code> writes into <code>~/project-brain/Inbox</code> on one laptop. That adds ~261 tokens to a crew session and needs no new repo. The nine HyperFrames skills stay personal by their nature — they drive a renderer and asset accounts only you have.</p>
       <p class="rationale"><b>The part that decides how rather than whether.</b> <code>~/Projects/Claude_testing</code>'s remote is <code>MrBlueStudios/claude-lab</code> and it is <b>private</b>, so pinning it as a <code>flake = false</code> input the way <code>claude-web-stack</code> is pinned would make <code>claude-env</code> unbuildable for a friend. That checkout is also <b>8 commits ahead of its remote on a detached HEAD</b>, with <code>legal-audit</code> edited since the last push — so the current version of a skill the crew would depend on exists nowhere but your laptop. And <code>claude-env</code> is public: vendoring <code>site-analytics</code> as written publishes <code>blitsol.com</code>, <code>blitsol.nl</code> and <code>blitsolhq.com</code> as the domains being measured. Not a secret, but a choice.</p>
-      <p class="rationale"><b>Three things that need no decision.</b> <code>anthropic-skills</code> (12.6 MB) and a second whole copy of <code>superpowers</code> (0.9 MB) hold their <code>SKILL.md</code> files one level too deep, so they have never registered anything, and both duplicate something already installed — delete them. <code>obsidian-skills</code> is the exception: <code>defuddle</code> and <code>obsidian-bases</code> are not duplicated anywhere, and the second is one of the three candidates for crew-memory's parked dashboard question, so those are worth wiring up rather than deleting. And the 20.6 MB of marketplace caches plus 7.9 MB of <code>.trash</code> are free to remove whenever you like.</p>
+      <p class="rationale"><b>Three things that need no decision.</b> <code>anthropic-skills</code> (12.6 MB) and a second whole copy of <code>superpowers</code> (0.9 MB) hold their <code>SKILL.md</code> files one level too deep, so they have never registered anything, and both duplicate something already installed — delete them. <code>obsidian-skills</code> is the exception, and I vetted it rather than assuming: MIT, Steph Ango — Obsidian's own CEO — no hooks, no blocking findings, ~320 tokens for all five. Worth wiring up: <code>obsidian-bases</code> alone, ~64 tokens, because it is one of the three candidates for crew-memory's parked dashboard question. Not <code>defuddle</code>, tempting as "use instead of WebFetch to save tokens" sounds: <code>defuddle-cli</code> is not in nixpkgs under any name, so it would be npm drift. That one is yours to approve, since it adds a line to every crew session. And the 20.6 MB of marketplace caches plus 7.9 MB of <code>.trash</code> are free to remove whenever you like.</p>
       <p class="blocks"><b>Blocks:</b> nothing of yours. It is the last open half of my plugin-channel work.</p>
     </article>
 
@@ -733,9 +737,9 @@
   </section>
 
   <footer>
-    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · nothing live until one switch</p>
+    <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce · nothing live until one switch</p>
     <p>input · github:MrBlueStudios/claude-env, so a module change needs commit, push, nix flake update, switch</p>
-    <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both, home module and system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
+    <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
     <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 38 facts, 3 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>

@@ -302,7 +302,7 @@
       </div>
       <div class="vital">
         <span class="figure">green</span>
-        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then the base generation and the system guard are <em>built</em> on both · 65 guard cases · 144 script tests · 8 scripts shellchecked · 20 Nov</span>
+        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then three things are <em>built</em> on both — a base generation, the module with every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked · 20 Nov</span>
       </div>
       <div class="vital is-warn">
         <span class="figure">0</span>
@@ -720,6 +720,7 @@
       <div>
         <h3>Verified by running it</h3>
         <ul>
+          <li>Every derivation the module can produce, built on both releases as of 21 Nov: a base generation, an all-options-on one that reaches claude-mode and the six opt-in servers, and the system guard. Each addition was mutation-checked by planting the failure it is meant to catch.</li>
           <li>The build that broke the switch, fixed and then proved from the pushed revision: <code>nix build</code> of the base generation against <code>github:MrBlueStudios/claude-env</code> at the fix commit, on 25.05, which is the release the laptop runs. Reverting either <code>shellcheck disable</code> makes <code>just test</code> fail, so the new recipes bite.</li>
           <li><code>just test</code> green on both releases, including the new tier assertions — and mutation-checked: lowering the version floor, dropping the settings key authority and neutering the local-scope prune each produce failures, so the tests bite.</li>
           <li>The Atlassian server against the real site: it works, and the "shared website board" does not exist yet.</li>

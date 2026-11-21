@@ -119,6 +119,28 @@ loading. Separately, `claude-plugins-check` reports 20.6 MB of marketplace cache
 and cursor-plugins uninstalls and 7.9 MB in Claude Code's own `.trash`, which are also free to
 remove.
 
+### obsidian-skills, vetted rather than assumed
+
+`just vet ~/.claude/skills/obsidian-skills` passes with no blocking findings: **MIT, Steph Ango
+(kepano), Obsidian's own CEO**, five skills, **no hooks declared**, ~320 projected always-on
+tokens for all five. The two outbound addresses it reports are a documentation link and the
+plugin's own metadata, not code that fetches anything.
+
+What each would actually need, which is where four of the five fall down:
+
+| Skill | ~tokens | The catch |
+|---|---|---|
+| `obsidian-bases` | ~64 | none — `.base` files are data, and this is one of the three candidates for crew-memory's parked dashboard question |
+| `defuddle` | ~64 | needs `defuddle-cli`, which is **not in nixpkgs** under any name, so it would have to come from npm — the imperative drift this repo exists to stop. Its pitch is "use instead of WebFetch to save tokens", so it becomes interesting the day someone packages it. |
+| `obsidian-cli` | ~64 | backed by **Obsidian's own CLI**, which this laptop already has (the `obsidian` app package ships it), but it only works while Obsidian is running. Worth knowing: the `obsidian-cli` binary on PATH here comes from `obsidian-1.13.7`, not from the unrelated third-party tool of the same name. |
+| `obsidian-markdown` | ~64 | wikilinks, callouts and properties, which Claude handles without a skill |
+| `json-canvas` | ~64 | `.canvas` files, which nothing in this crew's work produces |
+
+**Recommendation: wire up `obsidian-bases` alone**, vendored with the repo's LICENSE and a
+NOTICE.md the way the four adopted skills landed, and leave the other four where they are. That
+is ~64 tokens for the one skill that unblocks a decision already on the board. It is a decision
+rather than a thing I did, because it adds a line to every crew session on four laptops.
+
 ## What this does not answer
 
 Whether the 678 tokens of HyperFrames descriptions are worth paying on a day of Nix work. That is

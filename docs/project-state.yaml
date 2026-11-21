@@ -25,14 +25,16 @@ suite:
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
     26.05 (tests/eval-*), runs shellcheck over the eight packaged scripts, then the 65 guard
-    cases and 144 helper-script tests, and finally *builds* both halves on both releases: the
-    base home-manager generation, and the system guard's claude-guard script (reached by
-    building the managed-settings file, whose `command` interpolates the guard's store path, so
-    the string context forces it). The builds are new on 2026-11-20 and their absence is what
+    cases and 144 helper-script tests, and finally *builds* three things on each release: the
+    base home-manager generation; the same module with every option on, which is the only thing
+    that builds what sits behind an off-by-default flag (claude-mode, the six opt-in MCP
+    servers); and the system guard's claude-guard script, reached by building the
+    managed-settings file, whose `command` interpolates the guard's store path, so the string
+    context forces it. The builds are new on 2026-11-20 and their absence is what
     shipped a broken switch: writeShellApplication runs shellcheck in its check phase, which no
     `nix eval` reaches, so two scripts with style findings evaluated green and failed to build.
-    The guard half was added on 2026-11-21 after noticing the first fix covered only the home
-    module; mutation-checked by planting the same em-dash finding in guard.sh, which now fails
+    The guard and all-on builds were added on 2026-11-21 after noticing the first fix
+    covered only a base-tier home generation; mutation-checked by planting the same em-dash finding in guard.sh, which now fails
     the suite with the same exit code 2 it would have failed a switch with. `just test-fast` is
     the same suite without the builds, for the inner loop. Nothing switches.
     `just plugins-check` is deliberately not part of it: it reports the state of the machine it
@@ -1421,9 +1423,13 @@ questions:
       Three things to do while migrating, none of which need a decision. anthropic-skills (12.6
       MB) and a second whole copy of superpowers (0.9 MB) hold their SKILL.md files one level
       too deep, so they have never registered anything and both duplicate something already
-      installed: delete them. obsidian-skills is the exception — defuddle and obsidian-bases are
-      not duplicated anywhere, and the second is a candidate for crew-memory's parked dashboard
-      question, so wire those up rather than deleting them. ~/.claude/plugins/cache/ponytail and
+      installed: delete them. obsidian-skills is the exception, and it was vetted rather than
+      assumed on 2026-11-21: MIT, Steph Ango (Obsidian's own CEO), no hooks, ~320 projected
+      tokens for all five, no blocking findings. Of the five, wire up obsidian-bases alone
+      (~64 tokens) — it is a candidate for crew-memory's parked dashboard question. defuddle
+      reads well ("use instead of WebFetch to save tokens") but needs defuddle-cli, which is not
+      in nixpkgs under any name, so it would be npm drift; obsidian-cli needs the Obsidian app
+      running; and the markdown and canvas skills cover syntax Claude handles unaided. ~/.claude/plugins/cache/ponytail and
       .../cursor-plugins are 20.6 MB left over from the uninstalls and can be removed, as can
       7.9 MB in Claude Code's own .trash. Full per-skill table: docs/skills-inventory.md
     blocks:

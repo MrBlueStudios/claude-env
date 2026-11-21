@@ -35,15 +35,20 @@ test-fast: test-25-05 test-26-05 test-shellcheck test-guard test-scripts
 # ~40 s per release once the store is warm, minutes on a cold one. test-shellcheck is the fast
 # proxy for the same failure; this is the one that cannot be fooled.
 #
-# Both halves, because the module has two and the first fix only covered one: the home
-# generation, and the *system* guard, whose claude-guard script is a writeShellApplication of its
-# own. Building the managed-settings file is enough for the second — its `command` interpolates
-# the guard's store path, so the string context makes Nix realise the script to write the JSON.
+# Three builds per release, because the first fix covered one of them. A base-tier friend's
+# generation; the same module with *every* option on, which is the only thing that builds the
+# derivations behind an off-by-default flag (claude-mode, the six opt-in MCP servers); and the
+# *system* guard, whose claude-guard script is a writeShellApplication of its own. Building the
+# managed-settings file is enough for the last — its `command` interpolates the guard's store
+# path, so the string context makes Nix realise the script in order to write the JSON.
 test-build:
     @cd {{ root }} && for d in tests/eval-25.05 tests/eval-26.05; do \
         printf '%-22s %-8s ' "$d" build; \
         (cd "$d" && nix build --no-link {{overrides}} "path:$PWD#homeConfigurations.base.activationPackage" {{quiet}}) \
           && echo "home-manager generation builds: ok" || exit 1; \
+        printf '%-22s %-8s ' "$d" all-on; \
+        (cd "$d" && nix build --no-link {{overrides}} "path:$PWD#homeConfigurations.everything.activationPackage" {{quiet}}) \
+          && echo "every option on builds too: ok" || exit 1; \
         printf '%-22s %-8s ' "$d" guard; \
         (cd "$d" && nix build --no-link {{overrides}} "path:$PWD#nixosConfigurations.guard.config.environment.etc.\"claude-code/managed-settings.json\".source" {{quiet}}) \
           && echo "claude-guard builds: ok" || exit 1; \
