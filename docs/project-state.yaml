@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-23T13:36"
+updated: "2026-11-23T15:54"
 suite:
   command: just test
   result: green
@@ -1194,18 +1194,18 @@ my_todos:
     owner: leon
     why_yours: org-admin setting on the Blitsol Atlassian site
     guide: claude-env-rovo-extra-usage
-    status: blocked
+    status: done
     added: 2026-11-16
-    recheck: 2026-12-03
+    closed: 2026-11-23
     note: >-
-      Checked 2026-11-17 and there is nothing to switch off yet. Usage -> Meters says "data is
-      coming soon", AI and Rovo -> Overview has no usage data, no apps or subscriptions are
-      listed, and the org reports 0 Rovo credits used in the last 7 days. Not done and not
-      failed: the control does not exist. Part of the empty result is explained by the two
-      organisations whose names differ only by case. The capital-B "Blitsol" org Léon checked
-      holds no sites, which is why its sites filter returned no matches; the lowercase "blitsol"
-      org holds blitsol.atlassian.net. Recheck under the lowercase one. Still unverified either
-      way: whether a Free site with no card on file can be billed for credits at all.
+      Dropped on 2026-11-23, not finished: Léon decided not to use Rovo at all, since there is no
+      subscription for it, so there is no extra-usage meter left to turn off. Its replacement is
+      the Atlassian MCP server (mcp__atlassian__*, already wired at base tier for all four of you),
+      which covers the same ground Rovo's chat layer would -- search, read, create and edit Jira
+      issues and Confluence pages against the real blitsol.atlassian.net site -- at no extra cost.
+      Still true and now moot: the meter never existed when checked on 2026-11-17 (Usage -> Meters
+      said "data is coming soon", 0 credits used in 7 days), and the capital-B/lowercase org-name
+      confusion that explained the empty first check.
   - id: mt-atlassian-test
     text: Connect the Atlassian MCP server once from Claude Code and read one issue from the shared board
     owner: leon
@@ -1310,14 +1310,25 @@ my_todos:
     owner: leon
     why_yours: a Nix edit on your own machine, and a decision about a server pointing at your vault
     guide: claude-env-personal-servers
-    status: open
+    status: done
     added: 2026-11-20
+    closed: 2026-11-23
     note: >-
-      No longer a pre-switch decision: the 2026-11-21 01:31 activation removed it, as designed.
-      obsidian and vies-vat were two of six removals written to ~/.claude/removed-mcp-servers.json
-      first; the other four (filesystem, github, memory, sentry) are deliberate audit drops. The
-      exact Nix block to paste is in the guide, taken verbatim from that removal file, and the
-      file to paste it into is /etc/nixos/users/leon-new.nix, in the claude-env block that already
+      Both halves confirmed on 2026-11-23. obsidian is declared in
+      /etc/nixos/users/leon-new.nix and claude mcp list reports it Connected from ~, not just
+      from the vault. The version-gate fix landed too: claude --version now reads 2.1.329 (crossed
+      the 2.1.324 floor via `nix flake update nixpkgs-unstable`, since claude-code is overridden
+      from pkgs-unstable in /etc/nixos/flake.nix rather than built from the stable nixpkgs input),
+      and ~/.claude/settings.json's extraKnownMarketplaces now carries a commit `ref` for all
+      three marketplaces -- the gate is pinning silently, which is the correct end state.
+      vies-vat is deliberately not part of this item's done condition; it is its own question,
+      q-vies-vat, below.
+      (prior note, superseded:) No longer a pre-switch decision: the 2026-11-21 01:31 activation
+      removed it, as designed. obsidian and vies-vat were two of six removals written to
+      ~/.claude/removed-mcp-servers.json first; the other four (filesystem, github, memory,
+      sentry) are deliberate audit drops. The exact Nix block to paste is in the guide, taken
+      verbatim from that removal file, and the file to paste it into is
+      /etc/nixos/users/leon-new.nix, in the claude-env block that already
       sets tier and modes.enable.
       .
       The same switch carries the version-gate fix, which is why the two are one task.
