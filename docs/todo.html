@@ -339,8 +339,8 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">6</span>
-        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 11 closed</span>
+        <span class="figure">5</span>
+        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 13 closed</span>
       </div>
       <div class="vital">
         <span class="figure">20</span>
@@ -354,50 +354,31 @@
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p><strong><code>obsidian</code> is back, the version gate is fixed, and Rovo is dropped — all three closed today.</strong> <code>claude mcp list</code> shows obsidian connected from outside the vault; <code>claude --version</code> reads 2.1.329, past the 2.1.324 floor, and <code>~/.claude/settings.json</code> now pins all three marketplaces to a commit SHA. Rovo is off the board entirely rather than parked, since there's no subscription for it — the Atlassian MCP server already covers the same ground.</p>
-      <p><strong>Start with card 1: one message, so it starts waiting on them while you do the rest.</strong> Every card below is a numbered guide — each step says where it happens, a directory, a file, or a screen in a GUI, gives the exact command or click path, and ends in a <em>Done when</em> you can actually check. Cards 1 and 2 are one message each; send them first.</p>
+      <p><strong><code>obsidian</code> is back, the version gate is fixed, Rovo is dropped, and the three friends answered</strong> — four things closed today. <code>claude mcp list</code> shows obsidian connected from outside the vault; <code>claude --version</code> reads 2.1.329, past the 2.1.324 floor, and <code>~/.claude/settings.json</code> now pins all three marketplaces to a commit SHA. Rovo is off the board entirely rather than parked, since there's no subscription for it — the Atlassian MCP server already covers the same ground. And all three confirmed their Jira email, with Almar's full hardware report settling the GPU question for good: GTX 1660 Ti, not "1650 Ti or 1660 Ti".</p>
+      <p><strong>Start with card 1: one message, so it starts waiting on them while you do the rest.</strong> Every card below is a numbered guide — each step says where it happens, a directory, a file, or a screen in a GUI, gives the exact command or click path, and ends in a <em>Done when</em> you can actually check.</p>
       <p>The 21 November switch itself worked and is verified: the tier split, the declarative MCP block, the pinned plugin channel, nine <code>ask</code> rules in <code>/etc/claude-code/</code>, the four adopted skills and <code>repomix</code> are all live.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 6 to do, 1 paused · 11 closed</span></h2>
+    <h2>Your queue <span class="tally">— 5 to do, 1 paused · 13 closed</span></h2>
 
     <div class="order">
       <h3>The order, cheapest first</h3>
       <ol>
-        <li><b>Ask the three for two things</b> — one message, then it waits on them. <span class="after">gates card 6</span></li>
         <li><b>Send the questionnaire</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
-        <li><b>Create the Jira board</b> — 20 min, browser. <span class="after">gates card 4 and the guide</span></li>
-        <li><b>Jira → Google Calendar</b> — 30 min, two GUIs. <span class="after">needs card 3</span></li>
-        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 6</span></li>
-        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs cards 1 and 5</span></li>
+        <li><b>Create the Jira board</b> — 20 min, browser. <span class="after">gates card 3 and the guide</span></li>
+        <li><b>Jira → Google Calendar</b> — 30 min, two GUIs. <span class="after">needs card 2</span></li>
+        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 5</span></li>
+        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 4</span></li>
       </ol>
-      <p class="rationale" style="margin-top:10px">One and two are first because they are a message each: send them and other people's clocks start running while you do three to six. Nothing here needs me present.</p>
+      <p class="rationale" style="margin-top:10px">One is first because it is a message: send it and other people's clocks start running while you do two to five. Nothing here needs me present.</p>
     </div>
 
     <!-- 1 -->
     <article class="task">
       <div class="task-head">
-        <h3>1 · Ask Almar, Ryan and Kish for two things</h3>
-        <span class="why">one message · then it waits on them, so send it early</span>
-      </div>
-      <p class="where"><b>Where:</b> <span class="loc">wherever you three talk</span></p>
-      <p class="rationale">Two loose ends, both other people's data. The email half gates every invite in card 6; the hardware half no longer gates anything, since CLM is parked until the 8 December revisit.</p>
-      <ol class="steps">
-        <li><span class="loc">chat</span> Ask all three: <em>"is the email you sent me the one on your Atlassian account?"</em>
-          <span class="done-when"><b>Done when</b> you have a yes or a different address from each of the three. A mismatch here looks exactly like "the invite never arrived", three days later.</span></li>
-        <li><span class="loc">chat</span> Ask Almar for one paste: <code>fastfetch</code>, then <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>.
-          <span class="done-when"><b>Done when</b> the inventory can name his CPU, RAM, NixOS release, desktop and <em>which</em> of the two GPUs it is. It currently says "GTX 1650 Ti or 1660 Ti", which is a guess.</span></li>
-        <li><span class="loc">here</span> Paste the answers back to me.
-          <span class="done-when"><b>Done when</b> <code>rg -c 'unconfirmed|not yet confirmed' ~/Projects/crew-memory/docs/crew.md</code> prints 0.</span></li>
-      </ol>
-    </article>
-
-    <!-- 2 -->
-    <article class="task">
-      <div class="task-head">
-        <h3>2 · Send the crew-memory questionnaire</h3>
+        <h3>1 · Send the crew-memory questionnaire</h3>
         <span class="why">10 minutes to send · 15 minutes each to answer</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">editor · ~/Projects/crew-memory/docs/questionnaire.md</span> then <span class="loc">wherever you three talk</span></p>
@@ -415,14 +396,14 @@
       <p class="trap"><b>One rule about other people's words, so nobody has to trust me on it:</b> I tighten grammar, never meaning, and never upgrade a hedge into a commitment — "I might do X" becomes an idea with <code>status: raw</code>, not <code>doing</code>. A client name under NDA or a credential gets stored as a shape, not a value. Worth saying that when you send it.</p>
     </article>
 
-    <!-- 3 -->
+    <!-- 2 -->
     <article class="task">
       <div class="task-head">
-        <h3>3 · Create the real website board in Jira</h3>
+        <h3>2 · Create the real website board in Jira</h3>
         <span class="why">20 minutes · decides how the four of you work</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · blitsol.atlassian.net</span></p>
-      <p class="rationale">Checked again today rather than assumed: the site still holds exactly one project, <code>KAN</code>, named "test", with one issue — <code>KAN-1</code> "test issue". So every friend who follows <code>docs/guide.md</code> to the board lands in a sandbox, and card 4 has nothing real to subscribe to.</p>
+      <p class="rationale">Checked again today rather than assumed: the site still holds exactly one project, <code>KAN</code>, named "test", with one issue — <code>KAN-1</code> "test issue". So every friend who follows <code>docs/guide.md</code> to the board lands in a sandbox, and card 3 has nothing real to subscribe to.</p>
       <p class="rec-why"><b>Recommendation: one project, one board, a label per client.</b> At four people and a handful of sites, a project per client means four filters, four calendars and four permission sets to keep in step, for the sole benefit of a tidier issue key. Keep Kanban — you have it already and nothing here has sprint boundaries.</p>
       <ol class="steps">
         <li><span class="loc">Jira</span> <b>Projects → Create project → Kanban.</b> Pick a name, and a key of three or four letters you will type for years.
@@ -440,11 +421,11 @@
       </ol>
     </article>
 
-    <!-- 4 -->
+    <!-- 3 -->
     <article class="task">
       <div class="task-head">
-        <h3>4 · Connect Jira to Google Calendar</h3>
-        <span class="why">30 minutes · needs card 3 first</span>
+        <h3>3 · Connect Jira to Google Calendar</h3>
+        <span class="why">30 minutes · needs card 2 first</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · blitsol.atlassian.net</span> then <span class="loc">browser · calendar.google.com</span></p>
       <p class="rec-why"><b>Agree the convention before you connect anything.</b> On shared work a due date means <em>an outside party expects it on that date</em> — a client deadline, a filing date, a launch, a billing date. Internal sequencing is column and priority, never a due date. That keeps the calendar sparse enough that every entry means something, and it matches where your risk sits: forgetting internal work is what these boards are for; what hurts is an outside date arriving unnoticed.</p>
@@ -466,10 +447,10 @@
       <p class="trap"><b>The failure mode to watch, given how many tracks you run:</b> putting due dates on your own work to manufacture pressure. That turns the calendar from a record of commitments into ambient guilt, and the usual result is that you stop reading it — which loses the client dates sitting in it too.</p>
     </article>
 
-    <!-- 5 -->
+    <!-- 4 -->
     <article class="task">
       <div class="task-head">
-        <h3>5 · Replace Moneybird with AdministratieX</h3>
+        <h3>4 · Replace Moneybird with AdministratieX</h3>
         <span class="why">30 minutes · spends money and holds the crew's financial data</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · AdministratieX pricing page</span> then <span class="loc">browser · moneybird.nl</span></p>
@@ -487,11 +468,11 @@
       <p class="trap"><b>Worth knowing before it becomes the system of record:</b> a shared login removes attribution. Bookkeeping software normally answers "who entered this, and who changed it"; one account used by several people cannot, and that is exactly what an accountant or the Belastingdienst asks. Many providers also forbid sharing a login in their terms. It is a reasonable way to start cheaply — worth knowing you are trading that away, and worth revisiting before the books get big.</p>
     </article>
 
-    <!-- 6 -->
+    <!-- 5 -->
     <article class="task">
       <div class="task-head">
-        <h3>6 · Send the four invites</h3>
-        <span class="why">20 minutes · four billing accounts · needs cards 1 and 5</span>
+        <h3>5 · Send the four invites</h3>
+        <span class="why">20 minutes · four billing accounts · needs card 4</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · HubSpot</span> <span class="loc">browser · Cloudflare</span> <span class="loc">browser · Stripe</span> <span class="loc">browser · AdministratieX</span></p>
       <p class="rationale">No flake can do this: the claude.ai connectors bind to a person's Claude account, not to a machine. A friend gets HubSpot inside his Claude Code by being a real user in HubSpot.</p>
@@ -504,7 +485,7 @@
           <span class="done-when"><b>Done when</b> the member list shows your chosen scope rather than <b>Super Administrator</b>.</span></li>
         <li><span class="loc">Stripe</span> <b>Settings → Team and security → Team members → New member.</b> Read-only <b>Analyst</b> is enough for anyone not handling refunds.
           <span class="done-when"><b>Done when</b> the invite is pending and the role column is not <b>Administrator</b>.</span></li>
-        <li><span class="loc">AdministratieX</span> Either a real second user, or the shared login if that is what card 5 settled on.
+        <li><span class="loc">AdministratieX</span> Either a real second user, or the shared login if that is what card 4 settled on.
           <span class="done-when"><b>Done when</b> they can reach the books the way you intended, and you have written down which of the two it is. That answer decides who can be held to what later.</span></li>
         <li><span class="loc">their terminals</span> Have each friend run <code>claude mcp list</code> in any directory and read the line back to you.
           <span class="done-when"><b>Done when</b> the connector says <b>Connected</b>, not <b>Needs authentication</b>.</span></li>
@@ -629,8 +610,12 @@
   </section>
 
   <section>
-    <h2>Settled <span class="tally">— 10 of yours closed, 6 decisions, 1 audit</span></h2>
+    <h2>Settled <span class="tally">— 12 of yours closed, 6 decisions, 1 audit</span></h2>
     <div class="rows">
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed 23 Nov</span><span class="txt">Confirmed all three Jira emails, and closed Almar's GPU question for good</span></div>
+        <p class="dw">Almar, Ryan and Kish all confirmed the email they sent is their Atlassian login too, so nothing blocks the invites below on that count. Almar's <code>fastfetch</code> and <code>nvidia-smi</code> landed: Lenovo Legion 5 15IMH05H (same chassis and CPU as Ryan's), NixOS 26.05, Hyprland, 15.53 GiB RAM, and a <b>GTX 1660 Ti Mobile, 6 GB</b> — settling "1650 Ti or 1660 Ti" for good. Written into <code>~/Projects/crew-memory/docs/crew.md</code> and <code>hardware-inventory.md</code>.</p>
+      </div>
       <div class="row is-done">
         <div class="row-top"><span class="pill settled">Closed 23 Nov</span><span class="txt">Put <code>obsidian</code> back, and crossed the version-gate floor</span></div>
         <p class="dw"><code>claude mcp list</code> shows <code>obsidian</code> connected from outside the vault, declared in <code>/etc/nixos/users/leon-new.nix</code>. The version gate landed too: <code>claude --version</code> reads 2.1.329 — past 2.1.324 — because <code>claude-code</code> comes from <code>pkgs-unstable</code> in <code>/etc/nixos/flake.nix</code>, not the stable <code>nixpkgs</code> input, so the fix was <code>nix flake update nixpkgs-unstable</code>, not <code>nixpkgs</code>. <code>~/.claude/settings.json</code> now pins all three marketplaces to a commit <code>ref</code>, silently.</p>
@@ -702,7 +687,7 @@
         <li>Write an exemption in <code>docs/vet-exemptions.md</code> with an honest reason, then trial it</li>
         <li>Trial it on one repo with the hooks removed by hand</li>
       </ul>
-      <p class="rec-why"><b>My recommendation: drop it</b>, unless the Jira board in card 3 turns out not to work for the crew. Beads declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code at the start of every session and on every prompt, which makes it the most invasive thing on the 40-repo list. The review's note that <code>--stealth</code> stops it planting hooks is about <em>git</em> hooks, not Claude Code's lifecycle, so it does not help. The third option is worse than it sounds: a plugin with its hooks cut by hand is a fork nobody maintains.</p>
+      <p class="rec-why"><b>My recommendation: drop it</b>, unless the Jira board in card 2 turns out not to work for the crew. Beads declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code at the start of every session and on every prompt, which makes it the most invasive thing on the 40-repo list. The review's note that <code>--stealth</code> stops it planting hooks is about <em>git</em> hooks, not Claude Code's lifecycle, so it does not help. The third option is worse than it sounds: a plugin with its hooks cut by hand is a fork nobody maintains.</p>
       <p class="blocks"><b>Blocks:</b> nothing of yours. Nothing in the flake references Beads, so either answer is free.</p>
     </article>
 

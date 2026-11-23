@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-23T15:54"
+updated: "2026-11-23T16:23"
 suite:
   command: just test
   result: green
@@ -1181,14 +1181,16 @@ my_todos:
     owner: leon
     why_yours: other people's data, only you can ask them
     guide: claude-env-almar-specs
-    status: open
+    status: done
     added: 2026-11-15
+    closed: 2026-11-23
     note: >-
-      Léon said on 2026-11-17 that Almar's paste is not reachable right now. The fastfetch half
-      is no longer urgent: with CLM parked (mt-clm-call) his GPU decides nothing, and the
-      inventory saying "GTX 1650 Ti or 1660 Ti" costs nothing this month. The email half still
-      gates every invite, so chase that independently rather than waiting for one reply covering
-      both.
+      Both halves answered on 2026-11-23. All three confirmed the email they sent is also their
+      Atlassian/Jira login, so nothing blocks the invites in mt-invites on that count. Almar's
+      fastfetch and nvidia-smi landed too: Lenovo Legion 5 15IMH05H (same chassis and CPU as
+      Ryan's -- Intel i7-10750H), NixOS 26.05, Hyprland 0.55.4, 15.53 GiB RAM, and a GTX 1660 Ti
+      Mobile (6 GB) confirmed by nvidia-smi, settling the 1650 Ti/1660 Ti ambiguity for good.
+      Written into ~/Projects/crew-memory/docs/crew.md and hardware-inventory.md.
   - id: mt-rovo-extra-usage
     text: Turn Rovo extra usage off in Atlassian Administration before 3 December 2026
     owner: leon
