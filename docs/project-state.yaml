@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-21T02:10"
+updated: "2026-11-23T13:36"
 suite:
   command: just test
   result: green
@@ -1115,6 +1115,7 @@ my_todos:
       business-email login there, that row is not an invite at all but credentials handed over,
       which is less reversible; record which of the two it turned out to be.
   - id: mt-bookkeeping-switch
+    guide: claude-env-bookkeeping-switch
     text: Replace Moneybird with AdministratieX before anyone is invited into the books
     owner: leon
     why_yours: a tool choice that spends your money and holds the crew's financial data
@@ -1254,8 +1255,9 @@ my_todos:
     text: Commit and push the Atlassian ask rules, then update the flake input so they reach the system
     owner: leon
     why_yours: a push and a system switch on your own laptop
-    status: open
+    status: done
     added: 2026-11-17
+    closed: 2026-11-21
     note: >-
       Found 2026-11-17: /etc/claude-code/managed-settings.json on the running system has the 5
       deny rules but no permissions.ask, because the ask rules added in ct-atlassian-ask are still
@@ -1267,6 +1269,8 @@ my_todos:
       Half done 2026-11-20: everything is committed and pushed, so what is left is only the
       switch, and it is the same switch six other things now wait on. Verify with
       `jq '.permissions.ask | length' /etc/claude-code/managed-settings.json`, which must print 9.
+      Closed 2026-11-21: the switch ran at 01:31 and that command prints 9, alongside 5 deny
+      rules and a hook pointing at a store path.
   - id: mt-spare-machines
     text: When the spare machines are set up, run the GPU check from research/clm-hosting-reality.md on each
     owner: leon
@@ -1282,10 +1286,15 @@ my_todos:
       as its own loose end. If CLM is dropped for good at that revisit, close this with it.
 
   - id: mt-jira-board
-    text: >-
-      Create the shared website board in Jira, so the crew has somewhere to work other than the
-      KAN test project
+    text: Create the shared website board in Jira, so the crew has somewhere real to work
+    owner: leon
+    why_yours: a GUI decision about how four people work together
+    guide: claude-env-jira-board
     status: open
+    added: 2026-11-20
+    recheck_note: >-
+      Still true on 2026-11-23, checked rather than assumed: a JQL search over
+      blitsol.atlassian.net returns one issue, KAN-1 "test issue" in project KAN ("test").
     why: >-
       The Atlassian MCP server is wired at base tier and answers — a JQL query returns KAN-1
       "test issue" — but KAN, literally named "test", is the only project on
@@ -1296,18 +1305,41 @@ my_todos:
     size: twenty minutes in the Jira UI, once the shape is decided
   - id: mt-declare-personal-servers
     text: >-
-      Add obsidian and vies-vat to claude-env.mcp.personal in /etc/nixos before the next switch,
-      or accept losing them
+      Put obsidian back in claude-env.mcp.personal, and pick up the version-gate fix in the same
+      switch
+    owner: leon
+    why_yours: a Nix edit on your own machine, and a decision about a server pointing at your vault
+    guide: claude-env-personal-servers
     status: open
-    why: >-
-      mcp.nix now owns the user-scope mcpServers block, so a server that is not declared is
-      removed at the next switch. Two of the ten currently registered are undeclared on purpose:
-      obsidian points at ~/Obsidian/ZEN-Vault, which is personal, and vies-vat runs from a path
-      in ~/projects (q-vies-vat argues for replacing it with a CLI). Both are recoverable — the
-      switch writes them to ~/.claude/removed-mcp-servers.json — so this is a convenience, not a
-      risk. The other six removals (memory, github, filesystem, sentry, cloudflare at base tier,
-      playwright's old npx form) are all deliberate.
-    size: one Nix block, five minutes
+    added: 2026-11-20
+    note: >-
+      No longer a pre-switch decision: the 2026-11-21 01:31 activation removed it, as designed.
+      obsidian and vies-vat were two of six removals written to ~/.claude/removed-mcp-servers.json
+      first; the other four (filesystem, github, memory, sentry) are deliberate audit drops. The
+      exact Nix block to paste is in the guide, taken verbatim from that removal file, and the
+      file to paste it into is /etc/nixos/users/leon-new.nix, in the claude-env block that already
+      sets tier and modes.enable.
+      .
+      The same switch carries the version-gate fix, which is why the two are one task.
+      Léon switched again on 2026-11-21 14:06 and 2026-11-23 12:31, and both runs still logged
+      "no Claude Code version to read", because the lock is still at 83ee425: `nh os switch`
+      alone does not move the flake lock, so `nix flake update claude-env` has to be in the
+      command. Observable afterwards: the warning becomes "2.1.278 is older than 2.1.324".
+    size: one Nix block and one switch
+
+  - id: mt-questionnaire
+    text: >-
+      Send the crew-memory questionnaire, because the vault is empty until the answers come back
+    owner: leon
+    why_yours: other people's time, and three friends only you can ask
+    guide: claude-env-crew-questionnaire
+    status: open
+    added: 2026-11-20
+    note: >-
+      ~/Projects/crew-memory/docs/questionnaire.md, six sections, about fifteen minutes each.
+      Until it goes out, the collision check ranks a new idea against four ideas, all of them
+      written by Claude, which is a check over nothing. Answers come back to Claude, which turns
+      them into notes with owner set to whoever answered and source: human.
 questions:
   - id: q-mcp-philosophy
     question: >-
@@ -1416,6 +1448,48 @@ questions:
       Only those already working on Blitsol client work, which is all four of the current crew —
       Almar, Ryan, Kish and Léon. Named 2026-11-13. Friends added later get the base tier only,
       with no Blitsol access, so the tier split earns its keep from the first new person.
+  - id: q-beads-exemption
+    question: >-
+      Beads is the only candidate that would give the four of you a git-mergeable shared work
+      graph, and it fails the vetting gate. Write it an exemption, or drop it?
+    options:
+      - Drop it and keep Jira
+      - Write an exemption in docs/vet-exemptions.md with an honest reason, then trial it
+      - Trial it on one repo only, with the hooks removed by hand
+    recommendation: >-
+      The first, unless the Jira board turns out not to work for the crew. Beads declares four
+      hooks, two of them SessionStart and UserPromptSubmit, so it wants to run code at the start
+      of every session and on every prompt — the most invasive thing on the 40-repo list. The
+      review's note that `--stealth` stops it planting hooks is about *git* hooks, not Claude
+      Code's lifecycle, so it does not help. The third option is worse than it sounds: a plugin
+      with its hooks cut by hand is a fork nobody maintains.
+    blocks:
+      - ct-tool-trials
+    blocks_note: >-
+      ct-tool-trials cannot finish while one of its six candidates has no verdict. Nothing in the
+      flake references Beads, so neither answer breaks anything.
+    answer: null
+  - id: q-compressors
+    question: >-
+      RTK and Headroom are the only two entries of the forty with a real token-saving mechanism,
+      and neither is packaged. Install one imperatively anyway?
+    options:
+      - Skip both until one is in nixpkgs
+      - Allow one imperative install on Léon's laptop only, as a measured two-week trial
+      - Package one in the flake ourselves
+    recommendation: >-
+      The first. The plan claimed both were in nixpkgs and that is false — the only `headroom`
+      is haskellPackages.headroom, an unrelated licence-header manager, and there is no `rtk`.
+      So adopting one means a piped installer, pip or npm, which is the drift this repo exists
+      to stop. The number decides it: session start re-measured at 27,344 tokens on 2026-11-20,
+      of which all MCP servers together are 5,081, so a compressor of *command output* is
+      fighting for a slice of the small half. Revisit if a measurement ever shows command output
+      is where the tokens actually go.
+    blocks:
+      - ct-tool-trials
+    blocks_note: >-
+      Same gate as q-beads-exemption: the trial list cannot close with two candidates unjudged.
+    answer: null
   - id: q-personal-skills
     question: >-
       7 skills load from ~/.claude/skills on Léon's laptop by symlink into a private repo, and 9

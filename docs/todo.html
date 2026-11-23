@@ -220,6 +220,42 @@
     word-break: break-word;
   }
 
+  .loc {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    background: var(--surface-sunk);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+  .where { font-size: 13.5px; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+  .where b { color: var(--ink); font-weight: 600; }
+  ol.steps > li .loc { margin-right: 6px; }
+
+  .order {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 3px 3px 0;
+    padding: 15px 18px;
+  }
+  .order h3 { font-size: 16px; font-weight: 600; margin-bottom: 9px; }
+  .order ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 5px; }
+  .order li { font-size: 14px; color: var(--ink-soft); }
+  .order li b { color: var(--ink); font-weight: 600; }
+  .order .after { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  .subhead {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
   /* ---- Claude's queue ---- */
   .rows { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
   .row { background: var(--surface); padding: 13px 16px; display: flex; flex-direction: column; gap: 6px; }
@@ -298,209 +334,240 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">claude-env · queue · 21 Nov 2026 · Almar · Ryan · Kish · Léon</p>
+    <p class="eyebrow">claude-env · queue · 23 Nov 2026 · Almar · Ryan · Kish · Léon</p>
     <h1>What's on you, what's on me</h1>
 
     <div class="vitals">
       <div class="vital mine">
         <span class="figure">7</span>
-        <span class="sub">yours — open · 1 blocked on Atlassian · 1 paused to 8 Dec · 9 closed</span>
+        <span class="sub">yours — each one a numbered guide below · 1 waiting on Atlassian · 1 paused to 8 Dec · 9 closed</span>
       </div>
       <div class="vital">
         <span class="figure">20</span>
         <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
       </div>
       <div class="vital">
-        <span class="figure">3</span>
-        <span class="sub">open questions — personal skills, the superpowers pin, vies-vat</span>
+        <span class="figure">5</span>
+        <span class="sub">open questions — personal skills, the superpowers pin, vies-vat, Beads, the compressors</span>
       </div>
     </div>
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p><strong>You switched at 01:31 and it worked.</strong> Everything this board described is running: the tier split, the declarative MCP block, the pinned plugin channel, the guard's nine <code>ask</code> rules, the four adopted skills and <code>repomix</code>. The two failed attempts at 16:56 were my bug, and both the bug and the reason <code>just test</code> missed it are fixed.</p>
-      <p><strong>What activation removed, so nothing is a surprise:</strong> six user-scope MCP servers — <code>filesystem</code>, <code>github</code>, <code>memory</code>, <code>obsidian</code>, <code>sentry</code>, <code>vies-vat</code> — all of them written to <code>~/.claude/removed-mcp-servers.json</code> first; twelve local-scope registrations in <code>~/projects/fastsdcpu</code> and <code>~</code>; and the <code>brag</code> plugin's old marketplace name, which moved to the declared one. <code>obsidian</code> is the one you said you use, so the first card below is now about putting it back rather than about deciding.</p>
-      <p><strong>One defect came out of your activation log</strong>, found there rather than guessed at: the marketplace version gate could not find Claude Code, because home-manager-as-a-NixOS-module installs it into <code>/etc/profiles/per-user/&lt;user&gt;/bin</code> and the gate looked in three other places. Its fallback is "leave marketplaces unpinned", so it failed quietly — and would never have started pinning once Claude Code crossed 2.1.324, which is what this board promised would happen by itself. Fixed and pushed; it lands at your next switch, whenever that is. Nothing is broken in the meantime.</p>
+      <p><strong>Start with card 1: five minutes in <code>/etc/nixos</code>.</strong> It puts <code>obsidian</code> back and, in the same switch, picks up a fix that your last two switches missed — you ran <code>nh os switch</code> without <code>nix flake update claude-env</code>, so the lock never moved off <code>83ee425</code> and the activation log still says <code>no Claude Code version to read</code>.</p>
+      <p><strong>Every card below is a numbered guide.</strong> Each step says where it happens — a directory, a file, or a screen in a GUI — gives the exact command or click path, and ends in a <em>Done when</em> you can actually check. Cards 2 and 3 are one message each: send them early so other people's clocks run while you do the rest. Nothing on this board needs me present.</p>
+      <p>The 21 November switch itself worked and is verified: the tier split, the declarative MCP block, the pinned plugin channel, nine <code>ask</code> rules in <code>/etc/claude-code/</code>, the four adopted skills and <code>repomix</code> are all live. It removed six user-scope MCP servers, each saved to <code>~/.claude/removed-mcp-servers.json</code> first — <code>obsidian</code> is the one you use, which is why it is card 1.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 7 open, 1 blocked on Atlassian · the switch is done</span></h2>
-    <p class="rationale">The order changed at the top only: two short cards now come before the Jira work, because both are prerequisites for it being worth doing. CLM stays parked by your decision of 17 November. One item is paused and not shown: the GPU check on your and Almar's spare machines, which hangs off the same early-December revisit.</p>
+    <h2>Your queue <span class="tally">— 7 to do, 1 waiting on Atlassian, 1 paused · 9 closed</span></h2>
 
-    <article class="task">
-      <div class="task-head">
-        <h3>Put <code>obsidian</code> back, and decide <code>vies-vat</code></h3>
-        <span class="why">five minutes · one Nix block · both are sitting in the removal file</span>
-      </div>
-      <p class="rationale"><code>mcp.nix</code> owns the <code>mcpServers</code> block of <code>~/.claude.json</code>, and the 01:31 switch did what it says: a server nobody declared was removed. Six went, and two of them are yours rather than audit casualties — <code>obsidian</code>, which points at <code>~/Obsidian/ZEN-Vault</code>, and <code>vies-vat</code>, which runs from a path in <code>~/projects</code>. The other four (<code>filesystem</code>, <code>github</code>, <code>memory</code>, <code>sentry</code>) are ones the audit dropped on purpose.</p>
-      <p class="rationale">Nothing is lost: every removal was written to <code>~/.claude/removed-mcp-servers.json</code> with a timestamp before it went, and the <code>command</code> and <code>args</code> you need are in there verbatim. <code>jq '.servers.obsidian' ~/.claude/removed-mcp-servers.json</code> in any directory gives you the block to paste.</p>
-      <ol class="steps">
-        <li>In <code>/etc/nixos</code>, in the module where you set <code>claude-env.tier</code>, declare what you want back:
-          <code>claude-env.mcp.personal.obsidian = { type = "stdio"; command = "..."; args = [ ... ]; };</code> — copy the <code>command</code> and <code>args</code> out of <code>jq '.servers.obsidian' ~/.claude/removed-mcp-servers.json</code>, then switch again.
-          <span class="done-when"><b>Done when</b> <code>claude mcp list</code> shows <code>obsidian</code> connected from a directory that is not your vault. Declaring it is also what stops the next switch removing it again.</span></li>
-        <li>Decide <code>vies-vat</code> with the question at the bottom of this board rather than here — my recommendation is to drop the server and let me write a <code>vat-check</code> CLI instead.
-          <span class="done-when"><b>Done when</b> you have said drop or keep. Saying nothing means it goes at the next switch and can be restored from the removal file.</span></li>
+    <div class="order">
+      <h3>The order, cheapest first</h3>
+      <ol>
+        <li><b>Put obsidian back</b> — 5 min, terminal. Also picks up a fix that two switches missed.</li>
+        <li><b>Ask the three for two things</b> — one message, then it waits on them. <span class="after">gates card 6</span></li>
+        <li><b>Send the questionnaire</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
+        <li><b>Create the Jira board</b> — 20 min, browser. <span class="after">gates cards 5 and the guide</span></li>
+        <li><b>Jira → Google Calendar</b> — 30 min, two GUIs. <span class="after">needs card 4</span></li>
+        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 7</span></li>
+        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs cards 2 and 6</span></li>
       </ol>
-      <p class="trap"><b>What it did to local scope, measured after the fact:</b> 25 stranded registrations became 5. The five left are the opt-in modules — <code>eu-law</code>, <code>firecrawl</code> and <code>mcp-nixos</code> in your home directory, <code>coingecko</code> and <code>gsc</code> in <code>fastsdcpu</code> — which are declared by nobody and dropped by nobody, so the prune reports them and leaves them alone. That is the designed behaviour: nothing you added on purpose for one project disappears silently.</p>
-    </article>
+      <p class="rationale" style="margin-top:10px">Two and three are first among the slow ones because they are a message each: send them and other people's clocks start running while you do four to seven. Nothing here needs me present.</p>
+    </div>
 
-
+    <!-- 1 -->
     <article class="task">
       <div class="task-head">
-        <h3>Create the real website board in Jira</h3>
-        <span class="why">twenty minutes in the UI · decides how the four of you work</span>
+        <h3>1 · Put <code>obsidian</code> back, and pick up the version-gate fix in the same switch</h3>
+        <span class="why">5 minutes · one Nix block, one command</span>
       </div>
-      <p class="rationale">The Atlassian server is wired at base tier and answers — a JQL query returns <code>KAN-1</code>, "test issue". But <code>KAN</code>, literally named "test", is the only project on <code>blitsol.atlassian.net</code> and that is its only issue. So every friend who follows <code>docs/guide.md</code> to the board finds a sandbox, and the calendar card below has nothing real to subscribe to.</p>
-      <p class="rationale">This is yours because it is not a technical choice. One board for all client websites or one per client; which issue types; whether Almar, Ryan and Kish can create issues or only comment; and what the columns mean. Those decide how the crew works, and changing them later costs more than deciding now.</p>
-      <p class="rec-why"><b>Recommendation: one board, one project, labels per client.</b> At four people and a handful of sites, a project per client is four filters, four calendars and four sets of permissions to keep in step, for the sole benefit of a tidier issue key. One project with a label per client gives you the same views through JQL and one thing to maintain. Keep Kanban — you already have it, and nothing here has sprint boundaries.</p>
+      <p class="where"><b>Where:</b> <span class="loc">editor · /etc/nixos/users/leon-new.nix</span> then <span class="loc">terminal · /etc/nixos</span></p>
+      <p class="rationale">The 21 Nov switch removed <code>obsidian</code> because nothing declared it — as designed, and it was saved first. The same switch also needs to carry a fix of mine that has been on <code>main</code> since then: your runs on 21 Nov 14:06 and 23 Nov 12:31 did not pick it up, because <code>nh os switch</code> alone does not move the flake lock.</p>
       <ol class="steps">
-        <li>Create the project, pick a key you will be typing for years, and keep it short.
-          <span class="done-when"><b>Done when</b> the key is not <code>KAN</code> and the name is not "test".</span></li>
-        <li>Put something real in it — the three outside dates you already have are a good start.
-          <span class="done-when"><b>Done when</b> there is at least one issue nobody invented for the test.</span></li>
-        <li>Tell me the project key, so the guide stops pointing people at a sandbox.
-          <span class="done-when"><b>Done when</b> <code>docs/guide.md</code> names the real board.</span></li>
+        <li><span class="loc">editor</span> Open <code>/etc/nixos/users/leon-new.nix</code> and find the <code>claude-env = {</code> block at about line 35 — the one holding <code>tier = "blitsol";</code> and <code>modes.enable = true;</code>.
+          <span class="done-when"><b>Done when</b> both of those lines are on screen.</span></li>
+        <li><span class="loc">editor</span> Paste this directly under <code>modes.enable = true;</code>, inside the same block. It is the server verbatim as activation saved it, so there is nothing to look up:
+          <br><code>mcp.personal.obsidian = { type = "stdio"; command = "npx"; args = [ "-y" "@bitbonsai/mcpvault" "/home/leon-new/Obsidian/ZEN-Vault" ]; };</code>
+          <span class="done-when"><b>Done when</b> the file is saved. To see the original first: <code>jq '.servers.obsidian' ~/.claude/removed-mcp-servers.json</code> in any directory.</span></li>
+        <li><span class="loc">terminal · /etc/nixos</span> <code>nix flake update claude-env &amp;&amp; nh os switch .</code>
+          <span class="done-when"><b>Done when</b> the output says <code>Updated input 'claude-env'</code>. <b>Looks like success, is not:</b> a bare <code>nh os switch .</code> rebuilds the revision you already have — that is what happened twice.</span></li>
+        <li><span class="loc">terminal · anywhere but the vault</span> <code>cd ~ &amp;&amp; claude mcp list | grep obsidian</code>
+          <span class="done-when"><b>Done when</b> it reads <code>✔ Connected</code> from a directory that is not <code>~/Obsidian</code>. That is the whole point of user scope — it used to work only where you added it.</span></li>
+        <li><span class="loc">terminal · anywhere</span> <code>journalctl -u 'home-manager-leon\x2dnew.service' -n 40 --no-pager | grep claude-settings</code>
+          <span class="done-when"><b>Done when</b> the line reads <code>Claude Code 2.1.278 is older than 2.1.324</code> instead of <code>no Claude Code version to read</code>. The first means the gate found your Claude Code and decided; the second means it never found it and defaulted.</span></li>
       </ol>
-      <p class="trap"><b>While you are in there:</b> the invites in the card further down need the Jira email of each friend, and nobody has confirmed the address they sent is the one on their Atlassian account. A mismatch looks exactly like "the invite never arrived", three days later.</p>
+      <p class="trap"><b>While you are in that file:</b> <code>vies-vat</code> went in the same removal and is someone else's MIT template running from <code>~/projects/check-vat-vies-mcp</code>. My recommendation is to leave it gone and let me write a <code>vat-check</code> CLI, which costs no session tokens. Saying nothing keeps it gone, and it stays recoverable from the same file.</p>
     </article>
 
+    <!-- 2 -->
     <article class="task">
       <div class="task-head">
-        <h3>Connect Jira to Google Calendar</h3>
-        <span class="why">your stated next move · a click path through two GUIs you own</span>
+        <h3>2 · Ask Almar, Ryan and Kish for two things</h3>
+        <span class="why">one message · then it waits on them, so send it early</span>
       </div>
-      <p class="rationale">You said on 17 November this is what you want next, and asked what should appear. The site is your own, <code>blitsol.atlassian.net</code> — but the board to point this at is the one in the card above, not <code>KAN</code>. Everything below holds whichever key you choose.</p>
-      <p class="rec-why"><b>Recommendation: two feeds split by meaning, not one per board.</b> You said this is mainly for yourself, and that you want your own boards in it alongside the crew's. That changes the shape. A due date on shared work means <em>someone else is holding me to this</em>; on your own board it means <em>I intend this</em>. They must not share a colour, because your own dates slip routinely and a client's must not, and mixing them teaches you to discount both. "Assigned to me" also stops being a useful filter once your own projects are in scope, since everything there is yours anyway. One option from the first version of this card does not apply either: you used the Kanban template, so there are no sprint boundaries unless you deliberately turn sprints on.</p>
-      <p class="rationale"><b>The convention worth agreeing with the crew:</b> on shared work a due date means an outside party expects it on that date. A client deadline, a filing date, a launch, a billing date. Internal sequencing is expressed by column and priority and never by a due date. That keeps the calendar sparse enough that every entry means something, and it matches where your risk sits. Forgetting internal work is what these boards are for; what hurts is an outside date arriving unnoticed, and you have three already: the Rovo recheck on 3 December, closing the Moneybird trial before it can bill, and the CLM revisit around 8 December.</p>
-      <p class="rationale"><b>On your own boards, a structural warning.</b> The site has exactly one project today, <code>KAN</code>, holding one issue, so this is still free to decide. If your tracks go into Jira, put them in <strong>one</strong> personal project with a label per track rather than a project per track. One project is one filter and one feed; a project per track is five feeds, five colours and a maintenance job. And it is worth asking whether they belong in Jira at all, because you already keep personal state in this board, in <code>project-state.yaml</code>, and in <code>My Todos.md</code> plus the vault. Jira would be a fourth place, and that kind of fragmentation is part of why crew-memory exists.</p>
+      <p class="where"><b>Where:</b> <span class="loc">wherever you three talk</span></p>
+      <p class="rationale">Two loose ends, both other people's data. The email half gates every invite in card 7; the hardware half no longer gates anything, since CLM is parked until the 8 December revisit.</p>
       <ol class="steps">
-        <li>Write the due-date convention down and tell the other three. One sentence is enough.
-          <span class="done-when"><b>Done when</b> all four of you would answer "should this get a due date?" the same way.</span></li>
-        <li>Put due dates on the outside dates you already have, so there is something real to look at.
-          <span class="done-when"><b>Done when</b> the board has at least three issues with due dates that you did not invent for the test.</span></li>
-        <li>Save a filter in Jira: <code>project = KAN AND duedate IS NOT EMPTY ORDER BY duedate</code>.
-          <span class="done-when"><b>Done when</b> the filter returns exactly what you would want to see coming. Note there is deliberately <em>no</em> assignee clause: once the convention holds, every hit is something Blitsol owes an outsider, and you carry that whoever it is assigned to. The convention does the filtering, so the JQL does not have to.</span></li>
-        <li>Install <b>Easy Calendar Integration for Jira</b> from the Marketplace. Checked 17 Nov: Jira <em>Cloud</em> has no native iCal feed for filters, unlike Server, so an app is the only no-code route. It is free to 10 users, you are 4, and it is a Forge app so it runs on Atlassian's own infrastructure rather than the vendor's.
-          <span class="done-when"><b>Done when</b> it appears under Apps and the price shown for your site is 0. The cliff is at user 11, which is also where Jira itself starts charging.</span></li>
-        <li>In Apps → Easy Calendar Integration, create a subscription pointed at that saved filter, and copy its URL.
-          <span class="done-when"><b>Done when</b> you have the subscription URL. Treat it as a secret: anyone holding it reads the filter with no login.</span></li>
-        <li>Google Calendar → Other calendars → + → <b>From URL</b>, paste it, strong colour. Not Import, which is a one-time snapshot that never updates.
-          <span class="done-when"><b>Done when</b> one real deadline shows on the right day.</span></li>
-        <li>Leave it one week before judging, and only then decide about your own tracks.
-          <span class="done-when"><b>Done when</b> you can say whether you actually looked at it. If you did not, the problem is the convention in step 1, not the integration. A second muted feed for your own dated work is a decision for after that week.</span></li>
-      </ol>
-      <p class="trap"><b>The lag is Google's, not the app's.</b> The app refreshes its feed every five minutes and sets the TTL flag asking clients to do the same, but Google polls subscribed calendars on its own schedule, often 8 to 24 hours. Nothing you configure changes that. Apple Calendar and Outlook do honour a tighter interval, so if same-day accuracy turns out to matter, the fix is a different client or a real sync, not a setting. If you would rather not install a third-party app at all, the alternative is about forty lines on the Contabo box emitting the same <code>.ics</code> behind Caddy, which I can write. Not worth building before the week is up.</p>
-      <p class="trap"><b>The failure mode to watch, given how many tracks you run:</b> putting due dates on your own work to manufacture pressure. That turns the calendar from a record of commitments into ambient guilt, and the usual result is that you stop reading it, which loses the client dates sitting in it too. On your own boards, a due date should mean the date is real: a demo, a call, a trial expiring. Not a wish. Also leave status changes and new issues out entirely, since those are stream-shaped rather than day-shaped and the board already shows them.</p>
-      <p class="trap"><b>Looks like success, isn't:</b> Google refreshes subscribed iCal feeds on its own schedule, often hours behind and sometimes a full day. That is normal, but it means the feed is wrong for anything same-day, and if the crew starts relying on it the answer is the Atlassian MCP plus a real sync, not a faster refresh.</p>
-    </article>
-
-    <article class="task" style="border-top-color: var(--warn);">
-      <div class="task-head">
-        <h3>Two calls on the tool trials, now that all four candidates are vetted</h3>
-        <span class="why">both change what the crew runs · neither can be answered from the repo</span>
-      </div>
-      <p class="rationale">The six trials from the 40-repo plan went as far as they can without you: installing any third-party tool is denied here as <em>Untrusted Code Integration</em>, which is the guardrail working. So each candidate was cloned and run through <code>just vet</code> instead, and two of the answers want a decision rather than a next step.</p>
-      <p class="rationale"><b>Beads fails the gate.</b> It declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code on every session and every prompt. The plan's note about installing with <code>--stealth</code> is about <em>git</em> hooks, not Claude Code's lifecycle, so that does not help. It is the most invasive thing on the list, and it is also the only candidate that would give the four of you a git-mergeable shared work graph. Either write it an exemption in <code>docs/vet-exemptions.md</code> with an honest reason, or drop it and keep Jira.</p>
-      <p class="rationale"><b>The compressors are not packaged.</b> RTK and Headroom are the only two entries of the forty with a real token-saving mechanism, and the plan said both were in nixpkgs. They are not, under any name — <code>haskellPackages.headroom</code> is an unrelated licence-header manager. So both would have to be installed imperatively, which is the exact drift this repo exists to stop, for a saving their own README puts at roughly 20%.</p>
-      <p class="trap"><b>My recommendation on the second one:</b> skip both. <code>research/context-budget.md</code> is the argument — re-measured on 20 Nov, session start is 27,344 tokens and all MCP servers together are 5,081 of it, so the compressors would be fighting for a slice of the small half while costing the reproducibility rule. Revisit only if a measurement shows command output is actually where your tokens go.</p>
-      <p class="rationale">Both are still open on 20 November, and neither blocks anything — the flake does not reference either tool. The other two need nothing from you yet. <b>Claude HUD</b> is the cleanest thing on the list: MIT, named author, no hooks declared, one skill. <b>wshobson/agents</b> is 185 skills and a projected 11,840 always-on tokens — about 44% of session start — which settles it: raid two or three plugins, never install the catalogue.</p>
-    </article>
-
-    <article class="task">
-      <div class="task-head">
-        <h3>Replace Moneybird with AdministratieX before anyone is invited into the books</h3>
-        <span class="why">a tool choice that spends your money and holds the crew's financial data</span>
-      </div>
-      <p class="rationale">You spotted on 17 November that Moneybird is trial-only, so it cannot be where the books actually live. Your plan: AdministratieX with two users, your own account as the main bookkeeping account plus a shared business email the friends sign in with, until there is budget for real per-person seats.</p>
-      <p class="rationale">Two things in that plan are yours rather than verified: the two-user allowance and what it costs once any trial ends. Both decide whether this works, so they are step one rather than an assumption.</p>
-      <ol class="steps">
-        <li>Read AdministratieX's own pricing page and write down the user count and the price after trial.
-          <span class="done-when"><b>Done when</b> you can name both from their page, not from memory, and the second user is a real login rather than a seat you pay extra for.</span></li>
-        <li>Decide what the shared business-email login is allowed to do, and what only your own account may do.
-          <span class="done-when"><b>Done when</b> the shared login cannot do the things you would not want done without you.</span></li>
-        <li>Get whatever already exists out of Moneybird and close the trial before it can bill.
-          <span class="done-when"><b>Done when</b> nothing of value is left in Moneybird and no card is attached to it.</span></li>
-        <li>Only then invite anyone, using the invite task below.
-          <span class="done-when"><b>Done when</b> the bookkeeping row in that task names AdministratieX and the friends are in it.</span></li>
-      </ol>
-      <p class="trap"><b>Worth knowing before it becomes the system of record:</b> a shared login removes attribution. Bookkeeping software normally answers "who entered this, and who changed it"; one account used by several people cannot, and that is exactly the question an accountant or the Belastingdienst asks. Many providers also forbid sharing a login in their terms. It is a reasonable way to start cheaply, but it is worth knowing you are trading that away, and worth revisiting before the books get big.</p>
-    </article>
-
-    <article class="task">
-      <div class="task-head">
-        <h3>Get Almar's fastfetch output and confirm everyone's Jira account email</h3>
-        <span class="why">other people's data — only you can ask</span>
-      </div>
-      <p class="rationale">Three of four laptops are in the inventory; Almar's says "Lenovo Legion, GTX 1650 Ti or 1660 Ti" and nothing else. And the emails came in under "github accounts", so nobody has said they are also the Jira ones, and the Jira email is how a person lands on the shared board.</p>
-      <p class="rationale">You said on 17 November that Almar's paste is not reachable right now. That half can wait: with CLM parked, his GPU decides nothing, and the inventory saying "or" costs you nothing this month. The email half is the part worth chasing, because it gates every invite.</p>
-      <ol class="steps">
-        <li>When Almar is reachable, ask for one paste: <code>fastfetch</code>, then <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>.
-          <span class="done-when"><b>Done when</b> the inventory can name his CPU, RAM, NixOS release, desktop, and which of the two GPUs it is. No longer urgent, just unfinished.</span></li>
-        <li>Ask all three whether the email they sent is the one on their Atlassian account.
-          <span class="done-when"><b>Done when</b> you have a yes or a different address from each. A mismatch here looks like "the invite never arrived" three days later.</span></li>
-        <li>Hand the answers to me to fold into the crew file and the inventory.
+        <li><span class="loc">chat</span> Ask all three: <em>"is the email you sent me the one on your Atlassian account?"</em>
+          <span class="done-when"><b>Done when</b> you have a yes or a different address from each of the three. A mismatch here looks exactly like "the invite never arrived", three days later.</span></li>
+        <li><span class="loc">chat</span> Ask Almar for one paste: <code>fastfetch</code>, then <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>.
+          <span class="done-when"><b>Done when</b> the inventory can name his CPU, RAM, NixOS release, desktop and <em>which</em> of the two GPUs it is. It currently says "GTX 1650 Ti or 1660 Ti", which is a guess.</span></li>
+        <li><span class="loc">here</span> Paste the answers back to me.
           <span class="done-when"><b>Done when</b> <code>rg -c 'unconfirmed|not yet confirmed' ~/Projects/crew-memory/docs/crew.md</code> prints 0.</span></li>
       </ol>
     </article>
 
+    <!-- 3 -->
     <article class="task">
       <div class="task-head">
-        <h3>Send the crew-memory questionnaire — the vault is empty until it comes back</h3>
-        <span class="why">fifteen minutes each · one message · the answers come back to me</span>
+        <h3>3 · Send the crew-memory questionnaire</h3>
+        <span class="why">10 minutes to send · 15 minutes each to answer</span>
       </div>
-      <p class="rationale">crew-memory's collision check works as of 20 November, and right now it has four ideas to rank against, all mine. A check over an empty <code>Ideas/</code> is a check over nothing, so the one thing standing between a working system and a useful one is other people's answers. This is also the one chance to ask all four of you at once; after this it is four separate conversations.</p>
-      <p class="rationale">The questions are deliberately few and every one of them maps onto a field the schema already holds — asking something the stores cannot keep wastes the ask. Section 5 ("what do you want to get better at") is the deliberate exception: it becomes no note, it goes to you, and you use it when handing work out.</p>
+      <p class="where"><b>Where:</b> <span class="loc">editor · ~/Projects/crew-memory/docs/questionnaire.md</span> then <span class="loc">wherever you three talk</span></p>
+      <p class="rationale">The collision check works, and it currently ranks a new idea against four ideas — all written by me. A check over an empty <code>Ideas/</code> is a check over nothing. This is also the one chance to ask all four of you at once; after this it is four separate conversations.</p>
       <ol class="steps">
-        <li><b>Read it first:</b> <code>~/Projects/crew-memory/docs/questionnaire.md</code>. It is written to be pasted into a chat as-is, so if a section asks something you would not want to answer yourself, cut it before sending rather than after.
-          <span class="done-when"><b>Done when</b> you are happy that all six sections are worth fifteen minutes of Almar's, Ryan's and Kish's time.</span></li>
-        <li>Send it to the three of them, however you normally talk. Say the honest version of why: so that two of you do not spend a fortnight building the same thing, and so the dead ends stop evaporating.
-          <span class="done-when"><b>Done when</b> all three have it. Worth saying out loud that this is <b>not</b> a status report and nothing in it is tracked — the design calls anything that reads as surveillance the thing that kills capture.</span></li>
-        <li>Paste each set of answers back to me, naming whose they are. I turn them into notes with the CLI, set <code>owner</code> to the person who answered and <code>source: human</code>, and run the collision check as I go.
-          <span class="done-when"><b>Done when</b> <code>just cm query --store Ideas</code> in <code>~/Projects/crew-memory</code> lists ideas owned by more than one person, and <code>just sweep</code> has a real corpus to rank against.</span></li>
-        <li>Answer it yourself too, last — your own ideas are the ones most likely to already be half-written somewhere else on this board.</li>
+        <li><span class="loc">editor</span> Read <code>~/Projects/crew-memory/docs/questionnaire.md</code> first. Six sections, written to be pasted into a chat as-is.
+          <span class="done-when"><b>Done when</b> you are happy every section is worth fifteen minutes of their time. Cut one now rather than after it is answered.</span></li>
+        <li><span class="loc">chat</span> Send it to the three of them with the honest why: so two of you do not spend a fortnight building the same thing, and so dead ends stop evaporating.
+          <span class="done-when"><b>Done when</b> all three have it. Say out loud that it is <b>not</b> a status report and nothing in it is tracked — the design names anything that reads as surveillance as the thing that kills capture.</span></li>
+        <li><span class="loc">here</span> Paste each set of answers back to me, naming whose they are.
+          <span class="done-when"><b>Done when</b> <code>just cm query --store Ideas</code> in <code>~/Projects/crew-memory</code> lists ideas owned by more than one person.</span></li>
+        <li><span class="loc">chat or here</span> Answer it yourself, last.
+          <span class="done-when"><b>Done when</b> your own four or five ideas are in. Yours are the ones most likely to collide with something already half-written on the status board.</span></li>
       </ol>
-      <p class="trap"><b>One rule about other people's words:</b> I tighten grammar, never meaning, and never upgrade a hedge into a commitment — "I might do X" becomes an idea with <code>status: raw</code>, not <code>doing</code>. If an answer carries a client name under NDA or a credential, the note gets the shape and not the value. Say so when you send it, so nobody has to trust that I will.</p>
+      <p class="trap"><b>One rule about other people's words, so nobody has to trust me on it:</b> I tighten grammar, never meaning, and never upgrade a hedge into a commitment — "I might do X" becomes an idea with <code>status: raw</code>, not <code>doing</code>. A client name under NDA or a credential gets stored as a shape, not a value. Worth saying that when you send it.</p>
     </article>
 
+    <!-- 4 -->
     <article class="task">
       <div class="task-head">
-        <h3>Invite the Blitsol-tier friends into HubSpot, Cloudflare, Stripe and AdministratieX</h3>
-        <span class="why">GUI invites in four billing accounts · after the bookkeeping switch</span>
+        <h3>4 · Create the real website board in Jira</h3>
+        <span class="why">20 minutes · decides how the four of you work</span>
       </div>
-      <p class="rationale">No flake can ever do this: the claude.ai connectors bind to a person's Claude account, not to a machine. A friend gets HubSpot inside Claude Code by being a real user in HubSpot, not by copying anything off your laptop.</p>
-      <p class="rationale">The bookkeeping row changed on 17 November. Moneybird is trial-only, so AdministratieX takes its place and the task above has to land first. If the friends share one business-email login there, there is no invite to send for that row at all, only credentials to hand over, which is a different and less reversible act.</p>
+      <p class="where"><b>Where:</b> <span class="loc">browser · blitsol.atlassian.net</span></p>
+      <p class="rationale">Checked again today rather than assumed: the site still holds exactly one project, <code>KAN</code>, named "test", with one issue — <code>KAN-1</code> "test issue". So every friend who follows <code>docs/guide.md</code> to the board lands in a sandbox, and card 5 has nothing real to subscribe to.</p>
+      <p class="rec-why"><b>Recommendation: one project, one board, a label per client.</b> At four people and a handful of sites, a project per client means four filters, four calendars and four permission sets to keep in step, for the sole benefit of a tidier issue key. Keep Kanban — you have it already and nothing here has sprint boundaries.</p>
       <ol class="steps">
-        <li>Decide the per-tool role first. HubSpot and the bookkeeping tool see customer and financial data; Cloudflare and Stripe can take a site down or move money.
-          <span class="done-when"><b>Done when</b> you have one role per person per tool, and none says Admin unless you meant it.</span></li>
-        <li>HubSpot — Settings → Users &amp; Teams → Create user, invite by email, assign the role.
-          <span class="done-when"><b>Done when</b> the row shows Pending and he confirms the email arrived.</span></li>
-        <li>Cloudflare — Manage Account → Members → Invite, scoped to the Blitsol account and, where the UI allows, to specific zones.
-          <span class="done-when"><b>Done when</b> the member list shows your chosen scope, not Super Administrator.</span></li>
-        <li>Stripe — Settings → Team and security → Team members → New member. Read-only Analyst is enough for anyone not handling refunds.
-          <span class="done-when"><b>Done when</b> the invite is pending and the role column is not Administrator.</span></li>
-        <li>AdministratieX — either a real second user, or the shared business-email login if that is what the plan ends up being.
-          <span class="done-when"><b>Done when</b> the friends can reach the books the way you intended, and you have written down which of the two it is. The answer changes who can be held to what later.</span></li>
-        <li>Have each friend connect the tool in his own Claude Code.
-          <span class="done-when"><b>Done when</b> he runs <code>claude mcp list</code> and that connector reads Connected, not Needs authentication.</span></li>
+        <li><span class="loc">Jira</span> <b>Projects → Create project → Kanban.</b> Pick a name, and a key of three or four letters you will type for years.
+          <span class="done-when"><b>Done when</b> the key is not <code>KAN</code> and the name is not "test".</span></li>
+        <li><span class="loc">Jira</span> On the same screen, under <b>Access</b>, decide whether the other three can create issues or only comment.
+          <span class="done-when"><b>Done when</b> you can say what each of them may do without looking it up. Open is usually right for three people you trust — and it is the setting you cannot quietly undo once they are using it.</span></li>
+        <li><span class="loc">Jira</span> Create a label per client by typing it on the first issue. Jira has no label admin screen; labels exist because an issue uses them.
+          <span class="done-when"><b>Done when</b> at least one label reads like a client name rather than a status.</span></li>
+        <li><span class="loc">Jira</span> Add the three outside dates you already have, each with a real <b>Due date</b>: the Rovo recheck on 3 Dec, closing the Moneybird trial before it can bill, the CLM revisit around 8 Dec.
+          <span class="done-when"><b>Done when</b> <code>project = &lt;KEY&gt; AND duedate IS NOT EMPTY</code> returns three issues nobody invented for a test.</span></li>
+        <li><span class="loc">Jira</span> Delete or rename <code>KAN</code>, so nobody follows the guide into it.
+          <span class="done-when"><b>Done when</b> <code>KAN</code> is gone from <b>Projects</b> — or, if you keep it as a scratch pad, when its name says <code>scratch</code> rather than <code>test</code>.</span></li>
+        <li><span class="loc">here</span> Tell me the project key.
+          <span class="done-when"><b>Done when</b> <code>rg -n 'KAN' ~/Projects/claude-env/docs/guide.md</code> prints nothing, because I have replaced it.</span></li>
       </ol>
-      <p class="trap"><b>Looks like success, isn't:</b> an invite can sit Pending for days unnoticed, because Claude Code reports the connector as needing authentication either way. Ask for the <code>claude mcp list</code> line as proof instead of asking whether it worked.</p>
     </article>
+
+    <!-- 5 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>5 · Connect Jira to Google Calendar</h3>
+        <span class="why">30 minutes · needs card 4 first</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">browser · blitsol.atlassian.net</span> then <span class="loc">browser · calendar.google.com</span></p>
+      <p class="rec-why"><b>Agree the convention before you connect anything.</b> On shared work a due date means <em>an outside party expects it on that date</em> — a client deadline, a filing date, a launch, a billing date. Internal sequencing is column and priority, never a due date. That keeps the calendar sparse enough that every entry means something, and it matches where your risk sits: forgetting internal work is what these boards are for; what hurts is an outside date arriving unnoticed.</p>
+      <ol class="steps">
+        <li><span class="loc">chat</span> Write the convention in one sentence and send it to the other three.
+          <span class="done-when"><b>Done when</b> all four of you would answer "should this get a due date?" the same way.</span></li>
+        <li><span class="loc">Jira</span> Save a filter: <code>project = &lt;KEY&gt; AND duedate IS NOT EMPTY ORDER BY duedate</code>.
+          <span class="done-when"><b>Done when</b> it returns exactly what you would want to see coming. Note there is deliberately <em>no</em> assignee clause: once the convention holds, every hit is something Blitsol owes an outsider, and you carry that whoever it is assigned to.</span></li>
+        <li><span class="loc">Atlassian Marketplace</span> Install <b>Easy Calendar Integration for Jira</b>. Jira <em>Cloud</em> has no native iCal feed for filters, unlike Server, so an app is the only no-code route. Free to 10 users, you are 4, and it is a Forge app, so it runs on Atlassian's infrastructure rather than the vendor's.
+          <span class="done-when"><b>Done when</b> it appears under <b>Apps</b> and the price shown for your site is 0. The cliff is at user 11, which is also where Jira starts charging.</span></li>
+        <li><span class="loc">Jira · Apps</span> In <b>Easy Calendar Integration</b>, create a subscription pointed at that filter and copy its URL.
+          <span class="done-when"><b>Done when</b> you have the URL. Treat it as a secret: anyone holding it reads the filter with no login.</span></li>
+        <li><span class="loc">Google Calendar</span> <b>Other calendars → + → From URL</b>, paste it, give it a strong colour. Not <b>Import</b>, which is a one-time snapshot that never updates.
+          <span class="done-when"><b>Done when</b> one real deadline shows on the right day.</span></li>
+        <li><span class="loc">nothing to do</span> Leave it a week before judging it, and only then decide about your own projects.
+          <span class="done-when"><b>Done when</b> you can say whether you actually looked at it. If you did not, the problem is step 1, not the integration.</span></li>
+      </ol>
+      <p class="trap"><b>The lag is Google's, not the app's.</b> The app refreshes every five minutes and asks clients to do the same; Google polls subscribed calendars on its own schedule, often 8 to 24 hours. Nothing you configure changes that, so the feed is wrong for anything same-day. Apple Calendar and Outlook do honour a tighter interval. If same-day accuracy turns out to matter, the fix is a different client, a real sync, or forty lines on the Contabo box serving the same <code>.ics</code> behind Caddy — which I can write, but not before the week is up.</p>
+      <p class="trap"><b>The failure mode to watch, given how many tracks you run:</b> putting due dates on your own work to manufacture pressure. That turns the calendar from a record of commitments into ambient guilt, and the usual result is that you stop reading it — which loses the client dates sitting in it too.</p>
+    </article>
+
+    <!-- 6 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>6 · Replace Moneybird with AdministratieX</h3>
+        <span class="why">30 minutes · spends money and holds the crew's financial data</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">browser · AdministratieX pricing page</span> then <span class="loc">browser · moneybird.nl</span></p>
+      <p class="rationale">You found on 17 Nov that Moneybird is trial-only, so it cannot be where the books live. Your plan was AdministratieX with two users: your own account plus a shared business-email login the friends use until there is budget for seats. Two parts of that are still assumptions, so they are step one.</p>
+      <ol class="steps">
+        <li><span class="loc">browser</span> Open AdministratieX's own pricing page and write down two numbers: how many users your plan includes, and what it costs per month after any trial.
+          <span class="done-when"><b>Done when</b> you can quote both from their page rather than from memory, and the second user is a real login rather than a paid extra seat.</span></li>
+        <li><span class="loc">decision</span> Decide what the shared login may do and what only your own account may do — approving payments, changing bank details, filing.
+          <span class="done-when"><b>Done when</b> the shared login cannot do the things you would not want done without you.</span></li>
+        <li><span class="loc">browser · Moneybird</span> Export everything that exists — invoices, contacts, any ledger — then close the trial.
+          <span class="done-when"><b>Done when</b> nothing of value is left there and no card is attached. Check the billing page specifically: a trial quietly rolling into a paid month is the failure here.</span></li>
+        <li><span class="loc">browser · AdministratieX</span> Set up the account and whichever login shape step 2 settled on.
+          <span class="done-when"><b>Done when</b> you can reach the books from both logins, and you have written down which shape it is.</span></li>
+      </ol>
+      <p class="trap"><b>Worth knowing before it becomes the system of record:</b> a shared login removes attribution. Bookkeeping software normally answers "who entered this, and who changed it"; one account used by several people cannot, and that is exactly what an accountant or the Belastingdienst asks. Many providers also forbid sharing a login in their terms. It is a reasonable way to start cheaply — worth knowing you are trading that away, and worth revisiting before the books get big.</p>
+    </article>
+
+    <!-- 7 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>7 · Send the four invites</h3>
+        <span class="why">20 minutes · four billing accounts · needs cards 2 and 6</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">browser · HubSpot</span> <span class="loc">browser · Cloudflare</span> <span class="loc">browser · Stripe</span> <span class="loc">browser · AdministratieX</span></p>
+      <p class="rationale">No flake can do this: the claude.ai connectors bind to a person's Claude account, not to a machine. A friend gets HubSpot inside his Claude Code by being a real user in HubSpot.</p>
+      <ol class="steps">
+        <li><span class="loc">decision</span> Decide the role per person per tool before you open anything. HubSpot and the bookkeeping tool see customer and financial data; Cloudflare and Stripe can take a site down or move money.
+          <span class="done-when"><b>Done when</b> you have one role per person per tool, and none says Admin unless you meant it.</span></li>
+        <li><span class="loc">HubSpot</span> <b>Settings → Users &amp; Teams → Create user</b>, invite by email, assign the role.
+          <span class="done-when"><b>Done when</b> the row shows <b>Pending</b> and the friend says the mail arrived.</span></li>
+        <li><span class="loc">Cloudflare</span> <b>Manage Account → Members → Invite</b>, scoped to the Blitsol account and, where the UI allows, to specific zones.
+          <span class="done-when"><b>Done when</b> the member list shows your chosen scope rather than <b>Super Administrator</b>.</span></li>
+        <li><span class="loc">Stripe</span> <b>Settings → Team and security → Team members → New member.</b> Read-only <b>Analyst</b> is enough for anyone not handling refunds.
+          <span class="done-when"><b>Done when</b> the invite is pending and the role column is not <b>Administrator</b>.</span></li>
+        <li><span class="loc">AdministratieX</span> Either a real second user, or the shared login if that is what card 6 settled on.
+          <span class="done-when"><b>Done when</b> they can reach the books the way you intended, and you have written down which of the two it is. That answer decides who can be held to what later.</span></li>
+        <li><span class="loc">their terminals</span> Have each friend run <code>claude mcp list</code> in any directory and read the line back to you.
+          <span class="done-when"><b>Done when</b> the connector says <b>Connected</b>, not <b>Needs authentication</b>.</span></li>
+      </ol>
+      <p class="trap"><b>Looks like success, is not:</b> an invite can sit Pending for days unnoticed, because Claude Code reports a connector as needing authentication either way. Ask for the <code>claude mcp list</code> line as proof rather than asking whether it worked.</p>
+    </article>
+
+    <p class="subhead">Waiting on someone else — nothing to do yet</p>
 
     <article class="task" style="border-top-color: var(--stop);">
       <div class="task-head">
-        <h3>Turn Rovo extra usage off, once Atlassian ships the meter</h3>
-        <span class="why both">blocked on Atlassian · recheck before 3 December</span>
+        <h3>Turn Rovo extra usage off — recheck before 3 December</h3>
+        <span class="why both">blocked on Atlassian · the control does not exist yet</span>
       </div>
-      <p class="rationale">You checked on 17 November and there is nothing to switch off yet. Usage → Meters says "data is coming soon", AI and Rovo → Overview has no usage data, and the organisation reports 0 Rovo credits used in the last 7 days. Do not record this as done, and do not record it as a failure. The control does not exist.</p>
-      <p class="rationale">Part of the empty result has an explanation now. There are two organisations whose names differ only by case. The capital-B <strong>Blitsol</strong> one you checked holds no sites at all, which is why its sites filter returned no matches. The lowercase <strong>blitsol</strong> one holds <code>blitsol.atlassian.net</code>.</p>
+      <p class="where"><b>Where:</b> <span class="loc">browser · admin.atlassian.com</span></p>
+      <p class="rationale">You checked on 17 Nov and there was nothing to switch off: <b>Usage → Meters</b> says "data is coming soon", <b>AI and Rovo → Overview</b> has no usage data, and the org reports 0 Rovo credits used in 7 days. Do not record this as done, and do not record it as a failure — the control is not there.</p>
       <ol class="steps">
-        <li>Recheck before 3 December, under the lowercase organisation this time.
-          <span class="done-when"><b>Done when</b> extra usage reads off, or is capped at 0 if only a cap is offered, or you can say the meter still does not exist.</span></li>
-        <li>Tell me the exact menu path, so the friend guide can say it.
-          <span class="done-when"><b>Done when</b> the sentence is in the guide.</span></li>
+        <li><span class="loc">admin.atlassian.com</span> Before 3 Dec, switch to the <b>lowercase <code>blitsol</code></b> organisation. There are two whose names differ only by case; the capital-B one holds no sites, which is why its filter came back empty.
+          <span class="done-when"><b>Done when</b> the sites list shows <code>blitsol.atlassian.net</code>. If it is empty, you are in the other organisation.</span></li>
+        <li><span class="loc">admin.atlassian.com</span> Open <b>Usage → Meters</b>, then <b>AI and Rovo → Overview</b>.
+          <span class="done-when"><b>Done when</b> you can say which of three is true: extra usage is off, it is capped at 0, or the meter still does not exist.</span></li>
+        <li><span class="loc">admin.atlassian.com</span> If a control exists, set it off, or cap it at 0 if only a cap is offered.
+          <span class="done-when"><b>Done when</b> the panel still shows the off state <em>after a reload</em>, not just after the click.</span></li>
+        <li><span class="loc">here</span> Tell me the exact menu path.
+          <span class="done-when"><b>Done when</b> the sentence is in <code>docs/guide.md</code>, so the next person does not hunt for it.</span></li>
       </ol>
-      <p class="trap"><b>Still unverified:</b> whether a Free site with no card on file can be billed for credits at all. If the meter never appears, that question is the one that actually decides whether any of this matters.</p>
+      <p class="trap"><b>Still unverified, and it may make all of this moot:</b> whether a Free site with no card on file can be billed for credits at all. If the meter never appears, that question is the one that actually decides whether any of this matters.</p>
+    </article>
+
+    <p class="subhead">Paused by you</p>
+
+    <article class="task" style="border-top-color: var(--line-strong);">
+      <div class="task-head">
+        <h3>The GPU check on your and Almar's spare machines</h3>
+        <span class="why">paused · picked up at the 8 December CLM revisit</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">the spare machines, once they run</span></p>
+      <p class="rationale">Still genuinely paused, and it now hangs off a date rather than an open-ended wait. CLM was parked on 17 Nov with a revisit around 8 December, and this check only ever mattered for CLM — so it belongs to that revisit. The command to run is in <code>research/clm-hosting-reality.md</code>. If CLM is dropped for good at the revisit, this closes with it.</p>
     </article>
   </section>
 
@@ -664,7 +731,31 @@
   </section>
 
   <section>
-    <h2>Open questions <span class="tally">— 3, none of them urgent, all of them yours</span></h2>
+    <h2>Open questions <span class="tally">— 5, none of them urgent, all of them yours</span></h2>
+
+    <article class="q">
+      <h3>Beads is the only candidate that would give the four of you a shared, git-mergeable work graph — and it fails the vetting gate. Exemption, or drop it?</h3>
+      <p class="qid">q-beads-exemption · blocks closing the six tool trials</p>
+      <ul class="opts">
+        <li class="rec">Drop it and keep Jira</li>
+        <li>Write an exemption in <code>docs/vet-exemptions.md</code> with an honest reason, then trial it</li>
+        <li>Trial it on one repo with the hooks removed by hand</li>
+      </ul>
+      <p class="rec-why"><b>My recommendation: drop it</b>, unless the Jira board in card 4 turns out not to work for the crew. Beads declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code at the start of every session and on every prompt, which makes it the most invasive thing on the 40-repo list. The review's note that <code>--stealth</code> stops it planting hooks is about <em>git</em> hooks, not Claude Code's lifecycle, so it does not help. The third option is worse than it sounds: a plugin with its hooks cut by hand is a fork nobody maintains.</p>
+      <p class="blocks"><b>Blocks:</b> nothing of yours. Nothing in the flake references Beads, so either answer is free.</p>
+    </article>
+
+    <article class="q">
+      <h3>The only two tools on the list that genuinely cut tokens are not packaged. Install one imperatively anyway?</h3>
+      <p class="qid">q-compressors · blocks closing the six tool trials</p>
+      <ul class="opts">
+        <li class="rec">Skip both until one is in nixpkgs</li>
+        <li>Allow one imperative install on your laptop only, as a measured two-week trial</li>
+        <li>Package one in the flake ourselves</li>
+      </ul>
+      <p class="rec-why"><b>My recommendation: skip both.</b> The plan said RTK and Headroom were already in nixpkgs and that is false — the only <code>headroom</code> is <code>haskellPackages.headroom</code>, an unrelated licence-header manager, and there is no <code>rtk</code> at all. So adopting one means an installer outside Nix, which is the drift this repo exists to stop. The number settles it: session start re-measured at <b>27,344 tokens</b> on 20 Nov, of which <em>all</em> MCP servers together are 5,081 — so a compressor of command output is fighting for a slice of the small half. Worth revisiting only if a measurement shows command output is where your tokens actually go.</p>
+      <p class="blocks"><b>Blocks:</b> nothing of yours.</p>
+    </article>
 
     <article class="q">
       <h3>Seven skills on your laptop link into a private repo, and nine more are local to it. Which are crew skills?</h3>
@@ -726,7 +817,7 @@
     <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · switched and verified from the journal · the version gate could not find Claude Code and is fixed · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce </p>
     <p>input · github:MrBlueStudios/claude-env · live on 83ee425 since 21 Nov 01:31; main is one commit ahead with the version-gate fix</p>
     <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 40 facts, 3 open questions</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 40 facts, 5 open questions</p>
     <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
