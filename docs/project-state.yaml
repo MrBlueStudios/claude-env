@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-23T16:23"
+updated: "2026-11-24T02:03"
 suite:
   command: just test
   result: green
@@ -1148,8 +1148,16 @@ my_todos:
     owner: leon
     why_yours: a click path through two GUIs you own
     guide: claude-env-jira-calendar
-    status: open
+    status: done
     added: 2026-11-13
+    closed: 2026-11-24
+    note: >-
+      Done end to end on 2026-11-24. Saved the filter `project = WEB AND duedate IS NOT EMPTY`,
+      installed Easy Calendar Integration for Jira (Meetical, Forge-based, free under 10 licensed
+      users -- confirmed from the install page itself: "After trial: Plan Standard, Subtotal USD
+      0.00 per month", not just a 30-day trial), created a personal subscription named
+      "Blitsol - WEB due dates", added it to Google Calendar via From URL (not Import), and gave it
+      the same name there. Both issues (WEB-2, WEB-3) are now visible on the calendar.
   - id: mt-clm-call
     text: Decide whether CLM gets a running backend or is parked until there is a GPU
     owner: leon
@@ -1292,11 +1300,20 @@ my_todos:
     owner: leon
     why_yours: a GUI decision about how four people work together
     guide: claude-env-jira-board
-    status: open
+    status: done
     added: 2026-11-20
+    closed: 2026-11-24
+    note: >-
+      Done on 2026-11-24, named WEB rather than the test KAN project. One project, one Kanban
+      board (verified via the Atlassian MCP: 3-column To Do/In Progress/Done, no sprints) --
+      matches the recommendation. Léon seeded it with the two live due dates the calendar card
+      needed (WEB-2 Moneybird, 1 Dec placeholder; WEB-3 CLM revisit, 8 Dec) and correctly deleted
+      the third seed issue (WEB-1, Rovo recheck) once Rovo was dropped for good rather than give it
+      a stale due date. KAN itself is still sitting there named "test" -- worth a rename or delete
+      whenever convenient, but nothing depends on it any more.
     recheck_note: >-
-      Still true on 2026-11-23, checked rather than assumed: a JQL search over
-      blitsol.atlassian.net returns one issue, KAN-1 "test issue" in project KAN ("test").
+      Superseded 2026-11-24. Still true on 2026-11-23, checked rather than assumed: a JQL search
+      over blitsol.atlassian.net returns one issue, KAN-1 "test issue" in project KAN ("test").
     why: >-
       The Atlassian MCP server is wired at base tier and answers — a JQL query returns KAN-1
       "test issue" — but KAN, literally named "test", is the only project on
