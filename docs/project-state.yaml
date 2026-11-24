@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-24T03:25"
+updated: "2026-11-24T09:10"
 suite:
   command: just test
   result: green
@@ -1164,9 +1164,10 @@ my_todos:
     blocked_by: mt-bookkeeping-switch
     note: >-
       The bookkeeping row changed on 2026-11-17: Moneybird is trial-only, so AdministratieX
-      replaces it and mt-bookkeeping-switch has to land first. If the friends end up sharing one
-      business-email login there, that row is not an invite at all but credentials handed over,
-      which is less reversible; record which of the two it turned out to be.
+      replaces it and mt-bookkeeping-switch has to land first. Settled 2026-11-24: it is a real
+      invite, not credentials handed over. The free plan carries two named seats and their terms
+      forbid a shared login, so only one friend gets a bookkeeping seat and the other two are
+      invited to nothing there — which also means this row is three invites plus one, not four.
   - id: mt-bookkeeping-switch
     guide: claude-env-bookkeeping-switch
     text: Replace Moneybird with AdministratieX before anyone is invited into the books
@@ -1176,14 +1177,48 @@ my_todos:
     added: 2026-11-17
     note: >-
       Léon found on 2026-11-17 that Moneybird is trial-only, so it cannot hold the real books.
-      His plan: AdministratieX with two users, his own account as the main bookkeeping account
-      plus a shared business email the friends sign in with, until there is budget for seats.
-      Two parts are his belief rather than checked facts and decide whether the plan works at
-      all: the two-user allowance, and the price once any trial ends. Whether AdministratieX has
-      an MCP connector is also unchecked, which matters for the Blitsol tier list in
-      docs/mcp-audit.md. Trade-off he has already been told once and accepted: a shared login
-      removes attribution, so the books cannot answer who entered or changed an entry, and many
-      providers forbid shared logins in their terms.
+      Researched in the browser on 2026-11-24, and both of his unchecked beliefs resolved — one
+      in his favour, one against.
+      .
+      CONFIRMED, from administratiex.nl/prijzen and /gratis-boekhouden: the free plan allows
+      "Tot 2 gebruikers", with no invoice limit, no customer limit and no revenue limit. So the
+      two-user allowance is real and free. Also free: unlimited sales invoices and quotes, bank
+      import (MT940/CAMT.053) with matching, quarterly VAT prepared AND filed digitally 4x a
+      year, ledger with RGS, balance sheet and P&L, XAF export for an accountant, Peppol
+      e-invoicing both ways, NL hosting. Paid tiers: Plus EUR 16/mo (3 users), Pro EUR 32/mo (10
+      users), Volledig by quote. Add-ons that are NOT free and are the easy accidental spend:
+      automatic bank connection EUR 4.95 per account per month (manual import is free), IB
+      filing EUR 59, VPB filing EUR 99, filing done for you EUR 199, administrateur module
+      EUR 49/mo. Their Article 4 guarantees the free plan contractually: "Het Gratis-plan blijft
+      als plan beschikbaar voor EUR 0 - het is geen proefperiode en converteert niet automatisch
+      naar een betaald Abonnement", with 30 days' notice on material changes.
+      .
+      KILLED, from their own terms Article 7: the shared business-email login is forbidden -
+      "Geen account delen met andere bedrijven of personen" - and "Wat er onder jouw
+      inloggegevens gebeurt, geldt als door jou gedaan" makes every entry made under it legally
+      his. So the shared login breaks the contract and destroys attribution, and it was never
+      needed: two named seats are free. Recommendation given 2026-11-24 and it is the one on the
+      board: seat one Léon with everything, seat two ONE named person who actually touches
+      invoices, the other two get nothing until someone is genuinely blocked, and only then
+      Plus for a third seat.
+      .
+      RISK, stated rather than buried: AdministratieX B.V., KvK 42123200, Natriumweg 7
+      Amersfoort, registered 24 July 2026 at an address shared with unrelated companies, so it
+      is about four months old. No independent reviews exist - no Trustpilot presence at all -
+      and bestegratisboekhoudprogramma.nl, which ranks it first at 8.2/10, discloses on its own
+      page that AdministratieX is a sister company of the site's owner, so that ranking is
+      marketing, not evidence. The compared alternative with a real track record is
+      e-Boekhouden (~1,900 Trustpilot reviews, 4.6/5) at EUR 15/mo after a 15-month starter
+      window, which fails the "free" requirement. Verdict: use AdministratieX, because the
+      exposure is the tool rather than the records and one habit cancels it - export the ZIP
+      with the per-year XAF audit files to his own storage every quarter. XAF is the Dutch
+      standard audit file, so any accountant or competitor can import it, and quarterly VAT can
+      always be filed free on the Belastingdienst's own portal. Do NOT buy a paid plan or any
+      of the one-off filing or administrateur services from a company this young.
+      .
+      Still unchecked and only matters for docs/mcp-audit.md: whether AdministratieX has an MCP
+      connector. Nothing depends on it. The Moneybird export step is dropped - Léon confirmed
+      2026-11-24 he never used the trial, so there is nothing in it to export.
   - id: mt-connector-auth
     text: Authenticate the Sentry, Stripe and Cloudflare Developer Platform connectors
     owner: leon
@@ -1457,6 +1492,21 @@ my_todos:
       are present for the switch and the next session start, because changing how the plugin
       resolves makes it re-fetch, and a bad fetch means no superpowers at all. Needs no Claude
       Code 2.1.324 — that floor is on marketplace pins, not plugin ones.
+      .
+      How to start it, asked for and answered 2026-11-24: in ~/Projects/claude-env, NOT
+      /etc/nixos — the edit is to this repo's modules/home/settings.nix (the existing
+      superpowers-marketplace block is at lines 32-38 and its comment already explains why the
+      catalog pin does not pin the plugin), and /etc/nixos only consumes it as a flake input.
+      Command: `claude --model opus --effort high`. Opus because the ten-line diff is trivial
+      but the resolution-order reasoning is not; `high` rather than xhigh or max, which buy
+      nothing on a diff this size; fast mode off, since it trades deliberation for output speed
+      on the one change that can silently unload every plugin. He needs to send nothing up
+      front — Claude can read ~/.claude.json, ~/.claude/settings.json and the repo itself, and
+      fetch 7.0.2's sha with gh. Afterwards he must paste `claude plugin list` and
+      `claude-plugins-check` from the NEW session, which the working session cannot see. The
+      ready-to-paste prompt is on the todo board's card 6; step 2 of that card is the one people
+      forget — `nix flake update claude-env` in /etc/nixos, or the switch succeeds while
+      changing nothing.
 
   - id: mt-nixos-upgrade
     text: >-

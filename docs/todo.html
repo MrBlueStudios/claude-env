@@ -420,22 +420,36 @@
     <!-- 3 -->
     <article class="task">
       <div class="task-head">
-        <h3>3 · Replace Moneybird with AdministratieX</h3>
-        <span class="why">30 minutes · spends money and holds the crew's financial data</span>
+        <h3>3 · Set up AdministratieX (and skip the Moneybird export)</h3>
+        <span class="why">20 minutes · € 0 · holds the crew's financial data</span>
       </div>
-      <p class="where"><b>Where:</b> <span class="loc">browser · AdministratieX pricing page</span> then <span class="loc">browser · moneybird.nl</span></p>
-      <p class="rationale">You found on 17 Nov that Moneybird is trial-only, so it cannot be where the books live. Your plan was AdministratieX with two users: your own account plus a shared business-email login the friends use until there is budget for seats. Two parts of that are still assumptions, so they are step one.</p>
+      <p class="where"><b>Where:</b> <span class="loc">browser · administratiex.nl/register</span></p>
+      <p class="rationale">I researched this on 24 Nov in the browser rather than taking the plan on trust, and <b>two things changed.</b> The good one: the free plan includes <b>2 users</b>, confirmed on their own page — "Tot 2 gebruikers. Geen factuurlimiet. Geen limiet op het aantal klanten. Permanent." So you never needed a shared login. The bad one: their terms <b>forbid</b> the shared login anyway. And since you never used the Moneybird trial, there is nothing to export — that step is gone, so this card is now about twenty minutes.</p>
+
+      <div class="order" style="border-left-color:var(--ok);margin-bottom:4px">
+        <h3>My recommendation on the login question you asked about</h3>
+        <ol>
+          <li><b>Two real named accounts, not one shared login.</b> <span class="after">it is free, and the shared version breaks their terms</span></li>
+          <li><b>Seat one is you</b> — owner, bank details, filing, everything. <span class="after">your own email</span></li>
+          <li><b>Seat two is one named person</b>, not a crew mailbox. <span class="after">whoever actually touches invoices</span></li>
+          <li><b>The other two get nothing yet</b>, and lose nothing by it. <span class="after">they do not need the books to do client work</span></li>
+        </ol>
+        <p class="rationale" style="margin-top:10px">Their Article 7 says it twice over: <code>"Geen account delen met andere bedrijven of personen"</code>, and <code>"Wat er onder jouw inloggegevens gebeurt, geldt als door jou gedaan"</code> — anything done under your credentials counts as done by <em>you</em>. A shared mailbox login therefore breaks the contract <em>and</em> puts every entry in your name, which is exactly the attribution problem an accountant or the Belastingdienst asks about. A second named seat costs nothing and avoids both. If a third person genuinely needs in later, that is Plus at € 16/month for three users — but do not pay that before someone is actually blocked.</p>
+      </div>
+
       <ol class="steps">
-        <li><span class="loc">browser</span> Open AdministratieX's own pricing page and write down two numbers: how many users your plan includes, and what it costs per month after any trial.
-          <span class="done-when"><b>Done when</b> you can quote both from their page rather than from memory, and the second user is a real login rather than a paid extra seat.</span></li>
-        <li><span class="loc">decision</span> Decide what the shared login may do and what only your own account may do — approving payments, changing bank details, filing.
-          <span class="done-when"><b>Done when</b> the shared login cannot do the things you would not want done without you.</span></li>
-        <li><span class="loc">browser · Moneybird</span> Export everything that exists — invoices, contacts, any ledger — then close the trial.
-          <span class="done-when"><b>Done when</b> nothing of value is left there and no card is attached. Check the billing page specifically: a trial quietly rolling into a paid month is the failure here.</span></li>
-        <li><span class="loc">browser · AdministratieX</span> Set up the account and whichever login shape step 2 settled on.
-          <span class="done-when"><b>Done when</b> you can reach the books from both logins, and you have written down which shape it is.</span></li>
+        <li><span class="loc">browser</span> Register the free plan at <code>administratiex.nl/register</code> with your own email. No credit card is asked for, and the free plan is contractually permanent — their Article 4 says <code>"Het Gratis-plan blijft als plan beschikbaar voor €0 — het is geen proefperiode en converteert niet automatisch naar een betaald Abonnement."</code>
+          <span class="done-when"><b>Done when</b> you are in, and nowhere in the flow did it ask for a card. If it does ask, stop and tell me — that contradicts both their pricing page and their terms.</span></li>
+        <li><span class="loc">decision, then browser</span> Pick the one person who gets seat two and invite them by their own email.
+          <span class="done-when"><b>Done when</b> two named logins work, neither of them a shared mailbox.</span></li>
+        <li><span class="loc">browser · their settings</span> Skip every paid add-on for now — the automatic bank connection is € 4,95 per account per month, and manual <code>CAMT.053</code>/<code>MT940</code> import is free and fine at your volume.
+          <span class="done-when"><b>Done when</b> your monthly cost is still € 0 and no add-on is active.</span></li>
+        <li><span class="loc">browser, then your own storage</span> Do the export once now, while the books are empty, so you know where the button is before you need it: one ZIP with the full administration in open formats plus XAF audit files per year.
+          <span class="done-when"><b>Done when</b> a ZIP containing an <code>.xaf</code> file is sitting somewhere that is not AdministratieX. Then repeat it once a quarter — see the warning below for why that is the whole safety net.</span></li>
       </ol>
-      <p class="trap"><b>Worth knowing before it becomes the system of record:</b> a shared login removes attribution. Bookkeeping software normally answers "who entered this, and who changed it"; one account used by several people cannot, and that is exactly what an accountant or the Belastingdienst asks. Many providers also forbid sharing a login in their terms. It is a reasonable way to start cheaply — worth knowing you are trading that away, and worth revisiting before the books get big.</p>
+
+      <p class="trap"><b>The honest risk, because you asked whether it is safe:</b> AdministratieX B.V. is <b>real but very new</b> — KvK 42123200, Natriumweg 7 Amersfoort, registration date 24 July 2026, an address it shares with unrelated companies. I could find <b>no independent reviews at all</b>: no Trustpilot presence, and the comparison site that ranks it #1 at 8,2/10 discloses on its own page that AdministratieX is a <em>sister company</em> of the site's owner, so that ranking is not evidence. For contrast, e-Boekhouden has ~1,900 Trustpilot reviews at 4,6/5 — but costs € 15/month once its 15-month starter window ends, which is the opposite of what you asked for.</p>
+      <p class="trap"><b>Why I still say use it:</b> the exposure is not money, it is your books living at a four-month-old company. That exposure is almost entirely cancelled by one habit — the quarterly XAF export in step 4. XAF is the Dutch standard audit file, so every accountant and every competitor can import it. Free, 2 named users, no revenue limit, NL hosting, monthly cancellable, 30 days' notice on material changes, and your data leaves in an open format. If they disappear, you lose the tool and not the records, and quarterly VAT can always be filed on the Belastingdienst's own portal for nothing. <b>What I would not do</b> is buy a paid plan, the € 199 filing service, or the administrateur module from a company this young — those are the ones where you would be out real money if it folded.</p>
     </article>
 
     <!-- 4 -->
@@ -493,11 +507,33 @@
         <h3>6 · Sit with me for the superpowers pin</h3>
         <span class="why">20 minutes, with me present · the only card I cannot do alone</span>
       </div>
-      <p class="where"><b>Where:</b> <span class="loc">here, then terminal · /etc/nixos</span></p>
+      <p class="where"><b>Where:</b> <span class="loc">terminal · ~/Projects/claude-env</span> for the edit, then <span class="loc">terminal · /etc/nixos</span> for the switch</p>
       <p class="rationale">You took option two on <code>q-superpowers-pin</code>: an inline <code>settings</code> marketplace under the same name, carrying the plugin's own sha. That is the only way to pin the actual bytes. The reason you have to be here is not difficulty — it is that changing how the plugin resolves makes your next session re-fetch it, and if that goes wrong the one plugin your transcripts show actually being used stops loading, silently. Twenty minutes together beats finding out tomorrow.</p>
+
+      <div class="order" style="border-left-color:var(--go);margin-bottom:4px">
+        <h3>How to start the session</h3>
+        <p class="rationale" style="margin-bottom:9px">Start it in <b><code>~/Projects/claude-env</code></b>, not <code>/etc/nixos</code>. The edit is to this repo's <code>modules/home/settings.nix</code> — <code>/etc/nixos</code> only consumes it as a flake input, so a session started there is looking at the wrong tree. The one command, in any directory:</p>
+        <p class="rationale" style="margin-bottom:9px"><code>cd ~/Projects/claude-env &amp;&amp; claude --model opus --effort high</code></p>
+        <ol>
+          <li><b>Model: Opus 5.</b> <span class="after">--model opus</span></li>
+          <li><b>Effort: high.</b> <span class="after">--effort high — not xhigh or max</span></li>
+          <li><b>Fast mode: off.</b> <span class="after">leave /fast alone for this one</span></li>
+        </ol>
+        <p class="rationale" style="margin-top:10px"><b>Why those:</b> the change itself is about ten lines of Nix — it is small. What is not small is reasoning about <em>resolution order</em>: whether an inline <code>settings</code> source under an existing marketplace name shadows the pinned catalog cleanly, and whether the plugin id survives. That is judgement, so Opus at <code>high</code>. <code>xhigh</code> and <code>max</code> buy nothing on a ten-line diff and just spend your budget. And leave fast mode off — fast mode trades deliberation for output speed, which is the wrong trade on the one change that can silently unload your plugins.</p>
+      </div>
+
+      <div class="order" style="border-left-color:var(--accent);margin-bottom:4px">
+        <h3>What to send me — nothing up front</h3>
+        <p class="rationale" style="margin-bottom:9px">You do not need to paste anything to start. I can read <code>~/.claude.json</code>, <code>~/.claude/settings.json</code> and this repo myself, and I will fetch superpowers 7.0.2's commit sha from GitHub with <code>gh</code> — none of that is behind the guard. <b>Afterwards</b> is different: send me the output of step 4's <code>claude-plugins-check</code> and step 3's <code>claude plugin list</code>, because those run in a <em>new</em> session that I cannot see from this one.</p>
+        <p class="rationale"><b>The prompt to paste, once the session is open:</b></p>
+        <p class="rationale" style="margin-top:9px;padding:12px 14px;background:var(--surface-sunk);border-radius:3px;font-family:var(--mono);font-size:12.5px;line-height:1.7">Pin superpowers by declaring an inline settings marketplace, per the q-superpowers-pin answer in docs/project-state.yaml — option two, which I already chose, so don't re-open the decision.<br><br>Keep the plugin id exactly superpowers@superpowers-marketplace so no skill prefix changes. Look up 7.0.2's own commit sha on obra/superpowers rather than asking me for it. The declaration is in modules/home/settings.nix around lines 32-38, where the comment already explains why the current catalog pin doesn't pin the plugin.<br><br>Show me the diff and wait for me before I switch. Then talk me through the switch and the verification, and tell me what a failed fetch will look like so I recognise it. I'm at the keyboard for this one.</p>
+      </div>
+
       <ol class="steps">
-        <li><span class="loc">here</span> I write the inline marketplace; you read the diff before it lands.
+        <li><span class="loc">~/Projects/claude-env</span> I write the inline marketplace; you read the diff before it lands.
           <span class="done-when"><b>Done when</b> the plugin id is still <code>superpowers@superpowers-marketplace</code>. If that changes, every <code>superpowers:</code> skill prefix changes with it — that is the thing to catch here rather than afterwards.</span></li>
+        <li><span class="loc">~/Projects/claude-env</span> <code>just test</code>, then commit and push, then <code>nix flake update claude-env</code> in <code>/etc/nixos</code> so the switch actually picks the change up.
+          <span class="done-when"><b>Done when</b> <code>git diff flake.lock</code> in <code>/etc/nixos</code> shows claude-env moved. Skip this and the switch below succeeds while changing nothing, which is the most confusing possible outcome.</span></li>
         <li><span class="loc">/etc/nixos</span> <code>nh os switch .</code>
           <span class="done-when"><b>Done when</b> <code>jq '.extraKnownMarketplaces' ~/.claude.json</code> shows <code>superpowers-marketplace</code> with a <code>sha</code> rather than a branch name.</span></li>
         <li><span class="loc">a new terminal</span> Start a fresh session, so nothing is cached, and run <code>claude plugin list</code>.
