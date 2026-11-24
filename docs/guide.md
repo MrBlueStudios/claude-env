@@ -276,7 +276,7 @@ again" can switch it off. It stops:
 
 If the guard blocks something legitimate, **say so and ask** — do not work around it. A rule that
 gets bypassed is worse than no rule, because everyone still believes it is there. The rules are
-`modules/system/claude-code/guard.sh` and they have 58 tests; if one is wrong, it is a pull
+`modules/system/claude-code/guard.sh`, covered by `just test-guard`; if one is wrong, it is a pull
 request, not a local exception.
 
 ---

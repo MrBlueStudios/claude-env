@@ -339,47 +339,70 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">3</span>
-        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 15 closed</span>
+        <span class="figure">6</span>
+        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 14 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">20</span>
-        <span class="sub">mine — done · 2 in progress, both waiting on you · 1 parked · 1 next</span>
+        <span class="figure">14</span>
+        <span class="sub">mine — done · 2 in progress, both waiting on you · 3 next · 1 parked</span>
       </div>
       <div class="vital">
-        <span class="figure">5</span>
-        <span class="sub">open questions — personal skills, the superpowers pin, vies-vat, Beads, the compressors</span>
+        <span class="figure">0</span>
+        <span class="sub">open questions — you answered the last five tonight, so nothing of mine is gated on a decision</span>
       </div>
     </div>
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p><strong>The Jira board is real and the calendar is live — two more closed overnight.</strong> <code>WEB</code> replaced the <code>KAN</code> sandbox: one project, a 3-column Kanban board, two issues carrying real due dates (Moneybird 1 Dec, CLM revisit 8 Dec). "Blitsol — WEB due dates" is now a subscribed calendar in both Jira (via Meetical's Easy Calendar Integration, free under 10 users) and Google Calendar, showing both dates. That leaves three cards, none of them Nix or Jira work — just a message, a bookkeeping switch, and four invites.</p>
-      <p><strong>Start with card 1: one message, so it starts waiting on them while you do the rest.</strong> Every card below is a numbered guide — each step says where it happens, a directory, a file, or a screen in a GUI, gives the exact command or click path, and ends in a <em>Done when</em> you can actually check.</p>
-      <p>Everything from the 21 November switch and the 23 November closures is still live and verified: the tier split, the declarative MCP block, the pinned plugin channel, nine <code>ask</code> rules in <code>/etc/claude-code/</code>, the four adopted skills, <code>repomix</code>, <code>obsidian</code> reconnected, and the version gate past 2.1.324.</p>
+      <p><strong>Your five answers closed the last open questions and opened three new cards.</strong> Beads dropped, the superpowers pin agreed, vies-vat becomes a CLI, the personal-skills split settled with your "make sure the crew has everything they'll need" added to it as real work, and the compressors going to a measurement rather than a guess. Three of those answers need something only you can do, so the queue went from three cards to six.</p>
+      <p><strong>Card 1 is new and it is urgent in a way the others are not: it blocks all three of your friends tomorrow morning.</strong> <code>claude-env</code> is public, but it pulls in your private <code>claude-web-stack</code>, so the first command on the crew page fails for Almar, Ryan and Kish with an SSH error that looks like their fault. Five minutes in a browser fixes it. Do it before you send them anything.</p>
+      <p>The crew page is updated and republished at the same link, with a six-step install walkthrough, Almar's hardware filled in, AdministratieX instead of Moneybird, and the Jira paid-plan question answered. It also now says in plain words that <strong>answering the questionnaire needs nothing installed</strong> — which was the thing you asked about, and the questionnaire itself said the opposite until tonight.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 3 to do, 1 paused · 15 closed</span></h2>
+    <h2>Your queue <span class="tally">— 6 to do, 1 paused · 14 closed</span></h2>
 
     <div class="order">
-      <h3>The order, cheapest first</h3>
+      <h3>The order, by what blocks whom</h3>
       <ol>
-        <li><b>Send the questionnaire</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
-        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 3</span></li>
-        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 2</span></li>
+        <li><b>Grant access to claude-web-stack</b> — 5 min, browser. <span class="after">blocks all three friends tomorrow</span></li>
+        <li><b>Send the questionnaire and the crew page</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
+        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 4</span></li>
+        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 3</span></li>
+        <li><b>Upgrade to NixOS 26.05</b> — an hour, your own laptop. <span class="after">eleven months without security updates</span></li>
+        <li><b>Sit with the superpowers pin</b> — 20 min, with me. <span class="after">the only card I cannot do alone</span></li>
       </ol>
-      <p class="rationale" style="margin-top:10px">One is first because it is a message: send it and other people's clocks start running while you do two and three. Nothing here needs me present.</p>
+      <p class="rationale" style="margin-top:10px">One first because it is five minutes and three other people are behind it. Two next because it is a message: send it and their clocks start while you do the rest. Five and six are yours alone and have no deadline — five is a security update, six needs us both at the keyboard.</p>
     </div>
 
     <!-- 1 -->
     <article class="task">
       <div class="task-head">
-        <h3>1 · Send the crew-memory questionnaire</h3>
+        <h3>1 · Let the friends read claude-web-stack</h3>
+        <span class="why">5 minutes · blocks three people, not you</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">browser · github.com/MrBlueStudios/claude-web-stack/settings/access</span></p>
+      <p class="rationale">I checked this with <code>gh repo view</code> rather than assuming: <code>claude-env</code> is <b>public</b>, <code>claude-web-stack</code> is <b>private</b>, and <code>flake.nix</code> takes the private one as its only input, unconditionally, for the web-design playbook. Nix resolves inputs at <em>lock</em> time, before it builds anything, so all three of them fail at step 2 of the walkthrough with a permission error on <code>git@github.com</code> — an error that names SSH and not the playbook, so they will each spend an hour regenerating keys that were never the problem.</p>
+      <ol class="steps">
+        <li><span class="loc">browser</span> Open <a href="https://github.com/MrBlueStudios/claude-web-stack/settings/access">the repo's Access settings</a>, <em>Add people</em>, and add <code>AlmarvDiessen</code>, <code>luameister</code> and <code>KKP24</code> with the <b>Read</b> role.
+          <span class="done-when"><b>Done when</b> all three appear as Read collaborators. Watch for "pending invite" — they each have to accept the GitHub email, and a pending invite fails exactly like no invite at all.</span></li>
+        <li><span class="loc">chat</span> Tell them to accept the GitHub invite before they try the install.
+          <span class="done-when"><b>Done when</b> the page shows no pending invites.</span></li>
+        <li><span class="loc">one friend's laptop, any directory</span> Have one of them run <code>nix flake metadata github:MrBlueStudios/claude-env</code>.
+          <span class="done-when"><b>Done when</b> it prints metadata instead of <code>Permission denied (publickey)</code>. This is the only check that proves it — your own laptop always succeeds, because you own the repo.</span></li>
+      </ol>
+      <p class="trap"><b>Two other ways out, if read access is not what you want:</b> make the repo public (only after reading it — a client-work playbook may name clients), or tell me to vendor the playbook into <code>claude-env</code> and delete the input, which removes this failure mode permanently. Both change what the crew page should say, and the third is work for me, so tell me which you picked.</p>
+    </article>
+
+    <!-- 2 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>2 · Send the questionnaire and the crew page</h3>
         <span class="why">10 minutes to send · 15 minutes each to answer</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">editor · ~/Projects/crew-memory/docs/questionnaire.md</span> then <span class="loc">wherever you three talk</span></p>
+      <p class="trap" style="border-left-color:var(--ok);background:var(--ok-soft)"><b>The answer to what you asked:</b> they need <em>nothing</em> installed to answer this. The vault lives on one laptop and I write the notes from their prose with <code>owner</code> set to them. The questionnaire said the opposite until tonight — it told them to paste answers into a Claude session with the skill installed — and that line is now fixed. Section 6 asks for a <code>fastfetch</code>; all four are in, so all three skip it. Send the crew page in the same message: it carries the install walkthrough separately, so the two things do not get tangled.</p>
       <p class="rationale">The collision check works, and it currently ranks a new idea against four ideas — all written by me. A check over an empty <code>Ideas/</code> is a check over nothing. This is also the one chance to ask all four of you at once; after this it is four separate conversations.</p>
       <ol class="steps">
         <li><span class="loc">editor</span> Read <code>~/Projects/crew-memory/docs/questionnaire.md</code> first. Six sections, written to be pasted into a chat as-is.
@@ -394,10 +417,10 @@
       <p class="trap"><b>One rule about other people's words, so nobody has to trust me on it:</b> I tighten grammar, never meaning, and never upgrade a hedge into a commitment — "I might do X" becomes an idea with <code>status: raw</code>, not <code>doing</code>. A client name under NDA or a credential gets stored as a shape, not a value. Worth saying that when you send it.</p>
     </article>
 
-    <!-- 2 -->
+    <!-- 3 -->
     <article class="task">
       <div class="task-head">
-        <h3>2 · Replace Moneybird with AdministratieX</h3>
+        <h3>3 · Replace Moneybird with AdministratieX</h3>
         <span class="why">30 minutes · spends money and holds the crew's financial data</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · AdministratieX pricing page</span> then <span class="loc">browser · moneybird.nl</span></p>
@@ -415,10 +438,10 @@
       <p class="trap"><b>Worth knowing before it becomes the system of record:</b> a shared login removes attribution. Bookkeeping software normally answers "who entered this, and who changed it"; one account used by several people cannot, and that is exactly what an accountant or the Belastingdienst asks. Many providers also forbid sharing a login in their terms. It is a reasonable way to start cheaply — worth knowing you are trading that away, and worth revisiting before the books get big.</p>
     </article>
 
-    <!-- 3 -->
+    <!-- 4 -->
     <article class="task">
       <div class="task-head">
-        <h3>3 · Send the four invites</h3>
+        <h3>4 · Send the four invites</h3>
         <span class="why">20 minutes · four billing accounts · needs card 2</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · HubSpot</span> <span class="loc">browser · Cloudflare</span> <span class="loc">browser · Stripe</span> <span class="loc">browser · AdministratieX</span></p>
@@ -440,6 +463,51 @@
       <p class="trap"><b>Looks like success, is not:</b> an invite can sit Pending for days unnoticed, because Claude Code reports a connector as needing authentication either way. Ask for the <code>claude mcp list</code> line as proof rather than asking whether it worked.</p>
     </article>
 
+    <!-- 5 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>5 · Upgrade this laptop to NixOS 26.05</h3>
+        <span class="why">an hour, on a day you have an hour · no security updates for eleven months</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">terminal · /etc/nixos</span></p>
+      <p class="rationale">You said this again tonight, and you were right that it had no card: <code>q-nixos-version</code> was answered on 16 November and the upgrade half of that answer was never written down, which is exactly why it kept slipping. This is <em>not</em> about the crew — the flake supports both releases and tonight's suite proves it, with <code>tests/eval-25.05</code> and <code>tests/eval-26.05</code> both building. It is about this machine: <code>nixos-25.05</code> went end-of-life on 31 December 2025, so it has had no security updates for eleven months, while all three friends are already on 26.05.</p>
+      <ol class="steps">
+        <li><span class="loc">/etc/nixos</span> Dry run first, which changes nothing:
+          <code>nix build .#nixosConfigurations.mr-blue.config.system.build.toplevel --dry-run --override-input nixpkgs github:NixOS/nixpkgs/nixos-26.05 --override-input home-manager github:nix-community/home-manager/release-26.05 --override-input stylix github:nix-community/stylix/release-26.05</code>
+          <span class="done-when"><b>Done when</b> it lists derivations it <em>would</em> build and raises no evaluation error. An error naming stylix, nixvim or the AGS widgets is the one real risk — stop and send it to me, because that is breakage beyond a branch bump.</span></li>
+        <li><span class="loc">/etc/nixos</span> Bump the three release-tracking inputs in <code>flake.nix</code> — <code>nixpkgs</code> to <code>nixos-26.05</code>, <code>home-manager</code> and <code>stylix</code> to <code>release-26.05</code> — then <code>nix flake update nixpkgs home-manager stylix</code>.
+          <span class="done-when"><b>Done when</b> <code>git diff flake.lock</code> shows all three moved. The others are pinned by tag or rev and stay put.</span></li>
+        <li><span class="loc">/etc/nixos</span> Build before you switch: <code>nixos-rebuild build --flake .#mr-blue</code>
+          <span class="done-when"><b>Done when</b> a <code>result</code> symlink appears. This is where a renamed package shows up, and finding that out before activating costs you nothing.</span></li>
+        <li><span class="loc">/etc/nixos</span> <code>nh os switch .</code>
+          <span class="done-when"><b>Done when</b> <code>nixos-version</code> prints 26.05 and you still have a working Hyprland session with your theme and your AGS widgets on screen.</span></li>
+        <li><span class="loc">any directory</span> <code>claude --version</code>, <code>claude mcp list</code>, <code>claude-plugins-check</code>
+          <span class="done-when"><b>Done when</b> the version is still ≥ 2.1.324 and nothing is unpinned. This should be boring: <code>claude-code</code> comes from <code>pkgs-unstable</code>, not the release branch. If it is <em>not</em> boring, tell me.</span></li>
+      </ol>
+      <p class="trap"><b>If anything is wrong:</b> <code>sudo nixos-rebuild switch --rollback</code> in <code>/etc/nixos</code>, or pick the previous generation from the boot menu if you cannot get a session at all. Then send me what broke. There is no hurry and the old generation still works.</p>
+    </article>
+
+    <!-- 6 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>6 · Sit with me for the superpowers pin</h3>
+        <span class="why">20 minutes, with me present · the only card I cannot do alone</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">here, then terminal · /etc/nixos</span></p>
+      <p class="rationale">You took option two on <code>q-superpowers-pin</code>: an inline <code>settings</code> marketplace under the same name, carrying the plugin's own sha. That is the only way to pin the actual bytes. The reason you have to be here is not difficulty — it is that changing how the plugin resolves makes your next session re-fetch it, and if that goes wrong the one plugin your transcripts show actually being used stops loading, silently. Twenty minutes together beats finding out tomorrow.</p>
+      <ol class="steps">
+        <li><span class="loc">here</span> I write the inline marketplace; you read the diff before it lands.
+          <span class="done-when"><b>Done when</b> the plugin id is still <code>superpowers@superpowers-marketplace</code>. If that changes, every <code>superpowers:</code> skill prefix changes with it — that is the thing to catch here rather than afterwards.</span></li>
+        <li><span class="loc">/etc/nixos</span> <code>nh os switch .</code>
+          <span class="done-when"><b>Done when</b> <code>jq '.extraKnownMarketplaces' ~/.claude.json</code> shows <code>superpowers-marketplace</code> with a <code>sha</code> rather than a branch name.</span></li>
+        <li><span class="loc">a new terminal</span> Start a fresh session, so nothing is cached, and run <code>claude plugin list</code>.
+          <span class="done-when"><b>Done when</b> superpowers shows as installed and enabled. This is the step that can fail: not installed, or a blank version, means the fetch broke.</span></li>
+        <li><span class="loc">any directory</span> <code>claude-plugins-check</code>
+          <span class="done-when"><b>Done when</b> it reports no unpinned marketplace and no missing plugin. Passing step 3 but failing here means the entry resolved to a sha that does not hold what we think it does.</span></li>
+      </ol>
+      <p class="trap"><b>This needs no particular Claude Code version</b> — the 2.1.324 floor is on marketplace pins, not on pinning a plugin's own bytes. And if any step fails: <code>sudo nixos-rebuild switch --rollback</code> immediately, then tell me what it said. Do not debug it live.</p>
+    </article>
+
     <p class="subhead">Paused by you</p>
 
     <article class="task" style="border-top-color: var(--line-strong);">
@@ -453,7 +521,7 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 20 done, 2 in progress and both waiting on you, 1 parked, 1 next</span></h2>
+    <h2>My queue <span class="tally">— 14 done, 2 in progress and both waiting on you, 3 next, 1 parked</span></h2>
     <div class="rows">
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
@@ -463,7 +531,19 @@
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">The skills half of the plugin channel</span></div>
         <p class="dw">The plugin half closed on 20 Nov. The skills half is a question rather than work, and on 21 Nov it got much smaller: the report that sized it was wrong. It called a skill declared only when its <em>directory</em> was a store symlink, which misses the shape <code>home.file.".claude/skills/X/SKILL.md".text</code> produces — a real directory holding a store symlink, which is how every skill written inline in <code>skills.nix</code> and <code>modes.nix</code> lands. Eleven declared skills were being reported as yours alone. True counts: <b>16 declared</b>, 9 machine-only directories that are the entire HyperFrames video toolchain, 7 symlinks into <code>~/Projects/Claude_testing/skills/</code>, and 3 directories holding 13.6 MB that register nothing. <b>So the decision is about 7 skills, not 27</b>, and <code>docs/skills-inventory.md</code> is the per-skill table with my verdict on each. <b>Done when</b> every skill a crew laptop loads is either declared in the repo or deliberately listed as personal.</p>
-        <p class="gate">q-personal-skills — the split is at the bottom of this board with my recommendation</p>
+        <p class="gate">unblocked tonight — you took option one, so this is work again rather than a question</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Measure what command output actually costs, before packaging any compressor</span></div>
+        <p class="dw">Your instinct on <code>q-compressors</code> was to package both ourselves because they cut tokens. That premise is the one thing we cannot confirm, and the numbers already on this project argue about a different question: 27,344 tokens at session start, 5,081 of it every MCP server together — but <b>neither RTK nor Headroom touches session start.</b> They compress tool results mid-session, and nobody has ever measured how many tokens that is here. You chose the measurement, which is the right call. The transcripts are already on disk, so this is counting rather than instrumenting: sum tool-result content per session against the session total, with Bash, Read and Grep broken out. <b>Done when</b> <code>research/context-budget.md</code> names a median and a worst case, and <code>q-compressors</code> is re-answered against that figure instead of an instinct.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Replace the vies-vat server with a <code>vat-check</code> CLI</span></div>
+        <p class="dw">You took option one. Forty-odd lines against the VIES REST endpoint at <code>ec.europa.eu</code>, in <code>tools.nix</code> next to <code>compliance-scan</code>, with a real assert-based check rather than a smoke test — a wrong VAT validation is an invoice error, not a cosmetic one. The server is already undeclared, so there is no removal step: your last switch wrote it to <code>~/.claude/removed-mcp-servers.json</code>. <b>Done when</b> a known-good VAT number prints valid with the company name, a known-bad one prints invalid rather than erroring, and the check runs in <code>just test-scripts</code>.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Walk the crew's six jobs against the declared skills, so nothing they need is missing</span></div>
+        <p class="dw">This is your condition on <code>q-personal-skills</code>, in your words: "do make sure the crew has everything they'll need." The migration list itself is settled — <code>legal-audit</code>, <code>security-audit</code>, <code>design-review</code> and <code>site-analytics</code> vendored into <code>modules/home/skills/</code>, with <code>site-analytics</code> taking its domains from an option instead of hard-coding your three into a public repo. This is the completeness pass on top, and it is the part that stops a friend's first real job failing on a skill that only exists on this laptop. <b>Done when</b> websites, Roblox, trading, design and video, legal, and review each have their skills named and declared, and anything left out is written down as deliberately personal with the reason.</p>
       </div>
       <div class="row">
         <div class="row-top"><span class="pill later">Parked</span><span class="txt">The six tool trials from the 40-repo review</span></div>
@@ -632,7 +712,19 @@
   </section>
 
   <section>
-    <h2>Open questions <span class="tally">— 5, none of them urgent, all of them yours</span></h2>
+    <h2>Answered 24 Nov <span class="tally">— all five, in one message</span></h2>
+
+    <div class="order" style="border-left-color:var(--ok)">
+      <h3>What you decided</h3>
+      <ol>
+        <li><b>Beads</b> — dropped. <span class="after">the vetting gate stands, no exemption written</span></li>
+        <li><b>The superpowers pin</b> — inline marketplace, plugin sha pinned. <span class="after">card 6, with me</span></li>
+        <li><b>Personal skills</b> — migrate the crew's, declare the rest personal. <span class="after">plus your completeness check, now real work</span></li>
+        <li><b>vies-vat</b> — replaced by a <code>vat-check</code> CLI, server dropped. <span class="after">mine, next</span></li>
+        <li><b>The compressors</b> — measure command output first, then decide. <span class="after">your instinct was to package both; the premise did not hold up</span></li>
+      </ol>
+      <p class="rationale" style="margin-top:10px">The option lists below are kept as the record of what each decision was between, and the green line on each says which way it went. Nothing of mine is now waiting on a decision of yours — the three things still gated are gated on access, a session with you, or your own laptop, all of them cards above.</p>
+    </div>
 
     <article class="q">
       <h3>Beads is the only candidate that would give the four of you a shared, git-mergeable work graph — and it fails the vetting gate. Exemption, or drop it?</h3>
@@ -643,7 +735,7 @@
         <li>Trial it on one repo with the hooks removed by hand</li>
       </ul>
       <p class="rec-why"><b>My recommendation: drop it</b>, now that the Jira board is real. Beads declares four hooks, two of them <code>SessionStart</code> and <code>UserPromptSubmit</code> — it wants to run code at the start of every session and on every prompt, which makes it the most invasive thing on the 40-repo list. The review's note that <code>--stealth</code> stops it planting hooks is about <em>git</em> hooks, not Claude Code's lifecycle, so it does not help. The third option is worse than it sounds: a plugin with its hooks cut by hand is a fork nobody maintains.</p>
-      <p class="blocks"><b>Blocks:</b> nothing of yours. Nothing in the flake references Beads, so either answer is free.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> drop it — "yeah drop it". No exemption written, so the vetting gate stands intact. The shared Jira board is the thing Beads was wanted for, and it is now real.</p>
     </article>
 
     <article class="q">
@@ -655,7 +747,7 @@
         <li>Package one in the flake ourselves</li>
       </ul>
       <p class="rec-why"><b>My recommendation: skip both.</b> The plan said RTK and Headroom were already in nixpkgs and that is false — the only <code>headroom</code> is <code>haskellPackages.headroom</code>, an unrelated licence-header manager, and there is no <code>rtk</code> at all. So adopting one means an installer outside Nix, which is the drift this repo exists to stop. The number settles it: session start re-measured at <b>27,344 tokens</b> on 20 Nov, of which <em>all</em> MCP servers together are 5,081 — so a compressor of command output is fighting for a slice of the small half. Worth revisiting only if a measurement shows command output is where your tokens actually go.</p>
-      <p class="blocks"><b>Blocks:</b> nothing of yours.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> measure first. Your instinct was option three, package both ourselves, because they cut tokens — and that is the one claim we cannot confirm, so it went back to you and you took the measurement. Worth keeping: the 27,344 / 5,081 figures above argue against <em>server</em> pruning, not against a compressor. Neither tool touches session start.</p>
     </article>
 
     <article class="q">
@@ -669,7 +761,7 @@
       <p class="rec-why"><b>My recommendation: the first — vendor four, keep three.</b> Vendor <code>legal-audit</code>, <code>security-audit</code>, <code>design-review</code> and <code>site-analytics</code> into <code>modules/home/skills/</code> the way the four adopted skills landed, with <code>site-analytics</code> reading its domains from an option instead of hard-coding them. Keep <code>project-status</code>, <code>my-todo</code> and <code>prompt-optimizer</code> personal: the first two are how <em>you</em> report rather than how the crew works, and <code>my-todo</code> writes into <code>~/project-brain/Inbox</code> on one laptop. That adds ~261 tokens to a crew session and needs no new repo. The nine HyperFrames skills stay personal by their nature — they drive a renderer and asset accounts only you have.</p>
       <p class="rationale"><b>The part that decides how rather than whether.</b> <code>~/Projects/Claude_testing</code>'s remote is <code>MrBlueStudios/claude-lab</code> and it is <b>private</b>, so pinning it as a <code>flake = false</code> input the way <code>claude-web-stack</code> is pinned would make <code>claude-env</code> unbuildable for a friend. That checkout is also <b>8 commits ahead of its remote on a detached HEAD</b>, with <code>legal-audit</code> edited since the last push — so the current version of a skill the crew would depend on exists nowhere but your laptop. And <code>claude-env</code> is public: vendoring <code>site-analytics</code> as written publishes <code>blitsol.com</code>, <code>blitsol.nl</code> and <code>blitsolhq.com</code> as the domains being measured. Not a secret, but a choice.</p>
       <p class="rationale"><b>Three things that need no decision.</b> <code>anthropic-skills</code> (12.6 MB) and a second whole copy of <code>superpowers</code> (0.9 MB) hold their <code>SKILL.md</code> files one level too deep, so they have never registered anything, and both duplicate something already installed — delete them. <code>obsidian-skills</code> is the exception, and I vetted it rather than assuming: MIT, Steph Ango — Obsidian's own CEO — no hooks, no blocking findings, ~320 tokens for all five. Worth wiring up: <code>obsidian-bases</code> alone, ~64 tokens, because it is one of the three candidates for crew-memory's parked dashboard question. Not <code>defuddle</code>, tempting as "use instead of WebFetch to save tokens" sounds: <code>defuddle-cli</code> is not in nixpkgs under any name, so it would be npm drift. That one is yours to approve, since it adds a line to every crew session. And the 20.6 MB of marketplace caches plus 7.9 MB of <code>.trash</code> are free to remove whenever you like.</p>
-      <p class="blocks"><b>Blocks:</b> nothing of yours. It is the last open half of my plugin-channel work.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> option one, migrate the crew's and declare the rest personal — with your condition attached: "do make sure the crew has everything they'll need." That condition is now a card in my queue rather than an assumption.</p>
     </article>
 
     <article class="q">
@@ -682,7 +774,7 @@
       </ul>
       <p class="rec-why"><b>My recommendation: the second, but not unsupervised.</b> An inline <code>settings</code> source keeps the plugin id (<code>superpowers@superpowers-marketplace</code>), so no skill prefix changes, and its catalog entry can carry the plugin's own <code>sha</code> — the only way to pin the bytes. It also needs no 2.1.324, because the version floor applies to marketplace pins and not plugin ones. The cost is that it changes how the plugin resolves: the next session re-fetches it, and if that goes wrong, the one plugin you actually use stops loading. Worth one supervised switch rather than a surprise during a working session.</p>
       <p class="rationale">Where it stands today: the marketplace itself is pinned, and only the plugin's own bytes float. Your machine is on 7.0.0 against 7.0.2 upstream, so the floating is real rather than theoretical. Option three works too and costs a repo to maintain forever.</p>
-      <p class="blocks"><b>Blocks:</b> nothing. Either answer is safe to live with.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> option two, the inline marketplace pinning the plugin's own sha. It is card 6 above rather than something I do headlessly, because a bad fetch means superpowers stops loading entirely.</p>
     </article>
 
     <article class="q">
@@ -695,7 +787,7 @@
       </ul>
       <p class="rec-why"><b>My recommendation: the first.</b> The audit recorded this one as "Léon's own build, must be built by Nix", and it is neither: it is <code>Jazib-but/check-vat-vies-mcp-Jazib</code>, MIT, still carrying an <code>api-server.js</code>, a Dockerfile, a Coolify deployment guide and placeholder hosts. <code>just vet</code> clears it — no hooks, no keys, and the only outbound host is <code>ec.europa.eu</code>, which is the VIES API itself — so this is not a safety objection. It is a value one: the whole server is a SOAP call to one government endpoint, and a server costs its tool descriptions in every session on four laptops, where a CLI costs nothing until it is run. That is the rule in your own <code>CLAUDE.md</code>.</p>
       <p class="rationale">If you say the word I will write the CLI; it is an afternoon at most, and invoicing does not wait on it either way. Saying nothing means the server is removed at the next switch and restorable from <code>~/.claude/removed-mcp-servers.json</code>.</p>
-      <p class="blocks"><b>Blocks:</b> nothing. Listed because the switch acts on it.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> option one, a small <code>vat-check</code> CLI in <code>tools.nix</code> and the server dropped. The server was already undeclared, so there is nothing to undo.</p>
     </article>
   </section>
 
@@ -716,10 +808,11 @@
 
   <footer>
     <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · switched and verified from the journal · the version gate could not find Claude Code and is fixed · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce </p>
-    <p>input · github:MrBlueStudios/claude-env · live on 83ee425 since 21 Nov 01:31; main is one commit ahead with the version-gate fix</p>
-    <p>suite · just test green on 25.05 and 26.05, evaluated <em>and</em> built on both: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 15 features, 40 facts, 5 open questions</p>
-    <p>vault · 10 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
+    <p>24 nov · the crew page brought current and republished at the same link, with a six-step install walkthrough · the questionnaire line that told them to install something is fixed · claude-web-stack found to be private, which blocks all three of them · your five answers recorded, three new cards and three new jobs of mine out of them</p>
+    <p>input · github:MrBlueStudios/claude-env · the lock SHA your laptop is on is what <code>nix flake metadata</code> prints in /etc/nixos; main carries tonight's doc changes</p>
+    <p>suite · just test green, re-run tonight · evaluated <em>and</em> built on 25.05 and 26.05: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 11 questions, none open</p>
+    <p>vault · 13 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
     <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>

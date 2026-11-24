@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-24T02:03"
+updated: "2026-11-24T03:25"
 suite:
   command: just test
   result: green
@@ -1046,6 +1046,59 @@ claude_todos:
       mechanism would both have to be installed imperatively, which is the thing this repo exists
       to stop. Decide whether that is worth an exception before spending a fortnight on it;
       research/context-budget.md finding 9 is the argument that it is not.
+  - id: ct-measure-command-output
+    text: >-
+      Measure how many tokens command output actually costs across recent sessions, so
+      q-compressors is decided on a figure instead of an instinct
+    status: next
+    done_when: >-
+      research/context-budget.md carries a finding naming the median and worst-case tokens of
+      tool-result content per session, as a share of the whole session, measured from the
+      transcripts in ~/.claude/projects rather than estimated
+    paths:
+      - research/context-budget.md
+    note: >-
+      Created 2026-11-24 when q-compressors was put back to Léon. The existing findings all
+      measure *session start*, which is the wrong half for this question: a compressor shrinks
+      tool results mid-session and never touches the system prompt. The transcripts are already
+      on disk — 580 of them as of finding 11 — so this is counting, not instrumenting: sum the
+      tool_result content per session and compare it with the session's total. Bash, Read and
+      Grep results are the three worth breaking out, since those are what a compressor targets.
+  - id: ct-vat-cli
+    text: >-
+      Replace the vies-vat MCP server with a small vat-check CLI in tools.nix, with an
+      assert-based self-check
+    status: next
+    done_when: >-
+      vat-check with a known-good VAT number prints valid and the company name, a known-bad one
+      prints invalid rather than erroring, and the self-check passes in `just test-scripts`
+    paths:
+      - modules/home/tools.nix
+      - docs/crew.html
+    note: >-
+      q-vies-vat answered 2026-11-24, option one. Forty-odd lines against the VIES REST endpoint
+      at ec.europa.eu, next to compliance-scan. The server is already undeclared, so there is no
+      removal step. It gets a real check rather than a smoke test because a wrong VAT validation
+      is an invoice error, not a cosmetic one. crew.html still lists vies-vat under legal and
+      compliance — that line changes with this.
+  - id: ct-crew-skill-coverage
+    text: >-
+      Walk the crew's six jobs against the declared skill list and name anything the flake is
+      missing, before closing the skills half of ct-plugin-channel
+    status: next
+    done_when: >-
+      Each of websites, Roblox, trading, design and video, legal, and review has its skills
+      named and declared in skills.nix or modes.nix, and anything missing is either added or
+      written down as deliberately personal with the reason
+    paths:
+      - modules/home/skills.nix
+      - docs/skills-inventory.md
+    note: >-
+      Léon's added condition on q-personal-skills, 2026-11-24, in his words: "do make sure the
+      crew has everything they'll need." The migration list itself is settled (legal-audit,
+      security-audit, design-review, site-analytics vendored into modules/home/skills/, with
+      site-analytics taking its domains from an option); this is the completeness pass that stops
+      a friend's first real job failing on a skill that only exists on this laptop.
   - id: ct-guard-refspec
     text: >-
       Fix the force-push rule's false positives: it read the whole command string, so an ordinary
@@ -1370,6 +1423,58 @@ my_todos:
       Until it goes out, the collision check ranks a new idea against four ideas, all of them
       written by Claude, which is a check over nothing. Answers come back to Claude, which turns
       them into notes with owner set to whoever answered and source: human.
+
+  - id: mt-web-stack-access
+    text: >-
+      Decide how the friends reach claude-web-stack, because the public flake takes it as a
+      private input and their first rebuild fails without it
+    owner: leon
+    why_yours: a repo-access decision only you can make, on your own private repo
+    guide: claude-env-web-stack-access
+    status: open
+    added: 2026-11-24
+    note: >-
+      Verified 2026-11-24 with gh repo view: claude-env is PUBLIC, claude-web-stack is PRIVATE,
+      and flake.nix uses it unconditionally in homeManagerModules.default as a git+ssh input with
+      flake = false. Nix resolves inputs at lock time, before any build, so Almar, Ryan and Kish
+      each hit a permission error on git@github.com at step 2 of the walkthrough — and the error
+      names SSH, not the playbook, so it reads like their own key is broken. Three ways out:
+      add AlmarvDiessen, luameister and KKP24 as read collaborators (fastest and reversible),
+      make the repo public, or have Claude vendor the playbook into claude-env and drop the input.
+      crew.html already carries a callout telling them to stop and ask rather than debug SSH.
+
+  - id: mt-superpowers-pin
+    text: >-
+      Sit with the one switch that moves superpowers onto an inline pinned marketplace
+    owner: both
+    why_yours: a live session, because the one plugin you actually use can stop loading
+    guide: claude-env-superpowers-pin
+    status: open
+    added: 2026-11-24
+    note: >-
+      q-superpowers-pin answered 2026-11-24, option two. Claude writes the inline settings
+      marketplace keeping the id superpowers@superpowers-marketplace and pinning 7.0.2's sha; you
+      are present for the switch and the next session start, because changing how the plugin
+      resolves makes it re-fetch, and a bad fetch means no superpowers at all. Needs no Claude
+      Code 2.1.324 — that floor is on marketplace pins, not plugin ones.
+
+  - id: mt-nixos-upgrade
+    text: >-
+      Upgrade this laptop from NixOS 25.05 to 26.05, which has been end-of-life since
+      31 December 2025
+    owner: leon
+    why_yours: a system activation on your own machine
+    guide: claude-env-nixos-upgrade
+    status: open
+    added: 2026-11-24
+    note: >-
+      Implied by q-nixos-version, answered 2026-11-16, and flagged again by Léon on 2026-11-24
+      ("I still need to upgrade"). It had no todo until now, which is why it kept slipping. The
+      flake supports both releases either way — just test-25-05 and just test-26-05 both run — so
+      this is about your own machine's security updates, not about the crew: nixos-25.05 has had
+      none for eleven months. Cost is three branch bumps (nixpkgs, home-manager, stylix) plus a
+      dry run; the dry-run command is in research/nixos-version-matrix.md and is the only step
+      before anything in /etc/nixos is touched.
 questions:
   - id: q-mcp-philosophy
     question: >-
@@ -1462,7 +1567,9 @@ questions:
     answer: >-
       The flake supports both releases and Léon upgrades to 26.05. Léon confirmed on 2026-11-16,
       after research/nixos-version-matrix.md showed the modules evaluate on both releases with one
-      guarded fix and that the 25.05 branch is end-of-life.
+      guarded fix and that the 25.05 branch is end-of-life. Re-confirmed 2026-11-24 — "support
+      both releases, but I also still need to upgrade, so we need to do that soon as well" — and
+      the upgrade half, which had no todo of its own until then, is now mt-nixos-upgrade.
   - id: q-blitsol-friends
     question: Which friends get the Blitsol tier?
     options:
@@ -1493,12 +1600,16 @@ questions:
       review's note that `--stealth` stops it planting hooks is about *git* hooks, not Claude
       Code's lifecycle, so it does not help. The third option is worse than it sounds: a plugin
       with its hooks cut by hand is a fork nobody maintains.
-    blocks:
-      - ct-tool-trials
+    blocks: []
     blocks_note: >-
       ct-tool-trials cannot finish while one of its six candidates has no verdict. Nothing in the
       flake references Beads, so neither answer breaks anything.
-    answer: null
+    answer: >-
+      Dropped on 2026-11-24. Léon took the recommendation — "yeah drop it" — now that the shared
+      Jira board is real and pushing its due dates into a calendar, which is the one thing Beads
+      was wanted for. No exemption is written, so the vetting gate stands unbroken: the four hooks,
+      two of them SessionStart and UserPromptSubmit, were the objection and nothing about them
+      changed.
   - id: q-compressors
     question: >-
       RTK and Headroom are the only two entries of the forty with a real token-saving mechanism,
@@ -1516,10 +1627,22 @@ questions:
       fighting for a slice of the small half. Revisit if a measurement ever shows command output
       is where the tokens actually go.
     blocks:
-      - ct-tool-trials
+      - ct-measure-command-output
     blocks_note: >-
-      Same gate as q-beads-exemption: the trial list cannot close with two candidates unjudged.
-    answer: null
+      No longer gates ct-tool-trials, which can close with the compressor pair recorded as
+      "deferred pending measurement" rather than unjudged. It now gates only
+      ct-measure-command-output, which is the thing that answers it.
+    answer: >-
+      Measure first, 2026-11-24. Léon's instinct was option three, package both ourselves,
+      on the grounds that they cut tokens; that premise is the part we cannot confirm, so it was
+      put back to him and he chose the measurement. The correction matters and is worth keeping:
+      neither RTK nor Headroom touches session start, so the 27,344 / 5,081 figures in the
+      recommendation above argue against *server* pruning, not against a compressor — they are
+      the wrong number for this question. What a compressor would shrink is command output
+      mid-session, and nobody has ever measured how many tokens that is on this machine. So
+      ct-measure-command-output runs first and this question is re-answered against a real
+      figure: a big slice makes packaging both an easy yes, a small one saves two Nix
+      derivations with no nixpkgs presence from being ours to maintain forever on four laptops.
   - id: q-personal-skills
     question: >-
       7 skills load from ~/.claude/skills on Léon's laptop by symlink into a private repo, and 9
@@ -1571,12 +1694,24 @@ questions:
       running; and the markdown and canvas skills cover syntax Claude handles unaided. ~/.claude/plugins/cache/ponytail and
       .../cursor-plugins are 20.6 MB left over from the uninstalls and can be removed, as can
       7.9 MB in Claude Code's own .trash. Full per-skill table: docs/skills-inventory.md
-    blocks:
-      - ct-plugin-channel
+    blocks: []
     blocks_note: >-
       The plugin half of ct-plugin-channel closed on 2026-11-20; the skills half is this
       question, because which skills are the crew's is not something the repo can infer.
-    answer: null
+    answer: >-
+      Option one, 2026-11-24: "migrate the ones the crew would use; leave the rest personal and
+      declared as personal", with one added condition in his words — "do make sure the crew has
+      everything they'll need." So the migration list is the recommendation's four
+      (legal-audit, security-audit, design-review, site-analytics, the last taking its domains
+      from an option rather than hard-coding blitsol.com/.nl/blitsolhq.com into a public repo),
+      and the completeness check is now part of the work rather than an assumption: before
+      closing ct-plugin-channel, walk the crew's actual jobs — websites, Roblox, trading, design,
+      legal, review — and confirm each has its skills declared in the flake, not only on this
+      laptop. project-status, my-todo and prompt-optimizer stay personal and get declared as
+      personal. The HyperFrames nine stay personal: they drive a renderer and asset accounts only
+      Léon has. Claude_testing is not usable as a flake input — its remote, MrBlueStudios/claude-lab,
+      is private, the same trap as claude-web-stack — so the four get vendored into
+      modules/home/skills/ rather than pulled from a repo.
   - id: q-superpowers-pin
     question: >-
       superpowers is the one plugin the flake cannot pin, because its catalog entry fetches a
@@ -1600,7 +1735,13 @@ questions:
     blocks: []
     blocks_note: >-
       Not blocking: the marketplace is pinned either way, and only the plugin's own bytes float.
-    answer: null
+    answer: >-
+      Option two, 2026-11-24: declare an inline `settings` marketplace under the same name,
+      pinning the plugin's own sha. The plugin id stays superpowers@superpowers-marketplace so no
+      skill prefix changes. It must be done as one supervised switch with Léon present, not
+      headlessly: changing how the plugin resolves makes the next session re-fetch it, and if
+      that goes wrong the one plugin the transcripts show being used stops loading. Pin 7.0.2's
+      sha, not 7.0.0's, since the vetting already covered the same named author.
   - id: q-vies-vat
     question: >-
       The vies-vat MCP server is a clone of someone else's template repo running from a path in
@@ -1629,4 +1770,10 @@ questions:
     blocks_note: >-
       Not blocking: invoicing does not wait on this, and the removal is recoverable from the
       file the switch writes.
-    answer: null
+    answer: >-
+      Option one, 2026-11-24: replace it with a small vat-check CLI in tools.nix and drop the
+      server. The CLI calls the VIES REST endpoint at ec.europa.eu directly and gets an
+      assert-based self-check, since a wrong VAT validation is a real invoice error. The server
+      is already undeclared, so no removal step is needed — Léon's next switch has written it to
+      ~/.claude/removed-mcp-servers.json. crew.html still lists vies-vat under legal and
+      compliance; update that line to the CLI's name once it exists.

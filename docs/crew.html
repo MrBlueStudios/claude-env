@@ -246,6 +246,34 @@
   ol.steps-plain li { font-size: 15px; color: var(--ink-soft); max-width: 64ch; }
   ol.steps-plain li strong { color: var(--ink); font-weight: 600; }
 
+  ol.install { margin: 0; padding-left: 24px; display: flex; flex-direction: column; gap: 22px; }
+  ol.install > li { font-size: 15px; color: var(--ink-soft); }
+  ol.install > li > strong { display: block; color: var(--ink); font-size: 16.5px; font-family: var(--cond); font-weight: 700; margin-bottom: 5px; }
+  ol.install > li > p { max-width: 62ch; margin-top: 6px; }
+  ol.install > li > pre { margin-block: 10px; }
+  ol.install .done {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ok);
+    background: var(--ok-soft);
+    border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
+    padding: 3px 9px;
+    border-radius: 2px;
+    margin-top: 8px;
+  }
+  .mine {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 15px 18px;
+    border-radius: 0 3px 3px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mine .eyebrow { color: var(--accent); }
+  .mine p { font-size: 14.5px; color: var(--ink-soft); }
+
   footer { border-top: 1px solid var(--line); padding-top: 24px; display: flex; flex-direction: column; gap: 8px; }
   footer p { font-family: var(--mono); font-size: 12px; color: var(--muted); max-width: none; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
@@ -255,26 +283,22 @@
 <div class="wrap">
 
   <header class="top">
-    <p class="eyebrow">For Almar, Ryan and Kish · updated 15 November 2026</p>
+    <p class="eyebrow">For Almar, Ryan and Kish · updated 24 November 2026</p>
     <h1>Four laptops, one setup</h1>
-    <p class="lede">I'm turning my Claude Code environment into something all four of us run — the same tools, the same guardrails, the same shared knowledge, installed with one line in your NixOS config. Here's what it is, what you get, and the four things I need from you.</p>
+    <p class="lede">I'm turning my Claude Code environment into something all four of us run — the same tools, the same guardrails, the same shared knowledge, installed with one line in your NixOS config. Here's what it is, what you get, and the two things left to do.</p>
   </header>
 
   <div class="ask">
     <h2>What I need from you</h2>
-    <p><strong>Thanks — keys, GitHub handles and emails are in for all three of you, and hardware for Ryan and Kish.</strong> All three keys verified clean. What's still open is small, plus one new thing: each of you has three research items waiting.</p>
+    <p><strong>Everything I asked for is in — keys, handles, emails and now all four machines' hardware.</strong> Two things left, and they're independent: one takes fifteen minutes on paper, the other is a rebuild on your own laptop.</p>
     <ol class="ask-list">
       <li>
-        <span class="what">Research: done — thank you, Kish</span>
-        <span class="how">Kish ran all nine crew items in Claude web and I checked them against my machine; mine were done here. All sixteen are answered on the research page. For you two things changed: Léon moves to NixOS 26.05 to match you, and the <code>claude-mode</code> window layouts only work in Kitty, so on Konsole they will be an opt-in you can ignore.</span>
+        <span class="what">Answer the questionnaire — you need nothing installed for this</span>
+        <span class="how">Five sections: what you're on now, what you want to build, what you've built that someone else could reuse, what you tried and dropped, what you want to get better at. Answer in plain prose anywhere — chat message, text file, voice note. The vault lives on one laptop today and I paste your answers into my Claude, which writes the notes with <em>your</em> name on them. You never type YAML and you never touch the vault. Section 6 asks for a <code>fastfetch</code> — all four are in, so skip it.</span>
       </li>
       <li>
-        <span class="what">Almar: your <code>fastfetch</code></span>
-        <span class="how">Plus <code>nvidia-smi --query-gpu=name,memory.total --format=csv</code>. The inventory currently says "GTX 1650 Ti or 1660 Ti" and nothing else about your machine.</span>
-      </li>
-      <li>
-        <span class="what">All three: is the email you sent the one on your Atlassian account?</span>
-        <span class="how">A yes, or a different address. A mismatch here looks like "the Jira invite never arrived" three days later.</span>
+        <span class="what">Install the environment on your own laptop</span>
+        <span class="how">The walkthrough is <a href="#install">further down this page</a>, with your own values already filled in. One of you does it without me helping, and we write down every place it goes wrong — that's the only honest test of whether this works.</span>
       </li>
     </ol>
     <details style="margin-top: 4px;">
@@ -302,23 +326,24 @@
 
   <section>
     <h2>What your hardware told us</h2>
-    <p>Two things that change the plan, both found in the inventory you sent.</p>
+    <p>All four machines are now measured rather than guessed. Two things in here change the plan.</p>
     <div class="table-scroll">
       <table>
         <thead><tr><th scope="col"></th><th scope="col">Léon</th><th scope="col">Ryan</th><th scope="col">Kish</th><th scope="col">Almar</th></tr></thead>
         <tbody>
-          <tr><td class="store">GPU</td><td>none — Arc iGPU</td><td>RTX 2060, 6 GB</td><td>GTX 1650, 4 GB</td><td>1650 Ti or 1660 Ti — ?</td></tr>
-          <tr><td class="store">RAM</td><td>32 GB</td><td>16 GB</td><td>16 GB</td><td>?</td></tr>
-          <tr><td class="store">NixOS</td><td>25.05</td><td>26.05</td><td>26.05</td><td>?</td></tr>
-          <tr><td class="store">Desktop</td><td>Hyprland</td><td>KDE Plasma</td><td>KDE Plasma</td><td>?</td></tr>
+          <tr><td class="store">GPU</td><td>none — Arc iGPU</td><td>RTX 2060, 6 GB</td><td>GTX 1650, 4 GB</td><td>GTX 1660 Ti, 6 GB</td></tr>
+          <tr><td class="store">RAM</td><td>32 GB</td><td>16 GB</td><td>16 GB</td><td>16 GB</td></tr>
+          <tr><td class="store">NixOS</td><td>25.05</td><td>26.05</td><td>26.05</td><td>26.05</td></tr>
+          <tr><td class="store">Desktop</td><td>Hyprland</td><td>KDE Plasma</td><td>KDE Plasma</td><td>Hyprland</td></tr>
         </tbody>
       </table>
     </div>
-    <p><strong>CLM is parked.</strong> Its encoder needs a 24 GB NVIDIA card — the 16 GB in the README is the weight size, not a card — and the biggest card among us is 6 GB. My and Almar's spare machines are weeks away, so we skip CLM until one of them is real. The idea-overlap check uses a small embedding model that runs on any of our CPUs (about a tenth of a second per idea, measured on mine) plus Laya for the yes/no. Same pipeline shape, smaller ranker; the diagram below still reads correctly if you swap "CLM" for "the small model".</p>
-    <p><strong>We run two NixOS releases and two desktops.</strong> I'm on 25.05 with Hyprland; two of you are on 26.05 with KDE Plasma. My config was never tested against either, so the module now has to work on both — and I'll probably upgrade to match you, once Léon's research item confirms what that costs. Kish's item <code>desktop-neutral-module</code> is the KDE checklist.</p>
+    <p>Almar and Ryan turn out to have the <em>same</em> laptop — a Legion 5 15IMH05H, same i7-10750H, same 16 GB. They differ only in the graphics card and the desktop. That's useful: if something breaks on one of those two machines and not the other, the cause is the GPU or the desktop, and nothing else.</p>
+    <p><strong>CLM is parked until 8 December.</strong> Its encoder needs a 24 GB NVIDIA card — the 16 GB in the README is the weight size, not a card — and the biggest card among us is 6 GB. My and Almar's spare machines are weeks away, so we skip CLM until one of them is real and look at it again in December. The idea-overlap check uses a small embedding model that runs on any of our CPUs (about a tenth of a second per idea, measured on mine) plus Laya for the yes/no. Same pipeline shape, smaller ranker; the diagram below still reads correctly if you swap "CLM" for "the small model".</p>
+    <p><strong>We run two NixOS releases and two desktops.</strong> I'm on 25.05 with Hyprland; all three of you are on 26.05, two of you on KDE Plasma. My config was never tested against either, so the module has to work on both — and the test suite now runs against both releases (<code>just test-25-05</code> and <code>just test-26-05</code>) so it can't quietly regress on yours. The <code>claude-mode</code> window layouts only work in Kitty, so on Konsole they're an opt-in you can ignore.</p>
   </section>
 
-  <section>
+  <section id="install">
     <h2>How it gets to your laptop</h2>
     <p>It isn't a folder of dotfiles you copy and then slowly drift away from. It's a flake. You add one input and one import to your own NixOS config, rebuild, and you have the whole environment. When I improve something, you run <code>nix flake update</code> and you have it too.</p>
 
@@ -372,18 +397,76 @@
       <figcaption>Import both modules, not just the first. The home-manager module is the tools; the NixOS module is the brakes. The dashed path is the private secrets repo, which only applies to the four of us on the Blitsol tier.</figcaption>
     </figure>
 
-    <p>What you'll actually add, once I've pushed it:</p>
-    <pre><code>inputs.claude-env.url = "github:MrBlueStudios/claude-env";
+    <h3>The walkthrough</h3>
+    <p>Six steps, about twenty minutes, most of it the rebuild. Every command below runs <strong>in the directory that holds your own <code>flake.nix</code></strong> — for most NixOS installs that's <code>/etc/nixos</code>; if you keep your config in a repo under your home directory, it's that directory instead. Steps 1 and 6 are the ones that catch problems, so don't skip them.</p>
 
-# then, in your config
+    <div class="mine">
+      <p class="eyebrow">Before step 2 can work — this one is mine, not yours</p>
+      <p><code>claude-env</code> is public, but it pulls in one private repo of mine for the web-design playbook. Until I've given your GitHub account read access to that repo, step 2 fails for all three of you with a permission error on <code>git@github.com</code> — and it fails at lock time, before anything is built, so the error won't look like it has anything to do with the playbook. <strong>If you hit that, stop and tell me; it's not your SSH setup.</strong></p>
+    </div>
+
+    <ol class="install">
+      <li>
+        <strong>Check what you're starting from</strong>
+        <pre><code>nixos-version
+claude --version</code></pre>
+        <p>You want 26.05 (all three of you are) and Claude Code <code>2.1.324</code> or newer. Below that floor, the plugin marketplace pins are ignored and you silently get whatever is on their main branches instead of the versions I tested — Claude Code itself keeps working, which is why it's worth checking now rather than wondering later. If <code>claude</code> isn't found at all, that's expected: it comes from nixpkgs, and the flake configures it rather than installing it. Add <code>claude-code</code> to your packages, rebuild once, and sign in.</p>
+        <span class="done">Done when both commands print a version and the Claude one is ≥ 2.1.324</span>
+      </li>
+
+      <li>
+        <strong>Add the input</strong>
+        <p>In the <code>inputs</code> block of your own <code>flake.nix</code>:</p>
+        <pre><code>inputs.claude-env.url = "github:MrBlueStudios/claude-env";</code></pre>
+        <p>No <code>follows</code> line is needed. The flake deliberately declares no nixpkgs of its own — you bring yours, so nothing here can drag a second copy of nixpkgs into your closure.</p>
+        <span class="done">Done when <code>nix flake metadata</code> lists claude-env without erroring</span>
+      </li>
+
+      <li>
+        <strong>Import both modules</strong>
+        <p>There are two, and you need both: the home-manager one is the tools, the NixOS one is the brakes. Replace <code>&lt;you&gt;</code> with whatever <code>whoami</code> prints.</p>
+        <pre><code># in your NixOS configuration
 imports = [ inputs.claude-env.nixosModules.default ];
-home-manager.users.&lt;you&gt;.imports = [ inputs.claude-env.homeManagerModules.default ];
+
+home-manager.users.&lt;you&gt;.imports = [
+  inputs.claude-env.homeManagerModules.default
+];
+
 claude-env.tier = "blitsol";   # "base" is the default</code></pre>
+        <p>All three of you are on the Blitsol tier, so all three of you set that line. Leave it out and you get the base tier, which is everything except Blitsol's own accounts and secrets.</p>
+        <span class="done">Done when <code>nix flake check</code> — or just the next step — gets past evaluation</span>
+      </li>
+
+      <li>
+        <strong>Rebuild</strong>
+        <pre><code>sudo nixos-rebuild switch --flake .#$(hostname)</code></pre>
+        <p>Or <code>nh os switch .</code> if you have <code>nh</code>, which is what I use. The first build is the slow one: it fetches the MCP servers and the plugin pins. A second run takes seconds.</p>
+        <span class="done">Done when the switch completes and prints a generation number</span>
+      </li>
+
+      <li>
+        <strong>Verify, in any directory</strong>
+        <pre><code>claude mcp list
+claude plugin list
+claude-plugins-check
+ls ~/.claude/skills</code></pre>
+        <p>The first two should list servers and plugins; <code>claude-plugins-check</code> is mine and tells you whether every marketplace pin actually applied — that's the one that catches a half-finished install. The last one should print a directory full of skills rather than nothing.</p>
+        <span class="done">Done when <code>claude-plugins-check</code> reports no unpinned marketplace</span>
+      </li>
+
+      <li>
+        <strong>Write down everything that went wrong, and send it to me</strong>
+        <p>Including the parts you worked out yourself. This is the actual point of one of you installing it while I don't help: every rough edge you hit, the next person hits too, and the only way it gets fixed is if I know about it. The error text matters more than your description of it — paste it.</p>
+        <span class="done">Done when I have your notes, even if the notes say "it just worked"</span>
+      </li>
+    </ol>
+
+    <p>After that, keeping up with it is one command, in the same directory: <code>nix flake update claude-env</code> then the same rebuild. You stay on the version you updated to until you choose to move.</p>
   </section>
 
   <section>
     <h2>What's in it</h2>
-    <p>Right now my setup has 36 skills, 12 agents and a pile of MCP servers — and part of this project is cutting that down, because every tool loaded costs tokens in every session whether you use it or not. What survives, by the work we actually do:</p>
+    <p>My setup has more skills, agents and MCP servers than any one session should load, and part of this project is cutting that down, because every tool loaded costs tokens in every session whether you use it or not. <code>ls ~/.claude/skills</code> after step 5 shows you exactly what you got — I'm not quoting a number here, because it changes every week. What survives, by the work we actually do:</p>
 
     <div class="kit">
       <div class="kit-cell">
@@ -435,7 +518,7 @@ claude-env.tier = "blitsol";   # "base" is the default</code></pre>
         <p class="who">you three and me</p>
         <ul>
           <li>Everything in base, plus</li>
-          <li>HubSpot, Cloudflare, Stripe, Moneybird</li>
+          <li>HubSpot, Cloudflare, Stripe, AdministratieX</li>
           <li>The shared encrypted secrets</li>
           <li>You'll get real invites to each account — I'm not copying credentials around</li>
         </ul>
@@ -622,24 +705,26 @@ claude-env.tier = "blitsol";   # "base" is the default</code></pre>
       <p>No crew laptop has the 24 GB of GPU memory CLM wants, so it is parked until a spare machine is set up. Nothing is lost: the overlap check runs on a small CPU model plus Laya, and the CLM path is written up and ready for the day a box appears.</p>
     </div>
 
-    <h3>And then a questionnaire</h3>
-    <p>Once the structure is settled I'll send everyone a set of questions — current projects, ideas you haven't started, what you want to get better at, what you're stuck on, what you've built that someone else could reuse. That seeds the whole thing so it's useful on day one instead of empty. It comes <em>after</em> the structure, not before, because the questions are the structure.</p>
+    <h3>And the questionnaire — this is the part I'm handing you now</h3>
+    <p>Five sections: current projects, ideas you haven't started, what you've built that someone else could reuse, what you tried and dropped, and what you want to get better at. Fifteen minutes is the budget; if a section runs long, answer less of it rather than skipping the next one — three thin projects beat one perfect one and three blanks.</p>
+    <p><strong>You need nothing installed to answer it.</strong> That's worth saying plainly, because the install walkthrough above might make it look otherwise. The vault lives on one laptop today, and I paste your answers into my Claude, which writes the notes with <code>owner</code> set to you, never to me. Plain prose is the right format — a chat message, a text file, a voice note. The blocks in the questionnaire are a shape to answer along, not something you have to produce.</p>
+    <p>The section I most expect you to skip is the second one, ideas you haven't started, because nothing has started yet so it feels like it doesn't count. It's the section the whole duplicate-check runs on. List the ideas you'd be annoyed to find someone else had already half-built, including the ones you think are a bit silly: writing one down costs a line, and two people discovering the overlap in month three costs a fortnight.</p>
   </section>
 
   <section>
     <h2>What happens next</h2>
     <ol class="steps-plain">
-      <li><strong>You send me the four things.</strong> That unblocks nearly everything else.</li>
-      <li><strong>I cut the tool list down and publish the flake.</strong> Right now some of my tools only work in one specific folder, which is half of why I'm doing this at all.</li>
-      <li><strong>I invite you to HubSpot, Cloudflare, Stripe and Moneybird</strong> properly, and you connect each one from your own Claude. You'll be real users in those accounts, not borrowers of mine.</li>
-      <li><strong>One of you installs it from scratch</strong> while I don't help, and we write down every place it goes wrong. That's the only honest test of whether this works.</li>
-      <li><strong>Then the memory system</strong> and the questionnaire.</li>
+      <li><strong>Done:</strong> keys, handles, emails, all four machines' hardware, the research, and the shared Jira board — which is live and pushing its due dates into a Google Calendar.</li>
+      <li><strong>You answer the questionnaire.</strong> Nothing to install, fifteen minutes, and it's the thing that decides whether the shared memory is useful on day one or empty.</li>
+      <li><strong>One of you installs the flake from scratch</strong> while I don't help, following the walkthrough above, and we write down every place it goes wrong.</li>
+      <li><strong>I invite you to HubSpot, Cloudflare, Stripe and AdministratieX</strong> properly, and you connect each one from your own Claude. You'll be real users in those accounts, not borrowers of mine. (AdministratieX, not Moneybird — Moneybird turned out to be trial-only for what we need.)</li>
+      <li><strong>Then the shared memory runs for real</strong>, seeded with your answers.</li>
     </ol>
-    <p>There's one open question I'm still checking that might change a decision: whether our shared Jira board needs a paid plan for the integration I want. If it does, we'll do it differently. Everything else in here is free — the only things any of us pay for are our own Claude subscriptions and things we deliberately buy to put something live, like a domain or a server.</p>
+    <p>The open question about whether our Jira board needs a paid plan is answered: <strong>no.</strong> The board, and the calendar integration on top of it, stay free as long as we're under ten users — we're four. So the only things any of us pay for are our own Claude subscriptions and things we deliberately buy to put something live, like a domain or a server.</p>
   </section>
 
   <footer>
-    <p>claude-env · written for Almar, Ryan and Kish · 13 November 2026</p>
+    <p>claude-env · written for Almar, Ryan and Kish · 24 November 2026</p>
     <p>questions, corrections, or something you want in the toolkit → tell me, this is not finished</p>
   </footer>
 
