@@ -47,6 +47,12 @@ labels whose body ends in a `via: …` line**. GitHub drops labels when the shar
 access; an unlabelled issue without that line was written by hand and is left alone. Work
 oldest first.
 
+**Arguments narrow the queue.** `/inbox weibo`, `/inbox tiktok instagram` or `/inbox #12 #14` keep
+only the queue issues whose `kind:` platform (the part before the first hyphen; `rednote` means
+`xiaohongshu`, `notes` means `text`) or issue number is named. An issue with no `kind:` line is
+classified by host, as in step 2. Every other issue stays untouched and still waiting. No
+arguments: the whole queue. The summary table ends with a line `left waiting: N`.
+
 Two more cases, handled before the queue:
 
 - **`needs-you` issues.** If the sharer has commented after the `needs-you` comment, judge their
@@ -67,7 +73,7 @@ Two more cases, handled before the queue:
    whitespace is not fetched: close it `unsafe` with the reason "malformed link".
    The body's `kind:` line (for example `instagram-reel`, `douyin-short-link`, `web-page`) picks
    the recipe in [fetch.md](fetch.md). Without one, classify by host with that file's table.
-   A `*-short-link` kind (`vm.tiktok.com`, `xhslink.com`, `v.douyin.com`, `b23.tv`, `t.co`,
+   A `*-short-link` kind (`vm.tiktok.com`, `xhslink.com`, `xhslink.cn`, `v.douyin.com`, `b23.tv`, `t.co`,
    `t.cn`, `lnkd.in`, `naver.me`, …) is resolved first, because only the redirect shows what it
    is: `curl -sIL -o /dev/null -w '%{url_effective}' --max-redirs 5 -A 'Mozilla/5.0' '<url>'`.
    Classify the final link; fetch only an `https` result whose host is not localhost or a

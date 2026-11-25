@@ -34,7 +34,7 @@ test("splitKind: platform is everything before the first hyphen", () => {
 test("categoryLabel: the categories Léon named", () => {
   const labels = Object.fromEntries(["instagram", "tiktok", "douyin", "xiaohongshu", "youtube", "x", "reddit", "linkedin", "github", "web", "text", "image", "diagram", "video"].map((p) => [p, categoryLabel(p)]));
   assert.deepEqual(labels, {
-    instagram: "Instagram", tiktok: "TikTok", douyin: "Douyin", xiaohongshu: "Xiaohongshu", youtube: "YouTube", x: "X",
+    instagram: "Instagram", tiktok: "TikTok", douyin: "Douyin", xiaohongshu: "RedNote", youtube: "YouTube", x: "X",
     reddit: "Reddit", linkedin: "LinkedIn", github: "GitHub", web: "Websites", text: "Notes", image: "Pictures",
     diagram: "Diagrams", video: "Videos",
   });

@@ -169,6 +169,8 @@ const KINDS = [
   ["https://lnkd.in/abc", "linkedin-short-link"],
   ["https://someone.substack.com/p/title", "substack-article"],
   ["http://xhslink.com/a/AbCdEf", "xiaohongshu-short-link"],
+  ["https://xhslink.cn/a/AbCdEf", "xiaohongshu-short-link"],
+  ["https://www.rednote.com/explore/65abc", "xiaohongshu-note"],
   ["https://www.xiaohongshu.com/explore/65abc", "xiaohongshu-note"],
   ["https://v.douyin.com/AbCdEf/", "douyin-short-link"],
   ["https://www.douyin.com/video/123", "douyin-video"],
