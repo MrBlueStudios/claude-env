@@ -361,7 +361,7 @@ for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
   > non-secret bulk work like summarising video transcripts? Use the deliverable format in
   > research/PROGRESS.md.
 
-- [ ] **local-voice** — *Léon runs it, after share-inbox · Sonnet 5.5 · medium*
+- [x] **local-voice** — *Léon runs it, after share-inbox · Sonnet 5.5 · medium* · answered in `local-voice.md`
   Decides: whether talking to Claude, and hearing it answer, can run free and local on our laptops.
   Found by: the TikTok slideshow (faster-whisper + kokoro-onnx) and the OpenWhispr swap.
   > Find out whether I can talk to Claude Code and hear it answer, fully local and free, on this
