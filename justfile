@@ -23,12 +23,12 @@ default: test
 
 # Evaluate the home-manager module (base + blitsol) and the NixOS guard on both supported releases,
 # then run the guard and helper-script tests.
-test: test-25-05 test-26-05 test-shellcheck test-guard test-scripts test-build
+test: test-25-05 test-26-05 test-shellcheck test-guard test-scripts test-share-app test-build
 
 # The same suite without the two real builds: everything that runs in seconds, for the inner
 # loop. `test` is what runs before a commit, because `test-fast` is exactly what was green
 # while the switch was broken.
-test-fast: test-25-05 test-26-05 test-shellcheck test-guard test-scripts
+test-fast: test-25-05 test-26-05 test-shellcheck test-guard test-scripts test-share-app
 
 # The ground truth the eval tests cannot reach: actually build what `nh os switch` builds, so a
 # failing check phase inside any writeShellApplication is caught here instead of on a laptop.
@@ -105,6 +105,19 @@ test-guard:
 # The firecrawl wrapper and other helper scripts.
 test-scripts:
     bash modules/home/scripts/tests.sh
+
+# The share inbox's Android share target (share-app/). Pure functions only; the page is checked on the phone.
+test-share-app:
+    node --test share-app/*.test.mjs
+
+# Publish share-app/ to https://crew-share.pages.dev. Needs `nix run nixpkgs#wrangler -- login` once.
+share-deploy:
+    nix run nixpkgs#wrangler -- pages deploy share-app --project-name crew-share --branch main
+
+# Send a link to the crew inbox from the laptop: `just share https://example.com "why it matters"`
+[positional-arguments]
+share url note="":
+    gh issue create -R MrBlueStudios/crew-vault -l inbox --title "$1" --body "$(printf '%s %s\n\nvia: laptop' "$1" "${2:-}")"
 
 # What a plugin or skill tree would bring onto this machine. Run it on a checkout *before*
 # `claude plugin install` executes any of its code. Exits 1 on a blocking finding; the

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.github.com">
+  <title>Crew inbox</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Crew inbox</h1>
+
+    <section id="result" hidden aria-live="polite">
+      <p id="result-text">Sending…</p>
+    </section>
+
+    <section id="token" hidden>
+      <p id="token-why">Paste your GitHub token once. It stays on this phone only.</p>
+      <form id="token-form">
+        <label for="token-input">Fine-grained token (Issues: read and write on crew-vault)</label>
+        <input id="token-input" type="password" autocomplete="off" required>
+        <button type="submit">Save and send</button>
+      </form>
+    </section>
+
+    <section id="retry" hidden>
+      <p id="retry-text"></p>
+      <p id="retry-share" class="share"></p>
+      <button id="retry-button" type="button">Retry</button>
+    </section>
+  </main>
+</body>
+</html>
