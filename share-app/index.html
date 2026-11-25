@@ -3,34 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e1e2e">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.github.com">
   <title>Crew inbox</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="app.js"></script>
+  <script type="module" src="ui.js"></script>
 </head>
 <body>
   <main>
-    <h1>Crew inbox</h1>
+    <header class="top">
+      <h1>Crew inbox</h1>
+      <button id="refresh" class="icon" type="button" aria-label="Refresh the list" hidden>↻</button>
+    </header>
 
-    <section id="result" hidden aria-live="polite">
-      <p id="result-text">Sending…</p>
-    </section>
-
-    <section id="token" hidden>
+    <section id="token" class="card" hidden>
       <p id="token-why">Paste your GitHub token once. It stays on this phone only.</p>
       <form id="token-form">
         <label for="token-input">Fine-grained token (Issues: read and write on crew-vault)</label>
         <input id="token-input" type="password" autocomplete="off" required>
-        <button type="submit">Save and send</button>
+        <button type="submit" class="primary">Save token</button>
       </form>
     </section>
 
-    <section id="retry" hidden>
-      <p id="retry-text"></p>
-      <p id="retry-share" class="share"></p>
-      <button id="retry-button" type="button">Retry</button>
-    </section>
+    <form id="composer" class="card" hidden>
+      <label for="paste">Paste a link or type a note</label>
+      <textarea id="paste" rows="2" placeholder="https://… or a thought worth keeping"></textarea>
+      <button id="send" type="submit" class="primary">Send</button>
+    </form>
+
+    <div id="banner" role="status" aria-live="polite" hidden>
+      <p id="banner-text"></p>
+      <p id="banner-share" class="share"></p>
+      <button id="retry-button" type="button" class="primary" hidden>Retry</button>
+    </div>
+
+    <p id="note" class="note" hidden></p>
+    <nav id="chips" aria-label="Categories" hidden></nav>
+    <div id="list"></div>
+    <p id="empty" class="note" hidden>Nothing shared yet. Share a link from any app, or paste one above.</p>
   </main>
 </body>
 </html>

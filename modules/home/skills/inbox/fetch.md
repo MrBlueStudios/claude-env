@@ -26,6 +26,9 @@ The issue's `kind:` line is `<platform>-<type>`. Pick by platform, and let the t
 | `reddit-`, `linkedin-` | Reddit, LinkedIn |
 | `xiaohongshu-`, `douyin-`, `weibo-`, `wechat-`, `zhihu-`, `kuaishou-`, `douban-`, `toutiao-`, `line-`, `kakao-`, `naver-` | Asian platforms |
 | `web-page`, and any other platform (`substack-`, `medium-`, `facebook-`, `threads-`, `bluesky-`, `pinterest-`, `telegram-`, `twitch-`, …) | Website or article |
+| `image-file` | Picture or video file |
+| `video-file` | Picture or video file |
+| `diagram-` (excalidraw, drawio, figma, miro, …) | Website or article, then the diagram note |
 | `text` | no fetch: judge the text, `fetch: text only` |
 
 An unrecognised host always falls through to Website or article. A recipe that gets nothing is
@@ -51,6 +54,24 @@ curl -sL -H 'DNT: 1' 'https://r.jina.ai/<url>'
 ```
 
 Jina only for public URLs. `fetch: web defuddle | web jina | web meta only`
+
+## Picture or video file (`image-file`, `video-file`)
+
+Download into scratch with a size cap, then look at it:
+
+```sh
+curl -sL --max-filesize 50000000 -o <scratch>/file '<url>'
+```
+
+A picture: Read the file and describe what it shows (diagram, screenshot, photo, text in it).
+A video: `ffmpeg -i <scratch>/file -vn -ac 1 -ar 16000 <scratch>/a.wav`, then the transcribe step
+from the TikTok recipe. `fetch: image viewed | video whisper | file download failed`
+
+## Diagram link (`diagram-*`)
+
+Diagram tools render in the browser, so the page text is thin. Fetch it as a website for the
+title and description, add the page's `og:image` (`curl -sL '<url>' | rg -o 'og:image" content="[^"]+'`)
+and view that image. `fetch: diagram meta+og:image | diagram meta only`
 
 ## X post (`x.com`, `twitter.com`)
 

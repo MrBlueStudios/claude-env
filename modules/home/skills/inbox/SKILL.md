@@ -164,6 +164,11 @@ Next step: <one concrete step>   (worth it only)
 fetch: <path used, e.g. tiktok yt-dlp+whisper | instagram L2 caption only | web defuddle>
 ```
 
+Every judged issue also gets its category label, `src:<platform>` from the `kind:` line (the part
+before the first hyphen, `text` for notes), so the repo's issue list filters the same way the
+share page groups: `gh label create "src:<platform>" -R MrBlueStudios/crew-vault --force`, then
+`--add-label "src:<platform>"` in the command below.
+
 Then set the labels. Every verdict removes `inbox`, `retry` and `needs-you`, so a judged issue
 never re-enters the queue:
 

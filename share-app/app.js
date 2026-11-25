@@ -40,6 +40,7 @@ const PLATFORMS = [
   ["wechat", ["weixin.qq.com", "wechat.com"], [], (p, h) => h.startsWith("mp.") ? "article" : "page"],
   ["weibo", ["weibo.com", "weibo.cn", "t.cn"], ["t.cn"], (p) => /^\/(detail|status)\/|^\/\d+\/\w+/.test(p) ? "post" : "page"],
   ["zhihu", ["zhihu.com", "zhi.hu"], ["zhi.hu"], (p, h) => /\/answer\//.test(p) ? "answer" : /\/question\//.test(p) ? "question" : h.startsWith("zhuanlan.") || /^\/p\//.test(p) ? "article" : "page"],
+  ["diagram", ["excalidraw.com", "draw.io", "diagrams.net", "figma.com", "miro.com", "lucid.app", "lucidchart.com", "mermaid.live", "whimsical.com", "tldraw.com"], [], (p, h) => h.split(".").slice(-2, -1)[0]],
   ["douban", ["douban.com"], [], () => "page"],
   ["toutiao", ["toutiao.com"], [], () => "page"],
   ["kuaishou", ["kuaishou.com", "kwai.com"], ["v.kuaishou.com"], (p) => /\/short-video\//.test(p) ? "video" : "page"],
@@ -52,6 +53,9 @@ export function classify(link) {
   let u;
   try { u = new URL(link); } catch { return "text"; }
   const host = u.hostname.toLowerCase().replace(/^(www|m|mobile)\./, "");
+  const ext = /\.([a-z0-9]{2,5})$/i.exec(u.pathname)?.[1]?.toLowerCase();
+  if (["png", "jpg", "jpeg", "gif", "webp", "avif", "svg", "bmp"].includes(ext)) return "image-file";
+  if (["mp4", "mov", "webm", "m4v", "mkv"].includes(ext)) return "video-file";
   for (const [name, hosts, shorts, kindOf] of PLATFORMS) {
     if (!hosts.some((d) => host === d || host.endsWith(`.${d}`))) continue;
     return `${name}-${shorts.includes(host) ? "short-link" : kindOf(u.pathname, host)}`;
@@ -150,61 +154,9 @@ export function clearPending(storage) {
 }
 
 // Storage can throw (private mode, blocked site data); the share must survive that.
-function readToken() {
+export function readToken() {
   try { return localStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; }
 }
-function writeToken(value) {
+export function writeToken(value) {
   try { value ? localStorage.setItem(TOKEN_KEY, value) : localStorage.removeItem(TOKEN_KEY); } catch {}
 }
-
-function init() {
-  const $ = (id) => document.getElementById(id);
-  const params = new URLSearchParams(location.search);
-  const shared = buildIssue(
-    { title: params.get("title"), text: params.get("text"), url: params.get("url") },
-    "android",
-  );
-  if (shared) savePending(window.localStorage, shared);
-  // Drop the share from the address, so a reload or a restore from recents can't post it twice.
-  history.replaceState(null, "", "/");
-  const issue = shared || loadPending(window.localStorage);
-  const show = (id) => ["token", "result", "retry"].forEach((s) => ($(s).hidden = s !== id));
-  const say = (msg) => { $("result-text").textContent = msg; show("result"); };
-
-  async function send() {
-    const token = readToken();
-    if (!token) return show("token");
-    if (!issue) return say("Ready. Share a link or some text to Crew inbox.");
-    $("result-text").textContent = "Sending…";
-    show("result");
-    const r = await sendShare(fetch, token, issue);
-    if (r.status === "sent") {
-      clearPending(window.localStorage);
-      return say(`Sent to the crew inbox (#${r.number}).`);
-    }
-    if (r.status === "error") {
-      clearPending(window.localStorage);
-      return say(`${r.reason} Not sent: ${issue.body.replace(/\n\nvia: .*$/, "")}`);
-    }
-    if (r.status === "auth") {
-      writeToken("");
-      $("token-why").textContent = "GitHub refused the token. Paste a new one; your share is kept.";
-      return show("token");
-    }
-    $("retry-text").textContent = `${r.reason} Your share is kept:`;
-    $("retry-share").textContent = issue.body.replace(/\n\nvia: .*$/, "");
-    show("retry");
-  }
-
-  $("token-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    writeToken($("token-input").value.trim());
-    $("token-input").value = "";
-    send();
-  });
-  $("retry-button").addEventListener("click", send);
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-  send();
-}
-
-if (typeof document !== "undefined") init();
