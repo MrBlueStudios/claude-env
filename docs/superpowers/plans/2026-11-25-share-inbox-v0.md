@@ -332,11 +332,12 @@ order. Everything below must be in it, and nothing more:
   - one Instagram reel.
 
   On the laptop, run
-  `gh issue create -R MrBlueStudios/crew-vault --title test --body "https://example.com"`
+  `gh issue create -R MrBlueStudios/crew-vault --title test --body "$(printf 'https://example.com\n\nvia: laptop')"`
   with **no label**.
 - [ ] **Step 2:** run `/inbox` in a Claude Code session.
 - [ ] **Step 3: Check.** Expected:
-  - every one of the six issues has a verdict comment, and each comment carries a `fetch:` line;
+  - every one of the six issues has a verdict comment carrying a `fetch:` line, except a reel
+    that ended at L3, which shows `fetch: instagram L3 retrying` only in the run table;
   - the duplicate website says "Same link as #N";
   - the unlabelled issue was processed;
   - at least one `Ideas/*.md` exists in `~/Projects/crew-vault`, and

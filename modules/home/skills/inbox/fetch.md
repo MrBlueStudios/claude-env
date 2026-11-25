@@ -8,6 +8,9 @@ transcript or images, and the `fetch:` line). On any failure, keep what you have
 laptop's system `nixpkgs` is 25.05, whose yt-dlp is a year old and breaks on TikTok and
 Instagram.
 
+`'<url>'` below is the shared URL, already checked in SKILL.md step 2, and always inside single
+quotes. TikTok links carry `&`, which unquoted would background the command.
+
 ## GitHub repo (`github.com/<owner>/<repo>`)
 
 ```sh
@@ -21,10 +24,10 @@ just -f ~/Projects/claude-env/justfile vet <scratch>/repo
 
 ## Website or article (and anything not listed below)
 
-`defuddle parse <url> --md` if defuddle is on PATH. Otherwise, or when it returns little:
+`defuddle parse '<url>' --md` if defuddle is on PATH. Otherwise, or when it returns little:
 
 ```sh
-curl -sL -H "DNT: 1" "https://r.jina.ai/<url>"
+curl -sL -H 'DNT: 1' 'https://r.jina.ai/<url>'
 ```
 
 Jina only for public URLs. `fetch: web defuddle | web jina | web meta only`
@@ -32,7 +35,7 @@ Jina only for public URLs. `fetch: web defuddle | web jina | web meta only`
 ## X post (`x.com`, `twitter.com`)
 
 ```sh
-curl -s "https://publish.x.com/oembed?url=<url>&omit_script=1"
+curl -sG --data-urlencode 'url=<url>' -d omit_script=1 https://publish.x.com/oembed
 ```
 
 The post text is inside the `html` blockquote. Text only: no thread, no media.
@@ -46,8 +49,8 @@ blocked: `fetch: <site> link only`, and judge on the title and the sharer's text
 ## TikTok video (`tiktok.com/…/video/…`, `vm.tiktok.com/…`)
 
 ```sh
-nix run UNSTABLE#yt-dlp -- --write-info-json --skip-download -o '<scratch>/%(id)s' <url>
-nix run UNSTABLE#yt-dlp -- -x --audio-format mp3 -o '<scratch>/%(id)s.%(ext)s' <url>
+nix run UNSTABLE#yt-dlp -- --write-info-json --skip-download -o '<scratch>/%(id)s' '<url>'
+nix run UNSTABLE#yt-dlp -- -x --audio-format mp3 -o '<scratch>/%(id)s.%(ext)s' '<url>'
 nix run UNSTABLE#whisper-ctranslate2 -- --model small --compute_type int8 \
   --output_format txt --output_dir <scratch> <scratch>/<id>.mp3
 ```
@@ -65,9 +68,16 @@ Climb the levels in order, stopping at the first that gives content. Record the 
 
 - **L1. yt-dlp, logged out.** The TikTok commands with the Instagram URL. Add
   `--ignore-no-formats-error` (image carousels). `fetch: instagram L1 yt-dlp+whisper`
-- **L2. The public page, logged out.** Read the caption from `og:description` on the reel
-  page, or from `https://www.instagram.com/reel/<id>/embed/captioned/`. Judge on the caption
-  alone. `fetch: instagram L2 caption only, no transcript`
+- **L2. The public page, logged out.** Read the caption from the reel page's `og:description`,
+  or from the embed page when that is empty:
+
+  ```sh
+  curl -sL -A 'Mozilla/5.0' '<url>' | grep -o '<meta property="og:description"[^>]*>'
+  curl -sL -A 'Mozilla/5.0' 'https://www.instagram.com/reel/<id>/embed/captioned/' \
+    | grep -o '<div class="Caption"[^<]*<[^>]*>[^<]*'
+  ```
+
+  Judge on the caption alone. `fetch: instagram L2 caption only, no transcript`
 - **L3. Wait.** If L1 and L2 got nothing and the issue is under 24 hours old (by `createdAt`),
   add the label `retry` and post no comment. A later run tries again.
   `fetch: instagram L3 retrying`

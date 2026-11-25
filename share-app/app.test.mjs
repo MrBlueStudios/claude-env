@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildIssue, postIssue, REPO } from "./app.js";
+import { buildIssue, postIssue, REPO, savePending, loadPending, clearPending } from "./app.js";
 
 test("buildIssue: Instagram share", () => {
   const url = "https://www.instagram.com/reel/ABC/?igsh=x";
@@ -71,4 +71,39 @@ test("postIssue: network error → retry", async () => {
 test("postIssue: 500 → retry", async () => {
   const result = await postIssue(async () => ({ status: 500, json: async () => ({}) }), "tok", ISSUE);
   assert.equal(result.status, "retry");
+});
+
+test("postIssue: 404 → auth (token can't see the repo)", async () => {
+  const result = await postIssue(async () => ({ status: 404, json: async () => ({}) }), "tok", ISSUE);
+  assert.deepEqual(result, { status: "auth" });
+});
+
+test("postIssue: 422 → error, not an endless retry", async () => {
+  const result = await postIssue(async () => ({ status: 422, json: async () => ({}) }), "tok", ISSUE);
+  assert.equal(result.status, "error");
+});
+
+test("postIssue: 429 → retry", async () => {
+  const result = await postIssue(async () => ({ status: 429, json: async () => ({}) }), "tok", ISSUE);
+  assert.equal(result.status, "retry");
+});
+
+function memoryStorage() {
+  const m = new Map();
+  return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) };
+}
+const brokenStorage = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); }, removeItem() { throw new Error("blocked"); } };
+
+test("pending: a share survives until it is cleared", () => {
+  const st = memoryStorage();
+  savePending(st, ISSUE);
+  assert.deepEqual(loadPending(st), ISSUE);
+  clearPending(st);
+  assert.equal(loadPending(st), null);
+});
+
+test("pending: blocked storage never throws", () => {
+  assert.doesNotThrow(() => savePending(brokenStorage, ISSUE));
+  assert.equal(loadPending(brokenStorage), null);
+  assert.doesNotThrow(() => clearPending(brokenStorage));
 });
