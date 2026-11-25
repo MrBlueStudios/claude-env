@@ -339,12 +339,12 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">7</span>
-        <span class="sub">yours — each one a numbered guide below · the top two are for right now · 1 paused to 8 Dec · 16 closed</span>
+        <span class="figure">6</span>
+        <span class="sub">yours — each one a numbered guide below · the top one is for right now · 1 paused to 8 Dec · 17 closed</span>
       </div>
       <div class="vital">
         <span class="figure">15</span>
-        <span class="sub">mine — done · 2 in progress, both waiting on you · 6 next · 1 parked</span>
+        <span class="sub">mine — done · 2 in progress, both waiting on you · 7 next · 1 parked</span>
       </div>
       <div class="vital">
         <span class="figure">0</span>
@@ -353,53 +353,34 @@
     </div>
 
     <div class="next-up">
-      <p class="eyebrow">Right now, in this order · about 12 minutes</p>
-      <p><strong>1. Close three terminals: local-voice, free-llm-router and oss-swaps.</strong> All three are finished, and everything they made is committed and pushed to <code>main</code> at <code>b7a1adf</code>. The local-voice session asks whether to push. It's already pushed, so you don't need to answer it.</p>
-      <p><strong>2. Start the skill scanner in one of the freed terminals</strong> (card Now 1 below). Two minutes to launch, then it runs on its own. It's the last research prompt.</p>
-      <p><strong>3. Switch to the share-inbox session and do Guide A</strong> (card Now 2 below), about eight minutes. That session is idle until you reply "done". Its first step is one sentence confirming the two <code>/etc/nixos</code> edits it found are yours. They are: I checked both.</p>
+      <p class="eyebrow">Right now · about 8 minutes</p>
+      <p><strong>1. If they're still open, close the three finished Sonnet terminals:</strong> local-voice, free-llm-router and oss-swaps. Everything they made is on <code>main</code>.</p>
+      <p><strong>2. You don't need to start the skill scanner.</strong> It had already run: <code>research/skill-scanner.md</code> was filed this morning, and I've committed and pushed it. If its session is still open (Opus 5.5, high), close it too. All five research prompts are now in.</p>
+      <p><strong>3. Switch to the share-inbox session and do Guide A</strong> (card "Now" below), about eight minutes. That session is idle until you reply "done". Its first step is one sentence confirming the two <code>/etc/nixos</code> edits it found are yours. They are: I checked both.</p>
       <p>After that, the inbox session sends you Guide B (installing the app on the Pixel, the rebuild, the four-share test), and you follow it there. Cards 1 to 5 below are for after the inbox works.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 7 to do, 1 paused · 16 closed</span></h2>
+    <h2>Your queue <span class="tally">— 6 to do, 1 paused · 17 closed</span></h2>
 
     <div class="order">
       <h3>The order</h3>
       <ol>
-        <li><b>Now 1 · Start the skill scanner</b> — 2 min, then it runs alone. <span class="after">runbook card 2 · the last prompt</span></li>
-        <li><b>Now 2 · Guide A for the share inbox</b> — 8 min, browser and that session. <span class="after">its session is waiting on you</span></li>
+        <li><b>Now · Guide A for the share inbox</b> — 8 min, browser and that session. <span class="after">its session is waiting on you</span></li>
         <li><b>Send the questionnaire and the crew page</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
         <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 3</span></li>
         <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 2</span></li>
         <li><b>Upgrade to NixOS 26.05</b> — an hour, your own laptop. <span class="after">eleven months without security updates</span></li>
         <li><b>Sit with the superpowers pin</b> — 20 min, with me. <span class="after">needs me at the keyboard</span></li>
       </ol>
-      <p class="rationale" style="margin-top:10px">The two Now cards first, because a session is sitting idle on one and the other runs by itself once started. Then the questionnaire, because it's a message and their clocks start when you send it. AdministratieX before the invites, because the invites need the bookkeeping tool to exist.</p>
+      <p class="rationale" style="margin-top:10px">Guide A first, because a session is sitting idle on it. Then the questionnaire, because it's a message and their clocks start when you send it. AdministratieX before the invites, because the invites need the bookkeeping tool to exist.</p>
     </div>
 
-    <!-- now 1 -->
+    <!-- now -->
     <article class="task" style="border-top-color: var(--go);">
       <div class="task-head">
-        <h3>Now 1 · Start the last research prompt: the skill scanner</h3>
-        <span class="why">2 minutes to start · it runs on its own</span>
-      </div>
-      <p class="where"><b>Where:</b> <span class="loc">a terminal you just freed</span>, using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook card 2</a></p>
-      <p class="rationale">Four of the five are in. Cards 3, 4 and 5 are filed, committed and pushed: <code>oss-swaps.md</code> (now with a <code>nix search</code> pass: only AppFlowy is packaged), <code>free-llm-router.md</code> (settled: Groq called directly, no router) and <code>local-voice.md</code>. For local voice, speech in is <code>whisper-ctranslate2</code> plus <code>wtype</code>, and speech out is a Stop hook into <code>espeak-ng</code>. Kokoro comes later, because it's in neither NixOS release. Nothing is built. That leaves card 2.</p>
-      <ol class="steps">
-        <li><span class="loc">browser</span> Open the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook</a> at card 2 and copy its launch command: <code>cd ~/Projects/claude-env &amp;&amp; claude --model opus --effort high</code>
-          <span class="done-when"><b>Done when</b> Claude Code is open, and <code>/status</code> shows Opus.</span></li>
-        <li><span class="loc">that session</span> Paste card 2's prompt as the first message.
-          <span class="done-when"><b>Done when</b> it says it launched the researcher agent. You can switch away now, since it doesn't need you.</span></li>
-        <li><span class="loc">later</span> Check <code>~/Projects/claude-env/research/</code>.
-          <span class="done-when"><b>Done when</b> <code>skill-scanner.md</code> exists and its box in <code>research/PROGRESS.md</code> is ticked. If the guard blocks a step, it should stop and tell you. Don't let it work around the guard.</span></li>
-      </ol>
-    </article>
-
-    <!-- now 2 -->
-    <article class="task" style="border-top-color: var(--go);">
-      <div class="task-head">
-        <h3>Now 2 · Guide A for the share inbox</h3>
+        <h3>Now · Guide A for the share inbox</h3>
         <span class="why">about 8 minutes · a browser login and a token, in your own accounts</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">terminal · the share-inbox session (Opus 5.5)</span> and <span class="loc">browser</span></p>
@@ -581,8 +562,12 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 15 done, 2 in progress and both waiting on you, 6 next, 1 parked</span></h2>
+    <h2>My queue <span class="tally">— 15 done, 2 in progress and both waiting on you, 7 next, 1 parked</span></h2>
     <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Teach <code>just vet</code> what the skill scanner found it misses</span></div>
+        <p class="dw">From <code>research/skill-scanner.md</code>. The gate never reads markdown, and markdown is most of what a skill is. A test SKILL.md telling Claude to send <code>~/.ssh/id_ed25519</code> to a URL passed with exit 0. It also knows only 10 of the 34 hook events, so a hook on <code>InstructionsLoaded</code> shows as "none declared". The port is a few lines of <code>rg</code>, <code>find</code> and <code>jq</code>: run the credential, URL and pipe checks over markdown too, flag hidden characters and HTML comments, flag shipped binaries, obfuscated exec and persistence, list every hook event, and fix a truncation bug. Left out: the LLM stage, which would send skill contents to a provider, plus taint tracking, YARA and the OSV lookup, which are too heavy for a bash gate. I do this before the obsidian pin, because that vet is only worth something once the gate reads markdown. <b>Done when</b> that test SKILL.md makes <code>just vet</code> block, a hook under an unlisted event is reported, and <code>just test</code> is green.</p>
+      </div>
       <div class="row">
         <div class="row-top"><span class="pill next">Next</span><span class="txt">Vet the obsidian server's npm package and pin its version</span></div>
         <p class="dw">The share-inbox session flagged it this morning, and it's right. <code>npx -y @bitbonsai/mcpvault</code> with no version pulls whatever was published last, every session, and that package was never put through <code>just vet</code>. It doesn't block the inbox: the server has run exactly like this since 23 Nov. It's your personal config, so I write the diff and you apply it. <b>Done when</b> <code>just vet</code> has been run on the package with its verdict written down, and <code>users/leon-new.nix</code> names an exact <code>@version</code>.</p>
@@ -713,8 +698,12 @@
   </section>
 
   <section>
-    <h2>Settled <span class="tally">— 16 of yours closed, 7 decisions, 1 audit</span></h2>
+    <h2>Settled <span class="tally">— 17 of yours closed, 7 decisions, 1 audit</span></h2>
     <div class="rows">
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Done 25 Nov</span><span class="txt">All five research prompts are in, the skill scanner last</span></div>
+        <p class="dw">The reel's "NVIDIA found one in four skills is vulnerable" mixes two things up. The scanner is NVIDIA's SkillSpector, but the study is Liu et al. from Quantstamp and five universities. Its 26.1% holds as "trips a confirmed pattern", not as "exploitable", and the 5.2% "malicious" figure is weak. What matters for us is in My queue: our gate doesn't read markdown. The full write-up is <code>research/skill-scanner.md</code>.</p>
+      </div>
       <div class="row is-done">
         <div class="row-top"><span class="pill settled">Decided 25 Nov</span><span class="txt">Free LLM API for bulk work: Groq called directly, no pooled router</span></div>
         <p class="dw">The reel's "7 billion free tokens across 600 models" is FreeLLMAPI. The figure adds up every model's nominal free allowance, which per-minute and per-day caps never let you reach. Its key rotation is the pattern OpenRouter's terms ban, and Google's free tier trains on prompts and its terms require paid plans for users in the EEA. So: one Groq account per person, called directly, with Cloudflare Workers AI only as a fallback, and public material only. Recorded as <code>q-free-llm-router</code>; the research is <code>research/free-llm-router.md</code>.</p>

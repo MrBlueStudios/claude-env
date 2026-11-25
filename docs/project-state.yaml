@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-25T17:45"
+updated: "2026-11-25T11:20"
 suite:
   command: just test
   result: green
@@ -266,7 +266,7 @@ features:
       .
       Round two (section E of PROGRESS.md, from Léon's feeds) opened 2026-11-25 and is tracked by
       mt-research-runbook rather than reopening this feature: share-inbox, oss-swaps and
-      free-llm-router are filed; local-voice and skill-scanner are not yet.
+      free-llm-router, local-voice and skill-scanner are all filed (2026-11-25).
     paths:
       - /home/leon-new/Projects/claude-env/research/PROGRESS.md
   - id: share-inbox
@@ -1210,6 +1210,24 @@ claude_todos:
       Flagged by the share-inbox session on 2026-11-25 while it checked /etc/nixos before a
       switch. The server has run unpinned since 23 Nov. It is Léon's personal config, so the edit
       is a proposed diff for him to apply, not one made in /etc/nixos headlessly.
+  - id: ct-vet-scanner-ports
+    text: >-
+      Port the skill-scanner findings into just vet: read markdown, list every hook event, fix
+      the surface truncation, plus checks 11a to 11e
+    status: next
+    done_when: >-
+      The fixture from research/skill-scanner.md finding 8 (a SKILL.md naming ~/.ssh/id_ed25519,
+      a URL, an HTML comment and a zero-width space) makes `just vet` block, a hook under an
+      unlisted event such as InstructionsLoaded is reported, hits under a long root keep their
+      matched text, and `just test` is green
+    paths:
+      - /home/leon-new/Projects/claude-env/modules/home/scripts/claude-vet.sh
+      - /home/leon-new/Projects/claude-env/research/skill-scanner.md
+    note: >-
+      From runbook card 2, filed 2026-11-25. Léon said to go with the recommendations, so the
+      port list in finding 11 is taken as decided; finding 12 (LLM stage, AST/taint, YARA, OSV)
+      stays out. Do this before ct-pin-obsidian-mcp, whose vet verdict is weaker while the gate
+      cannot read markdown.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
@@ -1649,8 +1667,9 @@ my_todos:
     owner: leon
     why_yours: you asked to run these yourself, and they spend your session allowance
     guide: claude-env-research-runbook
-    status: open
+    status: done
     added: 2026-11-25
+    closed: 2026-11-25
     note: >-
       Runbook: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47 (docs/runbook.html).
       Same prompts in research/PROGRESS.md section E. Opus 5.5 high for the skill scanner,
@@ -1660,7 +1679,8 @@ my_todos:
       As of 2026-11-25 07:15: 3 (oss-swaps, plus a nix search pass), 4 (free-llm-router, decided
       as q-free-llm-router) and 5 (local-voice: whisper-ctranslate2 + wtype in, a Stop hook into
       espeak-ng out, Kokoro later because it is in neither release; nothing built) are filed,
-      committed and pushed. Only 2 (skill-scanner) is left, and nobody has launched it.
+      committed and pushed. 2 (skill-scanner) was filed the same morning, so all five are in;
+      its port list became ct-vet-scanner-ports.
   - id: mt-inbox-guide-a
     text: >-
       Do the share inbox's Guide A: tell its session the /etc/nixos edits are yours, log wrangler
