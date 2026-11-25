@@ -329,7 +329,7 @@ for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
   > Then give me the design: capture → fetch → judge → file, one component per step, plus the
   > smallest v0 I could use this week. Ask me about anything you'd otherwise guess. Don't build yet.
 
-- [ ] **skill-scanner** — *Léon runs it · Opus 5.5 · high*
+- [x] **skill-scanner** — *Léon runs it · Opus 5.5 · high* · answered in `skill-scanner.md`
   Decides: whether our `just vet` gate is missing checks that a published scanner has.
   Found by: an Instagram reel ("NVIDIA's Skill Specter", name possibly garbled).
   > A reel says NVIDIA released a skill scanner ("Skill Specter", the name may be garbled) and
