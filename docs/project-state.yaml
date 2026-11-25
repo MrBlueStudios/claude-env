@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-25T16:00"
+updated: "2026-11-25T16:30"
 suite:
   command: just test
   result: green
@@ -1584,9 +1584,14 @@ my_todos:
     owner: both
     why_yours: a live design session where your answers decide the shape
     guide: claude-env-share-inbox-session
-    status: open
+    status: done
     added: 2026-11-25
+    closed: 2026-11-25
     note: >-
+      Done 2026-11-25: the design is docs/superpowers/specs/2026-11-25-share-inbox-design.md and
+      the v0 plan docs/superpowers/plans/2026-11-25-share-inbox-v0.md; the share app and the
+      /inbox skill are committed and the build continues in its own session.
+      .
       Ranked first of the round-two items on 2026-11-25: it is the system that makes every future
       reel cheap to judge, and two of the reels' claims (Cal.com open source, Ponytail's token
       saving) were already known to be wrong, which is the case for a vetting step. Must work on
@@ -1608,6 +1613,10 @@ my_todos:
       Same prompts in research/PROGRESS.md section E. Opus 5.5 high for the skill scanner,
       Sonnet 5.5 medium for oss-swaps, free-llm-router and local-voice. Each result lands in
       research/<name>.md; tell Claude which finished.
+      .
+      As of 2026-11-25: 3 (oss-swaps) and 4 (free-llm-router, decided as q-free-llm-router) are
+      filed and ticked; 5 (local-voice) is being written in its own session; 2 (skill-scanner)
+      has not been launched yet.
 questions:
   - id: q-mcp-philosophy
     question: >-

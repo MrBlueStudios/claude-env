@@ -339,8 +339,8 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">7</span>
-        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 15 closed</span>
+        <span class="figure">6</span>
+        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 16 closed</span>
       </div>
       <div class="vital">
         <span class="figure">15</span>
@@ -355,13 +355,14 @@
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
       <p><strong>The friends can install now: Almar's laptop fetched the private repo, so that card is closed.</strong> His <code>nix flake metadata</code> pulled <code>claude-web-stack</code> over SSH, which is the outside check that counts. Ryan and Kish weren't checked from their own machines; if either sees <code>Permission denied (publickey)</code>, their GitHub invite is still pending.</p>
-      <p><strong>Two new cards came out of your reels and notes.</strong> Card 6 is the inbox design session with me, and card 7 is launching the other research prompts. Both use the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">research runbook</a>: every prompt has a Copy button, its model, its effort level and the folder it runs in. The inbox is also <code>WEB-4</code> on Jira.</p>
-      <p><strong>Cheapest next step: card 7's first half.</strong> Start runbook prompts 3 and 4 in two terminals. They need nothing from you and run while you do anything else on this list.</p>
+      <p><strong>The inbox is designed and being built.</strong> This morning's design-session card is closed: the design and its v0 plan are in <code>docs/superpowers/</code>, and the share app and the <code>/inbox</code> skill are on <code>main</code>. It is still <code>WEB-4</code> on Jira.</p>
+      <p><strong>Two research answers are in, and you settled one.</strong> <code>oss-swaps</code> and <code>free-llm-router</code> are filed. For the second you took Groq called directly over the pooled free-tier router; it is under Settled below. Local voice is being written in its own session.</p>
+      <p><strong>Cheapest next step: card 6, the skill scanner.</strong> Two minutes to launch from the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">research runbook</a>, then it runs on its own while you do anything else on this list.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 7 to do, 1 paused · 15 closed</span></h2>
+    <h2>Your queue <span class="tally">— 6 to do, 1 paused · 16 closed</span></h2>
 
     <div class="order">
       <h3>The order</h3>
@@ -371,10 +372,9 @@
         <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 2</span></li>
         <li><b>Upgrade to NixOS 26.05</b> — an hour, your own laptop. <span class="after">eleven months without security updates</span></li>
         <li><b>Sit with the superpowers pin</b> — 20 min, with me. <span class="after">needs me at the keyboard</span></li>
-        <li><b>The inbox design session</b> — about an hour, with me. <span class="after">runbook prompt 1 · WEB-4</span></li>
-        <li><b>Launch the other runbook prompts</b> — 2 min each to start. <span class="after">start 3 and 4 first</span></li>
+        <li><b>Launch the skill-scanner prompt</b> — 2 min to start. <span class="after">runbook card 2 · the last of the four</span></li>
       </ol>
-      <p class="rationale" style="margin-top:10px">One first because it is a message and their clocks start when you send it. Two before three because the invites need the bookkeeping tool to exist. Seven can start any time: its first two prompts run on their own in the background.</p>
+      <p class="rationale" style="margin-top:10px">One first because it is a message and their clocks start when you send it. Two before three because the invites need the bookkeeping tool to exist. Six can start any time: it runs on its own in the background.</p>
     </div>
 
     <!-- 1 -->
@@ -529,41 +529,18 @@
     <!-- 6 -->
     <article class="task">
       <div class="task-head">
-        <h3>6 · Sit with me for the share-to-Claude inbox design</h3>
-        <span class="why both">about an hour, with me · WEB-4</span>
+        <h3>6 · Launch the last research prompt: the skill scanner</h3>
+        <span class="why">2 minutes to start · it runs on its own</span>
       </div>
-      <p class="where"><b>Where:</b> <span class="loc">terminal · ~/Projects/claude-env</span> using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook card 1</a></p>
-      <p class="rationale">Your note asked for a way to send Claude anything you see, from your phone or laptop, so it gets judged and filed instead of forgotten. It's ranked first of everything from your feeds, because it makes every later reel cheap to check. Two of those reels' claims were already known to be wrong (Cal.com is no longer open source; Ponytail never saved a token here), which is the case for building a vetting step into it. It has to work on your Pixel and Almar's iPhone, and with your laptop off. It's a conversation, and your answers decide the shape, so it needs you there.</p>
+      <p class="where"><b>Where:</b> <span class="loc">any terminal</span>, using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook card 2</a></p>
+      <p class="rationale">Three of the four are in hand. Cards 3 and 4 are filed as <code>research/oss-swaps.md</code> and <code>research/free-llm-router.md</code>, and you settled the second one. Card 5, local voice, is being written in its own session now. That leaves card 2. You asked to run these yourself because they spend your weekly allowance, so you pick when.</p>
       <ol class="steps">
-        <li><span class="loc">browser</span> Open the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">research runbook</a> at card 1 and block out an hour.
-          <span class="done-when"><b>Done when</b> the page is open and the time is free.</span></li>
-        <li><span class="loc">any terminal</span> Copy card 1's launch command and run it. It opens Claude Code in <code>~/Projects/claude-env</code> on Opus 5.5, high effort, with crew-memory and project-brain added.
-          <span class="done-when"><b>Done when</b> <code>/status</code> in that session shows Opus.</span></li>
-        <li><span class="loc">that session</span> Paste card 1's prompt as the first message, then answer its questions as they come.
-          <span class="done-when"><b>Done when</b> you have a capture → fetch → judge → file design you agree with, plus a v0 you could use this week.</span></li>
-        <li><span class="loc">~/Projects/claude-env/research</span> Check that <code>reel-transcription.md</code> and <code>agent-reach.md</code> landed.
-          <span class="done-when"><b>Done when</b> both exist. If Agent Reach needs your logged-in cookies, the design should leave it out.</span></li>
-      </ol>
-      <p class="trap"><b>Push back on taps:</b> if any step of the design means more taps than sharing to WhatsApp, say so in the session. Easy sharing is the whole requirement.</p>
-    </article>
-
-    <!-- 7 -->
-    <article class="task">
-      <div class="task-head">
-        <h3>7 · Launch the other four research prompts</h3>
-        <span class="why">2 minutes each to start · they run on their own</span>
-      </div>
-      <p class="where"><b>Where:</b> <span class="loc">any terminal</span>, using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook cards 2–5</a></p>
-      <p class="rationale">You asked to run these yourself. Each card on the runbook has a Copy button for the launch command and the prompt, plus its model, effort level and folder, so there's nothing to work out. They also spend some of your weekly allowance, which is why you pick when they run.</p>
-      <ol class="steps">
-        <li><span class="loc">two terminals</span> Start cards 3 and 4 (open-source swaps, free LLM API), one per terminal. Sonnet 5.5, medium.
-          <span class="done-when"><b>Done when</b> both say they launched the researcher agent. You can walk away after that.</span></li>
-        <li><span class="loc">a third terminal, anytime</span> Card 2, the skill scanner. Opus 5.5, high. It clones a repo into a scratch folder and never installs it.
-          <span class="done-when"><b>Done when</b> <code>research/skill-scanner.md</code> exists. If the guard blocks a step, stop and tell me.</span></li>
-        <li><span class="loc">after card 6</span> Card 5, local voice. It reuses what the inbox session decides about transcription.
-          <span class="done-when"><b>Done when</b> <code>research/local-voice.md</code> exists.</span></li>
-        <li><span class="loc">here</span> Tell me which ones finished.
-          <span class="done-when"><b>Done when</b> they show as done on this board.</span></li>
+        <li><span class="loc">any terminal</span> Copy card 2's launch command and prompt from the runbook. Opus 5.5, high. It clones the scanner into a scratch folder and never installs it.
+          <span class="done-when"><b>Done when</b> it says it launched the researcher agent. You can walk away after that.</span></li>
+        <li><span class="loc">~/Projects/claude-env/research</span> Check the result landed.
+          <span class="done-when"><b>Done when</b> <code>research/skill-scanner.md</code> exists and its box in <code>research/PROGRESS.md</code> is ticked. If the guard blocks a step, stop and tell me rather than working around it.</span></li>
+        <li><span class="loc">here</span> Tell me it finished, and whether local voice did too.
+          <span class="done-when"><b>Done when</b> this card shows as closed on this board.</span></li>
       </ol>
     </article>
 
@@ -708,8 +685,16 @@
   </section>
 
   <section>
-    <h2>Settled <span class="tally">— 15 of yours closed, 6 decisions, 1 audit</span></h2>
+    <h2>Settled <span class="tally">— 16 of yours closed, 7 decisions, 1 audit</span></h2>
     <div class="rows">
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Decided 25 Nov</span><span class="txt">Free LLM API for bulk work: Groq called directly, no pooled router</span></div>
+        <p class="dw">The reel's "7 billion free tokens across 600 models" is FreeLLMAPI. The figure adds up every model's nominal free allowance, which per-minute and per-day caps never let you reach. Its key rotation is the pattern OpenRouter's terms ban, and Google's free tier trains on prompts and its terms require paid plans for users in the EEA. So: one Groq account per person, called directly, with Cloudflare Workers AI only as a fallback, and public material only. Recorded as <code>q-free-llm-router</code>; the research is <code>research/free-llm-router.md</code>.</p>
+      </div>
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed 25 Nov</span><span class="txt">The share-to-Claude inbox design session</span></div>
+        <p class="dw">Designed with you: <code>docs/superpowers/specs/2026-11-25-share-inbox-design.md</code>, with its v0 plan beside it in <code>docs/superpowers/plans/</code>. The share app and the <code>/inbox</code> skill are committed and pushed, and the build carries on in its own session. Both research sub-results landed: <code>reel-transcription.md</code> and <code>agent-reach.md</code>.</p>
+      </div>
       <div class="row is-done">
         <div class="row-top"><span class="pill settled">Closed 24 Nov</span><span class="txt">The friends can read <code>claude-web-stack</code></span></div>
         <p class="dw">Proved from outside your machine, the only check that counts: on Almar's laptop, <code>nix flake metadata github:MrBlueStudios/claude-env</code> fetched the private repo over SSH and locked it at <code>19130c1e</code>. Ryan's and Kish's weren't checked from their machines; a <code>Permission denied (publickey)</code> there means their invite is still pending.</p>
@@ -884,12 +869,13 @@
   <footer>
     <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · switched and verified from the journal · the version gate could not find Claude Code and is fixed · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce </p>
     <p>24 nov · the crew page brought current and republished at the same link, with a six-step install walkthrough · the questionnaire line that told them to install something is fixed · claude-web-stack found to be private, which blocks all three of them · your five answers recorded, three new cards and three new jobs of mine out of them</p>
+    <p>25 nov · the inbox designed with you and its v0 on main · oss-swaps and free-llm-router filed · Groq-direct chosen over the pooled free-tier router · main pushed, an old 17 Nov working-copy snapshot checked and found fully superseded</p>
     <p>input · github:MrBlueStudios/claude-env · the lock SHA your laptop is on is what <code>nix flake metadata</code> prints in /etc/nixos; main carries tonight's doc changes</p>
     <p>suite · just test green, re-run tonight · evaluated <em>and</em> built on 25.05 and 26.05: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
-    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 11 questions, none open</p>
+    <p>state · ~/Projects/claude-env/docs/project-state.yaml — 12 questions, none open</p>
     <p>runbook · research round two, five prompts with copy buttons · https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47</p>
     <p>vault · 15 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
-    <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
+    <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top · round two: share-inbox, oss-swaps and free-llm-router filed, local-voice and skill-scanner to go</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
     <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>
   </footer>
