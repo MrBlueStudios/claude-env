@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-25T11:30"
+updated: "2026-11-25T16:00"
 suite:
   command: just test
   result: green
@@ -1910,3 +1910,27 @@ questions:
       is already undeclared, so no removal step is needed — Léon's next switch has written it to
       ~/.claude/removed-mcp-servers.json. crew.html still lists vies-vat under legal and
       compliance; update that line to the CLI's name once it exists.
+  - id: q-free-llm-router
+    question: >-
+      A reel sells FreeLLMAPI as "7 billion free tokens a month across 600 models". Use it, or a
+      pooled free-tier router like it, for non-secret bulk work such as summarising transcripts?
+    options:
+      - Run FreeLLMAPI with one key per provider
+      - Call Groq directly, Cloudflare Workers AI as a fallback only if one provider is not enough
+      - No free LLM API; keep bulk work on the Claude subscriptions
+    recommendation: >-
+      The second (research/free-llm-router.md). The 7.4B figure is a sum of nominal allowances
+      that per-minute and per-day caps never let you reach, the router is labelled "personal
+      experimentation only", and its multi-key rotation is what OpenRouter §7.3 bans. Groq and
+      Cloudflare do not train on prompts; Google's free tier does, has human review, and its terms
+      require paid services for users in the EEA. Real capacity is under a million tokens a day.
+    blocks: []
+    blocks_note: >-
+      Not blocking: nothing in the share-inbox v0 depends on a free API.
+    answer: >-
+      Option two, 2026-11-25: one Groq account per person, called directly on its
+      OpenAI-compatible endpoint with retry-and-backoff on 429; add Cloudflare Workers AI only if
+      Groq alone runs out. No router, no extra accounts per provider, and no Google AI Studio,
+      OpenRouter :free, NVIDIA or Cerebras. Public, non-secret material only; anything private or
+      client-related stays off free tiers, since none of them offers a DPA. If Groq is not
+      enough, a small paid Groq or Cloudflare plan is a deliberate purchase, not more free tiers.

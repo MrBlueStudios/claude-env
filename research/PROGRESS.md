@@ -298,10 +298,10 @@ Codex/GPT-6 second brain (a second subscription). Not research: `--add-dir` (don
 Every prompt below is also on the copy-paste runbook, with the model, effort and launch command
 for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
 
-- [ ] **share-inbox** — *Léon with Claude, live · Opus 5.5 · high*
+- [x] **share-inbox** — *Léon with Claude, live · Opus 5.5 · high* · answered in `share-inbox.md`
   Decides: how anything seen on a phone or laptop reaches Claude in one or two taps, and where it lands.
   Found by: Léon's own note, plus the TikTok "Claude Agentic OS" slideshow as a reference picture.
-  Sub-results: `reel-transcription.md`, `agent-reach.md`.
+  Sub-results: `reel-transcription.md`, `agent-reach.md`. (reel-transcription.md filed 25 Nov) (agent-reach.md filed 25 Nov)
   > Design a share-to-Claude inbox. When I see a reel, TikTok, post, repo or website on my phone
   > or laptop, I send it in one or two taps. Claude fetches it, checks whether it's safe and
   > useful, scores it, and if it's worth it, files it in crew-memory's Ideas store and adds a
@@ -340,7 +340,7 @@ for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
   > figure holds up. Have doc-writer file it as research/skill-scanner.md in the deliverable
   > format from research/PROGRESS.md.
 
-- [ ] **oss-swaps** — *Léon runs it · Sonnet 5.5 · medium*
+- [x] **oss-swaps** — *Léon runs it · Sonnet 5.5 · medium* · answered in `oss-swaps.md`
   Decides: which self-hostable tools are worth anything to a four-person web studio.
   Found by: an Instagram reel listing eight swaps. Cal.com is already answered; OpenWhispr moved to local-voice.
   > Run the researcher agent, then doc-writer to file it as research/oss-swaps.md. For Chatwoot,
@@ -351,7 +351,7 @@ for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
   > Jira, Obsidian and a Contabo VPS. Skip Cal.com; research/booking-stack-licences.md covers it.
   > Use the deliverable format in research/PROGRESS.md.
 
-- [ ] **free-llm-router** — *Léon runs it · Sonnet 5.5 · medium*
+- [x] **free-llm-router** — *Léon runs it · Sonnet 5.5 · medium*
   Decides: whether a pooled free-model API is safe for non-secret bulk work.
   Found by: an Instagram reel ("7 billion free tokens a month from 600 models").
   > Run the researcher agent, then doc-writer to file it as research/free-llm-router.md. A reel
