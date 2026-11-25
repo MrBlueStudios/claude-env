@@ -2,7 +2,7 @@
 import { REPO, classify, extractUrl, explain } from "./app.js";
 
 const LABELS = {
-  web: "Websites", text: "Notes", image: "Pictures", diagram: "Diagrams", video: "Videos",
+  web: "Websites", text: "Notes", image: "Pictures", audio: "Audio", diagram: "Diagrams", video: "Videos",
   x: "X", github: "GitHub", youtube: "YouTube", tiktok: "TikTok", linkedin: "LinkedIn",
   wechat: "WeChat", xiaohongshu: "RedNote", bilibili: "Bilibili", kakao: "Kakao",
 };

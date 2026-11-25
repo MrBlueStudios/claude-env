@@ -1,5 +1,6 @@
 // The Crew inbox screen: a paste box, the shares by category, and how far each one got.
 import { buildIssue, sendShare, readToken, writeToken, savePending, loadPending, clearPending } from "./app.js";
+import { prepareFile, sendFile } from "./files.js";
 import { fetchHistory, groupShares, mergeLocal, entryFromIssue, ago, typeLabel, categoryLabel, categoryColor } from "./history.js";
 
 const $ = (id) => document.getElementById(id);
@@ -16,6 +17,23 @@ try { store = window.localStorage; } catch {}
 const LOG_KEY = "crewShareLog";
 const readLog = () => { try { return JSON.parse(store.getItem(LOG_KEY)) || []; } catch { return []; } };
 const writeLog = (entries) => { try { store.setItem(LOG_KEY, JSON.stringify(entries.slice(0, 30))); } catch {} };
+
+// Files waiting to be uploaded: picked on this page, or left in the Cache by the phone's share menu.
+let queued = [];
+let uploading = false;
+const FILE_CACHE = "crew-share-files";
+
+async function takeSharedFiles() {
+  try {
+    const cache = await caches.open(FILE_CACHE);
+    for (const req of await cache.keys()) {
+      const r = await cache.match(req);
+      const f = new File([await r.blob()], decodeURIComponent(r.headers.get("x-name") || "file"), { type: r.headers.get("content-type") || "" });
+      queued.push({ ...prepareFile(f, new Date(r.headers.get("x-at") || Date.now()), r.headers.get("x-id") || undefined), cacheKey: req });
+    }
+  } catch {}
+}
+const dropFromCache = async (p) => { try { if (p.cacheKey) await (await caches.open(FILE_CACHE)).delete(p.cacheKey); } catch {} };
 
 let shares = [];
 let filter = "all";
@@ -113,6 +131,39 @@ async function loadList() {
   render();
 }
 
+async function sendFiles() {
+  if (uploading) return; // the running loop also takes files added meanwhile
+  uploading = true;
+  const sent = [];
+  const problems = [];
+  while (queued.length) {
+    if (!readToken()) { uploading = false; return showToken("Paste your token and the file will be sent."); }
+    const p = queued[0];
+    banner(`Uploading ${p.name}… (${sent.length + 1} of ${sent.length + queued.length})`);
+    const r = await sendFile(fetch, readToken(), p, "android");
+    if (r.status === "sent") {
+      queued.shift();
+      dropFromCache(p);
+      const entry = entryFromIssue(r.issue, r.number, new Date().toISOString());
+      writeLog([entry, ...readLog()]);
+      sent.push(`#${r.number} ${categoryLabel(entry.platform)}`);
+      render();
+    } else if (r.status === "error") {
+      queued.shift();
+      dropFromCache(p);
+      problems.push(`${p.name}: ${r.reason}`);
+    } else {
+      // auth wipes the token; scope and retry keep the file queued for the Retry button.
+      uploading = false;
+      if (r.status === "auth") { writeToken(""); showToken("GitHub refused the token. Paste a new one; your file is kept."); banner(null); return; }
+      return banner(`${r.reason} Your file is kept.`, { tone: "err", share: p.name, retry: true });
+    }
+  }
+  uploading = false;
+  banner([sent.length && `Sent ✓ ${sent.join(", ")}.`, ...problems].filter(Boolean).join(" "), { tone: problems.length ? "err" : "ok" });
+  if (sent.length) setTimeout(loadList, 6000);
+}
+
 async function send(issue) {
   if (!readToken()) { savePending(store, issue); return showToken(); }
   savePending(store, issue);
@@ -133,7 +184,8 @@ async function send(issue) {
   return false;
 }
 
-function init() {
+async function init() {
+  await takeSharedFiles();
   const params = new URLSearchParams(location.search);
   const shared = buildIssue({ title: params.get("title"), text: params.get("text"), url: params.get("url") }, "android");
   if (shared) savePending(store, shared);
@@ -147,6 +199,7 @@ function init() {
     showMain();
     const pending = loadPending(store);
     if (pending) send(pending);
+    if (queued.length) sendFiles();
     loadList();
   });
   $("composer").addEventListener("submit", async (e) => {
@@ -154,7 +207,12 @@ function init() {
     const issue = buildIssue({ text: $("paste").value }, "android");
     if (issue && (await send(issue))) $("paste").value = "";
   });
-  $("retry-button").addEventListener("click", () => { const p = loadPending(store); if (p) send(p); });
+  $("retry-button").addEventListener("click", () => { if (queued.length) return sendFiles(); const p = loadPending(store); if (p) send(p); });
+  $("files").addEventListener("change", (e) => {
+    for (const f of e.target.files) queued.push(prepareFile(f));
+    e.target.value = "";
+    sendFiles();
+  });
   $("refresh").addEventListener("click", loadList);
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") loadList(); });
   setInterval(render, 60_000);
@@ -166,6 +224,7 @@ function init() {
   loadList();
   const pending = shared || loadPending(store);
   if (pending) send(pending);
+  if (queued.length) sendFiles();
 }
 
 init();

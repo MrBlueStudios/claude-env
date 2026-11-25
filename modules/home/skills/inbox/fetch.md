@@ -26,8 +26,7 @@ The issue's `kind:` line is `<platform>-<type>`. Pick by platform, and let the t
 | `reddit-`, `linkedin-` | Reddit, LinkedIn |
 | `xiaohongshu-`, `douyin-`, `weibo-`, `wechat-`, `zhihu-`, `kuaishou-`, `douban-`, `toutiao-`, `line-`, `kakao-`, `naver-` | Asian platforms |
 | `web-page`, and any other platform (`substack-`, `medium-`, `facebook-`, `threads-`, `bluesky-`, `pinterest-`, `telegram-`, `twitch-`, …) | Website or article |
-| `image-file` | Picture or video file |
-| `video-file` | Picture or video file |
+| `image-file`, `audio-file`, `video-file` | Picture, audio or video file |
 | `diagram-` (excalidraw, drawio, figma, miro, …) | Website or article, then the diagram note |
 | `text` | no fetch: judge the text, `fetch: text only` |
 
@@ -55,17 +54,26 @@ curl -sL -H 'DNT: 1' 'https://r.jina.ai/<url>'
 
 Jina only for public URLs. `fetch: web defuddle | web jina | web meta only`
 
-## Picture or video file (`image-file`, `video-file`)
+## Picture, audio or video file (`image-file`, `audio-file`, `video-file`)
 
-Download into scratch with a size cap, then look at it:
+Where the file is depends on the issue:
+
+- **A `file:` line** (uploaded from a phone): the file is `~/Projects/crew-vault/<file value>`,
+  already pulled in step 1. Use it only when the value starts with `inbox-files/` and holds no
+  `..`; otherwise close the issue `unsafe` with "malformed file path". Copy it into scratch.
+- **A `url:` line** (a direct link): download it into scratch with a size cap:
 
 ```sh
 curl -sL --max-filesize 50000000 -o <scratch>/file '<url>'
 ```
 
-A picture: Read the file and describe what it shows (diagram, screenshot, photo, text in it).
-A video: `ffmpeg -i <scratch>/file -vn -ac 1 -ar 16000 <scratch>/a.wav`, then the transcribe step
-from the TikTok recipe. `fetch: image viewed | video whisper | file download failed`
+Then look at it. A picture: Read the file and describe what it shows (diagram, screenshot,
+photo, text in it). Audio or video: transcribe with the TikTok recipe's whisper command (for
+video, first `ffmpeg -i <scratch>/file -vn -ac 1 -ar 16000 <scratch>/a.wav`).
+`fetch: image viewed | audio whisper | video whisper | file download failed`
+
+A picture or recording with no words and no context is thin: judge what it shows, and say in the
+verdict that the sharer's own words were missing.
 
 ## Diagram link (`diagram-*`)
 

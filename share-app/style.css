@@ -52,3 +52,5 @@ a.item:active { background: var(--bg); }
 .tone-info { --tone: var(--info); } .tone-good { --tone: var(--good); } .tone-warn { --tone: var(--warn); }
 .tone-bad { --tone: var(--bad); } .tone-muted { --tone: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .icon.spin { animation: none; } }
+.filebtn { display: flex; align-items: center; justify-content: center; margin: .6rem 0 0; min-height: 2.75rem; border: 1px dashed var(--line); border-radius: .7rem; color: var(--fg); cursor: pointer; font-weight: 600; }
+.filebtn:active { background: var(--bg); }

@@ -56,6 +56,7 @@ export function classify(link) {
   const ext = /\.([a-z0-9]{2,5})$/i.exec(u.pathname)?.[1]?.toLowerCase();
   if (["png", "jpg", "jpeg", "gif", "webp", "avif", "svg", "bmp"].includes(ext)) return "image-file";
   if (["mp4", "mov", "webm", "m4v", "mkv"].includes(ext)) return "video-file";
+  if (["mp3", "m4a", "wav", "ogg", "oga", "opus", "aac", "flac"].includes(ext)) return "audio-file";
   for (const [name, hosts, shorts, kindOf] of PLATFORMS) {
     if (!hosts.some((d) => host === d || host.endsWith(`.${d}`))) continue;
     return `${name}-${shorts.includes(host) ? "short-link" : kindOf(u.pathname, host)}`;

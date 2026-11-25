@@ -65,7 +65,10 @@ Two more cases, handled before the queue:
 
 ## 2. Per issue: link and duplicates
 
-1. The link is the body's `url:` line. An issue without one (made by `just share` or by hand)
+1. A body with a `file:` line (kind `image-file` or `audio-file`, uploaded from a phone) has no link:
+   skip the rest of this item and use the file recipe in [fetch.md](fetch.md). Its `link` in the
+   idea note is the `file:` path.
+   Otherwise the link is the body's `url:` line. An issue without one (made by `just share` or by hand)
    uses the first `https?://` URL in its text, ending at the first character that is not an
    ASCII URL character, so Chinese text or full-width punctuation right after a link is not part
    of it. The link is sharer-supplied text that goes into shell commands, so it is **always
@@ -153,7 +156,7 @@ slugs.
    - `created` and `updated` (today);
    - `source: inbox`, `status: raw`;
    - `summary` (at most two sentences, English);
-   - `link` (the shared URL) and `issue` (the issue URL).
+   - `link` (the shared URL, or the `file:` path) and `issue` (the issue URL).
 
    The body holds the summary, the score line, and where it was already known.
 2. Run `CM lint`, then `CM index`. A lint problem is fixed in the note before going on. The
