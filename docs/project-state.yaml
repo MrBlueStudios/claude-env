@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-25T17:15"
+updated: "2026-11-25T17:45"
 suite:
   command: just test
   result: green
@@ -1196,6 +1196,20 @@ claude_todos:
     note: >-
       From an Instagram reel, ranked 2026-11-25. No research needed; the list is in the reel's
       transcript, which Léon pasted into the 2026-11-25 session.
+  - id: ct-pin-obsidian-mcp
+    text: >-
+      Vet @bitbonsai/mcpvault and pin the obsidian personal server to an exact npm version
+    status: next
+    done_when: >-
+      `just vet` has been run on the package's tarball with its verdict written down, and
+      users/leon-new.nix names `@bitbonsai/mcpvault@<exact version>` instead of the bare name, so
+      `npx -y` cannot pull a new release unannounced
+    paths:
+      - /etc/nixos/users/leon-new.nix
+    note: >-
+      Flagged by the share-inbox session on 2026-11-25 while it checked /etc/nixos before a
+      switch. The server has run unpinned since 23 Nov. It is Léon's personal config, so the edit
+      is a proposed diff for him to apply, not one made in /etc/nixos headlessly.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
@@ -1643,9 +1657,28 @@ my_todos:
       Sonnet 5.5 medium for oss-swaps, free-llm-router and local-voice. Each result lands in
       research/<name>.md; tell Claude which finished.
       .
-      As of 2026-11-25: 3 (oss-swaps) and 4 (free-llm-router, decided as q-free-llm-router) are
-      filed and ticked; 5 (local-voice) is being written in its own session; 2 (skill-scanner)
-      has not been launched yet.
+      As of 2026-11-25 07:15: 3 (oss-swaps, plus a nix search pass), 4 (free-llm-router, decided
+      as q-free-llm-router) and 5 (local-voice: whisper-ctranslate2 + wtype in, a Stop hook into
+      espeak-ng out, Kokoro later because it is in neither release; nothing built) are filed,
+      committed and pushed. Only 2 (skill-scanner) is left, and nobody has launched it.
+  - id: mt-inbox-guide-a
+    text: >-
+      Do the share inbox's Guide A: tell its session the /etc/nixos edits are yours, log wrangler
+      in, make the crew-vault token, then reply "done"
+    owner: leon
+    why_yours: a browser login and a credential, both in your own accounts
+    guide: claude-env-inbox-guide-a
+    status: open
+    added: 2026-11-25
+    note: >-
+      The share-inbox session (Opus 5.5) is idle waiting on this; Guide B (installing the app on
+      the Pixel, the rebuild, the four-share test) follows once it hears "done". It also paused
+      before switching because of two uncommitted /etc/nixos edits it did not make. Both are
+      Léon's, from closed cards: flake.nix moved the claude-env input from path: to github: on
+      17 Nov (mt-switch-to-flake), and users/leon-new.nix restored obsidian as a personal server
+      on 23 Nov (mt-personal-servers). obsidian is already live in ~/.claude.json with exactly
+      that config, so keeping the edit changes nothing at the switch. Its unpinned npx package is
+      a fair flag, and it is ct-pin-obsidian-mcp rather than a reason to hold the inbox.
 questions:
   - id: q-mcp-philosophy
     question: >-

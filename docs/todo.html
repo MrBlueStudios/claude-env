@@ -339,12 +339,12 @@
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">6</span>
-        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 16 closed</span>
+        <span class="figure">7</span>
+        <span class="sub">yours — each one a numbered guide below · the top two are for right now · 1 paused to 8 Dec · 16 closed</span>
       </div>
       <div class="vital">
         <span class="figure">15</span>
-        <span class="sub">mine — done · 2 in progress, both waiting on you · 5 next · 1 parked</span>
+        <span class="sub">mine — done · 2 in progress, both waiting on you · 6 next · 1 parked</span>
       </div>
       <div class="vital">
         <span class="figure">0</span>
@@ -353,29 +353,71 @@
     </div>
 
     <div class="next-up">
-      <p class="eyebrow">Where you are</p>
-      <p><strong>The friends can install now: Almar's laptop fetched the private repo, so that card is closed.</strong> His <code>nix flake metadata</code> pulled <code>claude-web-stack</code> over SSH, which is the outside check that counts. Ryan and Kish weren't checked from their own machines; if either sees <code>Permission denied (publickey)</code>, their GitHub invite is still pending.</p>
-      <p><strong>The inbox is designed and being built.</strong> This morning's design-session card is closed: the design and its v0 plan are in <code>docs/superpowers/</code>, and the share app and the <code>/inbox</code> skill are on <code>main</code>. It is still <code>WEB-4</code> on Jira.</p>
-      <p><strong>Two research answers are in, and you settled one.</strong> <code>oss-swaps</code> and <code>free-llm-router</code> are filed. For the second you took Groq called directly over the pooled free-tier router; it is under Settled below. Local voice is being written in its own session.</p>
-      <p><strong>Cheapest next step: card 6, the skill scanner.</strong> Two minutes to launch from the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">research runbook</a>, then it runs on its own while you do anything else on this list.</p>
+      <p class="eyebrow">Right now, in this order · about 12 minutes</p>
+      <p><strong>1. Close three terminals: local-voice, free-llm-router and oss-swaps.</strong> All three are finished, and everything they made is committed and pushed to <code>main</code> at <code>b7a1adf</code>. The local-voice session asks whether to push. It's already pushed, so you don't need to answer it.</p>
+      <p><strong>2. Start the skill scanner in one of the freed terminals</strong> (card Now 1 below). Two minutes to launch, then it runs on its own. It's the last research prompt.</p>
+      <p><strong>3. Switch to the share-inbox session and do Guide A</strong> (card Now 2 below), about eight minutes. That session is idle until you reply "done". Its first step is one sentence confirming the two <code>/etc/nixos</code> edits it found are yours. They are: I checked both.</p>
+      <p>After that, the inbox session sends you Guide B (installing the app on the Pixel, the rebuild, the four-share test), and you follow it there. Cards 1 to 5 below are for after the inbox works.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 6 to do, 1 paused · 16 closed</span></h2>
+    <h2>Your queue <span class="tally">— 7 to do, 1 paused · 16 closed</span></h2>
 
     <div class="order">
       <h3>The order</h3>
       <ol>
+        <li><b>Now 1 · Start the skill scanner</b> — 2 min, then it runs alone. <span class="after">runbook card 2 · the last prompt</span></li>
+        <li><b>Now 2 · Guide A for the share inbox</b> — 8 min, browser and that session. <span class="after">its session is waiting on you</span></li>
         <li><b>Send the questionnaire and the crew page</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
         <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 3</span></li>
         <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 2</span></li>
         <li><b>Upgrade to NixOS 26.05</b> — an hour, your own laptop. <span class="after">eleven months without security updates</span></li>
         <li><b>Sit with the superpowers pin</b> — 20 min, with me. <span class="after">needs me at the keyboard</span></li>
-        <li><b>Launch the skill-scanner prompt</b> — 2 min to start. <span class="after">runbook card 2 · the last of the four</span></li>
       </ol>
-      <p class="rationale" style="margin-top:10px">One first because it is a message and their clocks start when you send it. Two before three because the invites need the bookkeeping tool to exist. Six can start any time: it runs on its own in the background.</p>
+      <p class="rationale" style="margin-top:10px">The two Now cards first, because a session is sitting idle on one and the other runs by itself once started. Then the questionnaire, because it's a message and their clocks start when you send it. AdministratieX before the invites, because the invites need the bookkeeping tool to exist.</p>
     </div>
+
+    <!-- now 1 -->
+    <article class="task" style="border-top-color: var(--go);">
+      <div class="task-head">
+        <h3>Now 1 · Start the last research prompt: the skill scanner</h3>
+        <span class="why">2 minutes to start · it runs on its own</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">a terminal you just freed</span>, using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook card 2</a></p>
+      <p class="rationale">Four of the five are in. Cards 3, 4 and 5 are filed, committed and pushed: <code>oss-swaps.md</code> (now with a <code>nix search</code> pass: only AppFlowy is packaged), <code>free-llm-router.md</code> (settled: Groq called directly, no router) and <code>local-voice.md</code>. For local voice, speech in is <code>whisper-ctranslate2</code> plus <code>wtype</code>, and speech out is a Stop hook into <code>espeak-ng</code>. Kokoro comes later, because it's in neither NixOS release. Nothing is built. That leaves card 2.</p>
+      <ol class="steps">
+        <li><span class="loc">browser</span> Open the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook</a> at card 2 and copy its launch command: <code>cd ~/Projects/claude-env &amp;&amp; claude --model opus --effort high</code>
+          <span class="done-when"><b>Done when</b> Claude Code is open, and <code>/status</code> shows Opus.</span></li>
+        <li><span class="loc">that session</span> Paste card 2's prompt as the first message.
+          <span class="done-when"><b>Done when</b> it says it launched the researcher agent. You can switch away now, since it doesn't need you.</span></li>
+        <li><span class="loc">later</span> Check <code>~/Projects/claude-env/research/</code>.
+          <span class="done-when"><b>Done when</b> <code>skill-scanner.md</code> exists and its box in <code>research/PROGRESS.md</code> is ticked. If the guard blocks a step, it should stop and tell you. Don't let it work around the guard.</span></li>
+      </ol>
+    </article>
+
+    <!-- now 2 -->
+    <article class="task" style="border-top-color: var(--go);">
+      <div class="task-head">
+        <h3>Now 2 · Guide A for the share inbox</h3>
+        <span class="why">about 8 minutes · a browser login and a token, in your own accounts</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">terminal · the share-inbox session (Opus 5.5)</span> and <span class="loc">browser</span></p>
+      <p class="rationale">That session has built and pushed everything it can: the page passes 16 tests and a six-scenario browser check, <code>crew-vault</code> exists with its 8 labels, the system is pre-built with <code>/inbox</code> in it, and wrangler, yt-dlp and whisper are already downloaded. What's left needs your Cloudflare login and a token from your GitHub, which no session should hold. It also paused before switching over two uncommitted <code>/etc/nixos</code> edits it didn't make. I checked both, and they're yours, from cards you already closed. <code>flake.nix</code>'s <code>github:</code> URL for claude-env is from the 17 Nov switch. The <code>obsidian</code> server in <code>users/leon-new.nix</code> is from 23 Nov, and it's already live with exactly that config, so keeping it changes nothing.</p>
+      <ol class="steps">
+        <li><span class="loc">share-inbox session</span> Paste this as your reply: <code>The two uncommitted /etc/nixos edits are mine: flake.nix's github: URL for claude-env is from the 17 Nov switch, and the obsidian personal server in users/leon-new.nix is from 23 Nov. It is already live with that exact config, so keep both. Pinning its npm version is a separate todo, so don't hold the switch for it.</code>
+          <span class="done-when"><b>Done when</b> it says it will keep both edits.</span></li>
+        <li><span class="loc">share-inbox session</span> Type <code>! nix run nixpkgs#wrangler -- login</code>, sign in with the Cloudflare account that has blitsol.com, scroll down and click <b>Allow</b>.
+          <span class="done-when"><b>Done when</b> the session prints <code>Successfully logged in</code>. If no tab opens, click the <code>https://dash.cloudflare.com/oauth2/auth?...</code> link in the output.</span></li>
+        <li><span class="loc">browser · github.com/settings/personal-access-tokens/new</span> As MrBlueStudios: name <code>crew-inbox-pixel</code>, 90 days, owner MrBlueStudios, <b>Only select repositories → MrBlueStudios/crew-vault</b>, Repository permissions → <b>Issues: Read and write</b>, everything else No access. "Metadata: Read-only" appears by itself. Click <b>Generate token</b>.
+          <span class="done-when"><b>Done when</b> you have a token starting <code>github_pat_</code>.</span></li>
+        <li><span class="loc">Bitwarden</span> Save it as a new item named <code>crew-inbox-pixel</code>.
+          <span class="done-when"><b>Done when</b> the item exists. <b>Don't paste the token into any Claude session.</b> It only ever goes into the page on your phone.</span></li>
+        <li><span class="loc">share-inbox session</span> Reply <code>done</code>.
+          <span class="done-when"><b>Done when</b> it publishes the page and sends you Guide B: the Pixel install (2 min), the rebuild (one command) and the test run (10 min).</span></li>
+      </ol>
+      <p class="trap"><b>Looks right but isn't:</b> a token created with "All repositories" works just as well, and it can open issues in every repo you own. If the token's page lists anything other than <code>crew-vault</code>, delete it and make it again.</p>
+    </article>
 
     <!-- 1 -->
     <article class="task">
@@ -526,24 +568,6 @@
       <p class="trap"><b>This needs no particular Claude Code version</b> — the 2.1.324 floor is on marketplace pins, not on pinning a plugin's own bytes. And if any step fails: <code>sudo nixos-rebuild switch --rollback</code> immediately, then tell me what it said. Do not debug it live.</p>
     </article>
 
-    <!-- 6 -->
-    <article class="task">
-      <div class="task-head">
-        <h3>6 · Launch the last research prompt: the skill scanner</h3>
-        <span class="why">2 minutes to start · it runs on its own</span>
-      </div>
-      <p class="where"><b>Where:</b> <span class="loc">any terminal</span>, using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook card 2</a></p>
-      <p class="rationale">Three of the four are in hand. Cards 3 and 4 are filed as <code>research/oss-swaps.md</code> and <code>research/free-llm-router.md</code>, and you settled the second one. Card 5, local voice, is being written in its own session now. That leaves card 2. You asked to run these yourself because they spend your weekly allowance, so you pick when.</p>
-      <ol class="steps">
-        <li><span class="loc">any terminal</span> Copy card 2's launch command and prompt from the runbook. Opus 5.5, high. It clones the scanner into a scratch folder and never installs it.
-          <span class="done-when"><b>Done when</b> it says it launched the researcher agent. You can walk away after that.</span></li>
-        <li><span class="loc">~/Projects/claude-env/research</span> Check the result landed.
-          <span class="done-when"><b>Done when</b> <code>research/skill-scanner.md</code> exists and its box in <code>research/PROGRESS.md</code> is ticked. If the guard blocks a step, stop and tell me rather than working around it.</span></li>
-        <li><span class="loc">here</span> Tell me it finished, and whether local voice did too.
-          <span class="done-when"><b>Done when</b> this card shows as closed on this board.</span></li>
-      </ol>
-    </article>
-
     <p class="subhead">Paused by you</p>
 
     <article class="task" style="border-top-color: var(--line-strong);">
@@ -557,8 +581,12 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 15 done, 2 in progress and both waiting on you, 5 next, 1 parked</span></h2>
+    <h2>My queue <span class="tally">— 15 done, 2 in progress and both waiting on you, 6 next, 1 parked</span></h2>
     <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Vet the obsidian server's npm package and pin its version</span></div>
+        <p class="dw">The share-inbox session flagged it this morning, and it's right. <code>npx -y @bitbonsai/mcpvault</code> with no version pulls whatever was published last, every session, and that package was never put through <code>just vet</code>. It doesn't block the inbox: the server has run exactly like this since 23 Nov. It's your personal config, so I write the diff and you apply it. <b>Done when</b> <code>just vet</code> has been run on the package with its verdict written down, and <code>users/leon-new.nix</code> names an exact <code>@version</code>.</p>
+      </div>
       <div class="row">
         <div class="row-top"><span class="pill next">Next</span><span class="txt">An on-demand "own words" skill</span></div>
         <p class="dw">From one of your reels. After a brain dump you call it, and it repeats back your goal, your limits, what you <em>didn't</em> ask for, and its open questions, then waits for your yes. It only runs when you ask, so it never fires on its own. <b>Done when</b> it's declared in the flake and <code>just test</code> is green.</p>
@@ -869,13 +897,13 @@
   <footer>
     <p>20 nov · tiers, declarative MCP and the plugin channel landed · guide and enrolment runbook written · guard false positive fixed · crew-memory’s collision check built · a build failure of mine broke the switch and is fixed<br>21 nov · switched and verified from the journal · the version gate could not find Claude Code and is fixed · the skills count was wrong and is corrected — the personal-skills question is 7 skills, not 27 · the suite builds every derivation the module can produce </p>
     <p>24 nov · the crew page brought current and republished at the same link, with a six-step install walkthrough · the questionnaire line that told them to install something is fixed · claude-web-stack found to be private, which blocks all three of them · your five answers recorded, three new cards and three new jobs of mine out of them</p>
-    <p>25 nov · the inbox designed with you and its v0 on main · oss-swaps and free-llm-router filed · Groq-direct chosen over the pooled free-tier router · main pushed, an old 17 Nov working-copy snapshot checked and found fully superseded</p>
+    <p>25 nov · the inbox designed with you and its v0 on main · oss-swaps, free-llm-router and local-voice filed · Groq-direct chosen over the pooled free-tier router · main pushed to b7a1adf, an old 17 Nov working-copy snapshot checked and found fully superseded · the two /etc/nixos edits the inbox session held on checked and confirmed yours</p>
     <p>input · github:MrBlueStudios/claude-env · the lock SHA your laptop is on is what <code>nix flake metadata</code> prints in /etc/nixos; main carries tonight's doc changes</p>
     <p>suite · just test green, re-run tonight · evaluated <em>and</em> built on 25.05 and 26.05: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
     <p>state · ~/Projects/claude-env/docs/project-state.yaml — 12 questions, none open</p>
     <p>runbook · research round two, five prompts with copy buttons · https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47</p>
-    <p>vault · 15 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
-    <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top · round two: share-inbox, oss-swaps and free-llm-router filed, local-voice and skill-scanner to go</p>
+    <p>vault · 22 guides in project-brain/Guides/claude-env-*.md, the newest claude-env-inbox-guide-a, none of yours overwritten · 23 checkboxes under ## claude-env, one added today, none ticked or changed by me</p>
+    <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top · round two: share-inbox, oss-swaps, free-llm-router and local-voice filed, skill-scanner to go</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
     <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>
   </footer>
