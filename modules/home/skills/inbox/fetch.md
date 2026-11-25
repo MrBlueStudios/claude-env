@@ -11,6 +11,26 @@ Instagram.
 `'<url>'` below is the shared URL, already checked in SKILL.md step 2, and always inside single
 quotes. TikTok links carry `&`, which unquoted would background the command.
 
+## Which recipe
+
+The issue's `kind:` line is `<platform>-<type>`. Pick by platform, and let the type refine it:
+
+| kind starts with | Recipe |
+|---|---|
+| `github-repo` | GitHub repo |
+| `x-post` | X post |
+| `tiktok-video`, `tiktok-short-link` (after resolving) | TikTok video |
+| `tiktok-slideshow` | TikTok video, last paragraph |
+| `instagram-` | Instagram |
+| `youtube-`, `bilibili-video` | Video platforms |
+| `reddit-`, `linkedin-` | Reddit, LinkedIn |
+| `xiaohongshu-`, `douyin-`, `weibo-`, `wechat-`, `zhihu-`, `kuaishou-`, `douban-`, `toutiao-`, `line-`, `kakao-`, `naver-` | Asian platforms |
+| `web-page`, and any other platform (`substack-`, `medium-`, `facebook-`, `threads-`, `bluesky-`, `pinterest-`, `telegram-`, `twitch-`, …) | Website or article |
+| `text` | no fetch: judge the text, `fetch: text only` |
+
+An unrecognised host always falls through to Website or article. A recipe that gets nothing is
+not an error: judge on the sharer's own text and say so in the `fetch:` line.
+
 ## GitHub repo (`github.com/<owner>/<repo>`)
 
 ```sh
@@ -61,6 +81,32 @@ The caption is `description` in the `.info.json`; the transcript is the `.txt`.
 A `/photo/` URL (a slideshow) is out of scope for v0. Judge the caption from the page meta and
 write `fetch: tiktok slideshow caption only`.
 
+## Video platforms (`youtube-*`, `bilibili-video`)
+
+yt-dlp has extractors for both. Captions first, because they are cheap and exact:
+
+```sh
+nix run UNSTABLE#yt-dlp -- --write-info-json --write-auto-subs --sub-langs 'en.*,zh.*' --skip-download -o '<scratch>/%(id)s' '<url>'
+```
+
+Read the `description` and the `.vtt` subtitles. With no subtitles, take the TikTok video's audio
+and whisper path (its `--model small` handles Mandarin; add `--language zh` when the title is
+Chinese). `fetch: youtube captions | youtube yt-dlp+whisper | bilibili yt-dlp`
+
+## Asian platforms (Xiaohongshu, Douyin, Weibo, WeChat, Zhihu, Kuaishou, Douban, Toutiao, LINE, Kakao, Naver)
+
+**Start from the share text.** These apps put the caption in the share itself, for example
+`【标题 - 用户 | 小红书】` (Xiaohongshu) or `看看【某人的作品】…` (Douyin), and that is often all
+there is to judge. Then try, in order, and stop at the first that returns content:
+
+1. The resolved page's meta tags (`og:title`, `og:description`) and Jina Reader, as for a website.
+2. For Naver and Kakao video links, and Weibo, Douyin and Kuaishou videos: the TikTok video
+   commands (yt-dlp). UNVERIFIED for these platforms: they change often and some demand a login,
+   which this inbox never uses.
+
+`fetch: <platform> share text only | <platform> meta | <platform> yt-dlp+whisper`. Judge Chinese,
+Japanese and Korean text as it stands, and write the verdict comment in English.
+
 ## Instagram reel or post (`instagram.com/reel/…`, `/p/…`)
 
 Climb the levels in order, stopping at the first that gives content. Record the level in the
@@ -87,5 +133,8 @@ Climb the levels in order, stopping at the first that gives content. Record the 
   > Instagram blocked this one. Paste the caption or attach the video if you want it judged.
 
   `fetch: instagram L4 needs-you`
+
+`instagram-post` (a photo or carousel) has no video, so go straight to L2; `instagram-story`
+always needs a login, so judge the link and the sharer's text: `fetch: instagram story link only`.
 
 Never use cookies, a logged-in browser, or any Instagram account.

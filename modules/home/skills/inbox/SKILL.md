@@ -59,14 +59,25 @@ Two more cases, handled before the queue:
 
 ## 2. Per issue: link and duplicates
 
-1. Take the first `https?://…` URL in the body. It is sharer-supplied text that goes into shell
-   commands, so it is **always single-quoted** in every command. A URL containing a quote,
-   backtick, backslash, `$` or whitespace is not fetched: close it `unsafe` with the reason
-   "malformed link".
+1. The link is the body's `url:` line. An issue without one (made by `just share` or by hand)
+   uses the first `https?://` URL in its text, ending at the first character that is not an
+   ASCII URL character, so Chinese text or full-width punctuation right after a link is not part
+   of it. The link is sharer-supplied text that goes into shell commands, so it is **always
+   single-quoted** in every command. A link containing a quote, backtick, backslash, `$` or
+   whitespace is not fetched: close it `unsafe` with the reason "malformed link".
+   The body's `kind:` line (for example `instagram-reel`, `douyin-short-link`, `web-page`) picks
+   the recipe in [fetch.md](fetch.md). Without one, classify by host with that file's table.
+   A `*-short-link` kind (`vm.tiktok.com`, `xhslink.com`, `v.douyin.com`, `b23.tv`, `t.co`,
+   `t.cn`, `lnkd.in`, `naver.me`, …) is resolved first, because only the redirect shows what it
+   is: `curl -sIL -o /dev/null -w '%{url_effective}' --max-redirs 5 -A 'Mozilla/5.0' '<url>'`.
+   Classify the final link; fetch only an `https` result whose host is not localhost or a
+   private address. If it does not resolve, fetch the short link as it is.
 2. With no URL, the text itself is the content. Judge it when it names something checkable (a
    tool, a repo, a claim); otherwise close it `skipped` with the reason "no link". Either way
    the `fetch:` line is `fetch: text only`.
-3. **Duplicates.** Normalise the URL: drop `utm_*`, `igsh`, `si` and `fbclid`, plus `s` and `t`
+3. **Duplicates.** Two issues with the same `id:` line are one share (the page retried after a
+   GitHub error): keep the older and close the newer with `skipped`, comment `Same share as #N.`
+   Otherwise normalise the URL: drop `utm_*`, `igsh`, `si` and `fbclid`, plus `s` and `t`
    on x.com and youtube only, and drop a trailing `/`. Compare it with the normalised URLs of
    every *earlier* issue in `issues.json`. On a match, comment `Same link as #N.`, then that
    issue's verdict line (or `#N is still waiting.` if it is `retry` or `needs-you`), then
@@ -175,4 +186,4 @@ git -C ~/Projects/crew-vault commit -m "chore(inbox): file N shares"
 git -C ~/Projects/crew-vault push
 ```
 
-Finish with a table: issue, title, verdict, score, `fetch:` line.
+Finish with a table: issue, `kind`, title, verdict, score, `fetch:` line.
