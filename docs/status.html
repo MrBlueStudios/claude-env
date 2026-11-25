@@ -291,31 +291,35 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">Build board · updated 21 Nov 2026 · live on mr-blue since 01:31 · tiers, declarative MCP and the plugin channel are running</p>
+    <p class="eyebrow">Build board · updated 25 Nov 2026 · live on mr-blue · marketplace pins applying · the share inbox is being built</p>
     <h1>claude-env</h1>
     <p class="tagline">One NixOS flake that gives Léon and his friends the same Claude Code environment — every MCP server, skill, agent and guardrail available in every project folder — with a Blitsol tier for the people who also work on the company.</p>
 
     <div class="vitals">
       <div class="vital">
-        <span class="figure">10 / 15</span>
-        <span class="sub">features done · 1 in progress · 3 planned · 1 blocked on a human</span>
+        <span class="figure">11 / 16</span>
+        <span class="sub">features done · 2 in progress · 2 planned · 1 blocked on a human</span>
       </div>
       <div class="vital">
         <span class="figure">green</span>
-        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then three things are <em>built</em> on both — a base generation, the module with every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked · 20 Nov</span>
+        <span class="sub"><code>just test</code> — base, Blitsol and the guard evaluate on 25.05 and 26.05, then three things are <em>built</em> on both — a base generation, the module with every option on, and the system guard · 65 guard cases · 145 script tests · the share app's node tests · 8 scripts shellchecked · re-run 25 Nov</span>
       </div>
       <div class="vital">
         <span class="figure">live</span>
-        <span class="sub">switched 21 Nov 01:31 on <code>83ee425</code> after one failed attempt on a build error of mine — user-scope MCP servers went 10 → 4, the guard's 9 <code>ask</code> rules are in <code>/etc/claude-code/</code>, and the four adopted skills load</span>
+        <span class="sub">first switched 21 Nov; Claude Code is now 2.1.329, past the 2.1.324 floor, so all three marketplaces in <code>~/.claude/settings.json</code> carry a commit <code>ref</code>. <code>/etc/nixos</code> locks claude-env at <code>c41a9c6</code> (25 Nov)</span>
       </div>
       <div class="vital">
-        <span class="figure">3</span>
-        <span class="sub">open questions, all three for Léon — personal skills, the superpowers pin, vies-vat</span>
+        <span class="figure">0</span>
+        <span class="sub">open questions — all twelve answered, the last (<code>q-free-llm-router</code>) on 25 Nov</span>
       </div>
     </div>
 
     <div class="next-up">
-      <p class="eyebrow">What changed on 20 Nov</p>
+      <p class="eyebrow">Next</p>
+      <p><strong>Finish the share inbox's v0.</strong> The code is built and on <code>main</code>; what's left is Léon's one-off setup from the plan (a fine-grained token for <code>crew-vault</code> issues, <code>wrangler login</code>, installing the app on the Pixel, a rebuild so <code>/inbox</code> lands) and then four real shares through it as the acceptance run.</p>
+      <p class="eyebrow" style="margin-top:10px">What changed since 21 Nov</p>
+      <p><strong>The share-to-Claude inbox went from a note to built code in one day.</strong> Designed with Léon on 25 Nov, and the VPS receiver from the starting position was rejected: a Cloudflare Pages web app files GitHub issues in the private <code>crew-vault</code> repo, and a laptop-side <code>/inbox</code> skill judges them and files the good ones into crew-memory. Plan tasks 1–4 are done. <strong>Jira is finished:</strong> the <code>WEB</code> board replaced the <code>KAN</code> sandbox, and its due dates reach Google Calendar through Meetical's free integration. <strong>All five questions from 24 Nov are answered</strong>, and round two of the research queue is three-fifths filed. The free-LLM-API answer is Groq called directly, not a pooled free-tier router. <strong>The plugin pins apply now</strong>, because Claude Code crossed 2.1.324 on 23 Nov.</p>
+      <p class="eyebrow" style="margin-top:10px">20–21 Nov, for the record</p>
       <p><strong>The tier is real:</strong> <code>base</code> resolves to atlassian, context7 and playwright exactly, <code>blitsol</code> adds cloudflare, and <code>just test</code> asserts both on both releases. <strong>Nix now writes the MCP server block</strong> of <code>~/.claude.json</code> on every activation — hand-added servers are removed, named on stderr and saved to <code>~/.claude/removed-mcp-servers.json</code> first. <strong>The plugin channel is declared and pinned</strong> to three commit SHAs, behind a runtime version gate because SHA pinning needs Claude Code 2.1.324 and this laptop is on 2.1.278. And the two documents a friend actually needs exist: <code>docs/guide.md</code> and <code>docs/enrolment.md</code>.</p>
       <p><strong>It is live.</strong> The switch ran at 01:31 on 21 November, after failing twice at 16:56 on a build error of mine — <code>claude-plugins-check.drv</code> exited 2 because <code>writeShellApplication</code> runs shellcheck in a check phase, the sandbox sets no locale, and shellcheck died printing a diagnostic whose context line held an em dash. Fixed, and the reason the suite missed it is fixed too: <code>just test</code> now <em>builds</em> three configurations on each release rather than only evaluating them.</p>
       <p><strong>What the activation actually did:</strong> user-scope MCP servers went from 10 to 4, with <code>filesystem</code>, <code>github</code>, <code>memory</code>, <code>obsidian</code>, <code>sentry</code> and <code>vies-vat</code> written to <code>~/.claude/removed-mcp-servers.json</code> first; twelve local-scope registrations were pruned from <code>~/projects/fastsdcpu</code> and <code>~</code>; <code>brag</code> moved to its declared marketplace name; and the four adopted skills landed, taking the module's declared skills from 16 to 20. Five local-scope servers were deliberately left alone and reported, because they are the opt-in modules nobody declared and nobody dropped.</p>
@@ -383,8 +387,20 @@
     <div class="group">
       <div class="group-head">
         <h3>Done</h3>
-        <span class="count">10 — 13 to 20 Nov</span>
+        <span class="count">11 — 13 to 24 Nov</span>
       </div>
+
+      <article class="feat done">
+        <div class="feat-top">
+          <h4>Jira on the shared board, wired to Google Calendar</h4>
+          <span class="id">jira-calendar</span>
+        </div>
+        <p class="note">The crew shares one Jira board for the website work, reached through the Atlassian MCP server, and its due dates feed Léon's calendar.</p>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Done</span><span class="v">24 Nov. The <code>WEB</code> project's three-column Kanban board replaced the <code>KAN</code> sandbox. The saved filter <code>project = WEB AND duedate IS NOT EMPTY</code> reaches Google Calendar through Meetical's Easy Calendar Integration, free under ten users, added <em>From URL</em> so it stays live. The MCP half had landed on 20 Nov: <code>atlassian</code> is base tier, with its nine write operations behind the managed <code>ask</code> rule.</span></div>
+          <div class="meta-row"><span class="k">Corrected</span><span class="v">The state file still said <code>planned</code> on 25 Nov, a day after both of Léon's cards for it closed. Fixed in this refresh.</span></div>
+        </div>
+      </article>
 
       <article class="feat done">
         <div class="feat-top">
@@ -505,6 +521,7 @@
         <div class="meta">
           <div class="meta-row"><span class="k">Done</span><span class="v">All sixteen answered on 16 Nov and filed under <code>research/</code>. Nine run by Kish in Claude web and checked here, the rest done here. Nothing reopened a settled decision; two things moved — CLM parked, and <code>claude-mode</code> made opt-in.</span></div>
           <div class="meta-row"><span class="k">Surprises</span><span class="v">MCP servers cost only ~5.6k of the 28.5k startup tokens because schemas are deferred, so tiering is about secrets rather than context. Cal.com went closed-source in April. The 25.05 branch Léon runs has been end-of-life since December.</span></div>
+          <div class="meta-row"><span class="k">Round two</span><span class="v">Opened 25 Nov from Léon's feeds, tracked as a card of his rather than reopening this feature: <code>share-inbox</code>, <code>oss-swaps</code> and <code>free-llm-router</code> filed; <code>local-voice</code> being written; <code>skill-scanner</code> not launched.</span></div>
         </div>
       </article>
     </div>
@@ -512,7 +529,7 @@
     <div class="group">
       <div class="group-head">
         <h3>In progress</h3>
-        <span class="count">2 — one line of config and one open question away</span>
+        <span class="count">2 — one line of config, and a setup plus an acceptance run</span>
       </div>
 
       <article class="feat progress">
@@ -530,14 +547,14 @@
 
       <article class="feat progress">
         <div class="feat-top">
-          <h4>Declare and pin the plugin channel</h4>
-          <span class="id">ct-plugin-channel</span>
+          <h4>Share-to-Claude inbox</h4>
+          <span class="id">share-inbox</span>
         </div>
-        <p class="note">Every plugin on the machine arrived through <code>claude plugin install</code> — unpinned, and reaching nobody else in the crew. The same drift as the MCP servers, one layer up.</p>
+        <p class="note">Anything seen on a phone or laptop reaches Claude in one or two taps, is judged, and lands in crew-memory's Ideas store. Designed with Léon on 25 Nov; <code>WEB-4</code> on Jira.</p>
         <div class="meta">
-          <div class="meta-row"><span class="k">Done</span><span class="v">Three marketplaces pinned to full commit SHAs, four plugins enabled from Nix, and <code>claude-plugins-check</code> reports where the machine has drifted from what the repo declares. <code>frontend-design</code> cannot be pinned: it comes from <code>claude-plugins-official</code>, a reserved name Claude Code refuses to let a config pin.</span></div>
-          <div class="meta-row"><span class="k">Version gate</span><span class="v">SHA pinning needs Claude Code 2.1.324 and this laptop runs 2.1.278, so activation picks the floating overlay and says why. The check is made at activation rather than in Nix, so the pins start applying on the first switch after the upgrade with no repo edit.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">q-personal-skills — which of the 7 skills that link into a private repo become crew skills. Corrected on 21 Nov: the other sixteen were already declared, and the nine left are the HyperFrames toolchain. docs/skills-inventory.md has the per-skill table</span></div>
+          <div class="meta-row"><span class="k">Shape</span><span class="v">Not the VPS receiver it started from. A Cloudflare Pages web app (<code>share-app/</code>) sits in the Android share sheet and files a GitHub issue in the private <code>crew-vault</code> repo; <code>just share</code> does the same from the laptop; the <code>/inbox</code> skill drains the issues, fetches, judges and files. Nothing touches the production VPS. Spec and plan are in <code>docs/superpowers/</code>.</span></div>
+          <div class="meta-row"><span class="k">Done</span><span class="v">Plan tasks 1–4: crew-memory accepts <code>source: inbox</code>, <code>crew-vault</code> exists and is private, the share app and <code>just share</code> are committed with a round of review fixes, and <code>/inbox</code> is declared in <code>skills.nix</code>. The app's node tests run in <code>just test</code>.</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — the one-off setup in the plan's "What Léon does himself" table (a fine-grained token, <code>wrangler login</code>, installing the app on the Pixel, a rebuild), then Task 5: four real shares and one <code>/inbox</code> run. The iPhone Shortcut is v1.</span></div>
         </div>
       </article>
     </div>
@@ -564,7 +581,7 @@
     <div class="group">
       <div class="group-head">
         <h3>Planned</h3>
-        <span class="count">3 — each waiting on something outside this repo</span>
+        <span class="count">2 — each waiting on something outside this repo</span>
       </div>
 
       <article class="feat planned">
@@ -582,25 +599,13 @@
 
       <article class="feat planned">
         <div class="feat-top">
-          <h4>Jira on the shared board, wired to Google Calendar</h4>
-          <span class="id">jira-calendar</span>
-        </div>
-        <p class="note">The crew shares one Jira board for the website work, and Jira is not yet feeding Léon's calendar.</p>
-        <div class="meta">
-          <div class="meta-row"><span class="k">Done</span><span class="v">The MCP half: <code>atlassian</code> is base tier, with its nine write operations behind the managed <code>ask</code> rule, and it was tested live against <code>blitsol.atlassian.net</code>.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">Léon — twice. The shared website board does not exist: <code>KAN</code>, named "test", is the only project on the site and holds its only issue, so there is nothing yet for a friend following the guide to look at. And the Calendar subscription is a Jira setting rather than a connector.</span></div>
-        </div>
-      </article>
-
-      <article class="feat planned">
-        <div class="feat-top">
           <h4>Prove it on a friend's laptop</h4>
           <span class="id">onboarding-test</span>
         </div>
         <p class="note">The only real test of a shareable environment is a second machine going from zero to working without Léon typing on it.</p>
         <div class="meta">
           <div class="meta-row"><span class="k">Remaining</span><span class="v">One friend adds the flake input, rebuilds, and works through the guide unaided while every place he gets stuck is recorded. It also settles two things nothing else can: that the module is genuinely desktop-neutral on KDE, and that the guide answers its own questions.</span></div>
-          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">the switch, then a friend's laptop and an hour of their time</span></div>
+          <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">a friend's laptop and an hour of their time. The access half is proven: on 24 Nov Almar's laptop fetched the private <code>claude-web-stack</code> input over SSH</span></div>
         </div>
       </article>
     </div>
@@ -641,29 +646,29 @@
             <td class="key">pinned_plugin_marketplaces</td><td class="val">3</td>
             <td class="src">modules/home/settings.nix — full commit SHAs; claude-plugins-official is reserved and cannot be pinned</td><td class="when">2026-11-20</td>
           </tr>
-          <tr class="conflict">
-            <td class="key">claude_code_version_installed</td><td class="val">2.1.278</td>
-            <td class="src">claude --version — SHA pinning needs 2.1.324, so activation writes the floating overlay and says so</td><td class="when">2026-11-20</td>
+          <tr>
+            <td class="key">claude_code_version_installed</td><td class="val">2.1.329</td>
+            <td class="src">claude --version — past the 2.1.324 floor since 23 Nov (2.1.278 before), so activation writes the pinned overlay; all three marketplaces carry a commit ref</td><td class="when">2026-11-25</td>
           </tr>
           <tr>
             <td class="key">guard_tests</td><td class="val">65</td>
-            <td class="src">modules/system/claude-code/guard-test.sh — all pass; seven added with the force-push fix</td><td class="when">2026-11-20</td>
+            <td class="src">modules/system/claude-code/guard-test.sh — all pass; seven added with the force-push fix</td><td class="when">2026-11-25</td>
           </tr>
           <tr>
-            <td class="key">helper_script_tests</td><td class="val">144</td>
-            <td class="src">modules/home/scripts/tests.sh — 17 on 16 Nov, +117 for the settings gate, the MCP block and the drift check, +2 for the two shapes a declared skill arrives in</td><td class="when">2026-11-21</td>
+            <td class="key">helper_script_tests</td><td class="val">145</td>
+            <td class="src">modules/home/scripts/tests.sh — 17 on 16 Nov, +117 for the settings gate, the MCP block and the drift check, +2 for the two shapes a declared skill arrives in, +1 since</td><td class="when">2026-11-25</td>
           </tr>
           <tr>
             <td class="key">eval_matrix</td><td class="val">green</td>
-            <td class="src">just test — base, blitsol and the guard on nixpkgs 25.05 and 26.05</td><td class="when">2026-11-20</td>
+            <td class="src">just test — base, blitsol and the guard on nixpkgs 25.05 and 26.05</td><td class="when">2026-11-25</td>
           </tr>
           <tr>
             <td class="key">plugin_cache_leftover_mb</td><td class="val">20.0</td>
             <td class="src">du -sk ~/.claude/plugins/cache/{ponytail,cursor-plugins} — two marketplaces nothing declares any more</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
-            <td class="key">startup_context_tokens</td><td class="val">28503</td>
-            <td class="src">research/context-budget.md — all MCP servers together are 5,646 of it; ~120 skill descriptions are ~6,900</td><td class="when">2026-11-16</td>
+            <td class="key">startup_context_tokens</td><td class="val">27344</td>
+            <td class="src">research/context-budget.md finding 14 — re-measured with the same method; 22,263 with no servers, so MCP is 5,081 of it. The 16 Nov run was 28,503</td><td class="when">2026-11-20</td>
           </tr>
           <tr>
             <td class="key">account_connectors</td><td class="val">12</td>
@@ -717,7 +722,7 @@
       </table>
     </div>
 
-    <p style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">Two rows deserve a second look. <code>claude_code_version_installed</code> is the only thing standing between the plugin pins and reality, and it fixes itself on the next flake update — nixpkgs master is already at 2.1.328. And <code>startup_context_tokens</code> is the number that settles the token-saver question: MCP servers are a fifth of session startup because schemas are deferred, so the lever worth pulling is skills, not servers. That measurement is four days old and worth re-running after any harness update.</p>
+    <p style="color: var(--ink-soft); font-size: 14px; max-width: 72ch;">One row deserves a second look. <code>startup_context_tokens</code> is the number that settles the token-saver question: MCP servers are under a fifth of session startup because schemas are deferred, so the lever worth pulling is skills, not servers. It is five days old, and its source file has not changed since. It is worth re-running after any harness update. <code>claude_code_version_installed</code>, the row that used to stand between the plugin pins and reality, has resolved itself.</p>
   </section>
 
   <footer>
@@ -728,20 +733,22 @@
           <li>Every derivation the module can produce, built on both releases as of 21 Nov: a base generation, an all-options-on one that reaches claude-mode and the six opt-in servers, and the system guard. Each addition was mutation-checked by planting the failure it is meant to catch.</li>
           <li>The build that broke the switch, fixed and then proved from the pushed revision: <code>nix build</code> of the base generation against <code>github:MrBlueStudios/claude-env</code> at the fix commit, on 25.05, which is the release the laptop runs. Reverting either <code>shellcheck disable</code> makes <code>just test</code> fail, so the new recipes bite.</li>
           <li><code>just test</code> green on both releases, including the new tier assertions — and mutation-checked: lowering the version floor, dropping the settings key authority and neutering the local-scope prune each produce failures, so the tests bite.</li>
-          <li>The Atlassian server against the real site: it works, and the "shared website board" does not exist yet.</li>
+          <li>The Atlassian server against the real site, on 20 Nov. The <code>WEB</code> board and its calendar feed were verified on 24 Nov by the session that set them up, and are taken on trust here.</li>
+          <li>On 25 Nov, for this refresh: <code>just test</code> green with 65 guard cases and 145 script tests; <code>claude --version</code> 2.1.329; all three marketplace pins carrying a <code>ref</code>; 40 entries in <code>~/.claude/skills</code>; every open feature's paths present; <code>crew-vault</code> private on GitHub; crew-memory's schema accepting <code>source: inbox</code>.</li>
           <li>That the floating overlay really omits <code>ref</code>, by replaying the module's own logic through <code>nix eval</code> rather than trusting the code to read correctly.</li>
         </ul>
       </div>
       <div>
         <h3>Not yet true</h3>
         <ul>
-          <li>The version-gate fix is on <code>main</code> and not on the laptop: the lock points at <code>83ee425</code>, one commit before it. Nothing breaks in the meantime — the marketplaces stay unpinned, which is where the version floor would have left them anyway. The lock is the figure to trust here: a commit count goes stale the moment I write it down, which it did twice before I stopped quoting one.</li>
+          <li>That <code>/etc/nixos</code>'s lock at <code>c41a9c6</code> is what the running generation was built from. The lock moved today, and I didn't check whether a switch followed it.</li>
+          <li>That the share inbox works end to end: built and unit-tested, never yet driven by a real share from the Pixel.</li>
           <li>That a friend can follow the guide unaided — written carefully, tested by nobody.</li>
           <li>That the module behaves on KDE. Checked by reading, not by running.</li>
         </ul>
       </div>
     </div>
-    <p class="stamp">docs/project-state.yaml · 15 features · 40 facts · 3 open questions · created 2026-11-13, updated 2026-11-21</p>
+    <p class="stamp">docs/project-state.yaml · 16 features · 40 facts · 0 open questions · created 2026-11-13, updated 2026-11-25</p>
   </footer>
 
 </div>

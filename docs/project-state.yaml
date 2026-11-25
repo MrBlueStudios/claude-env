@@ -17,15 +17,15 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-25T16:30"
+updated: "2026-11-25T17:15"
 suite:
   command: just test
   result: green
-  as_of: 2026-11-21
+  as_of: 2026-11-25
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
     26.05 (tests/eval-*), runs shellcheck over the eight packaged scripts, then the 65 guard
-    cases and 144 helper-script tests, and finally *builds* three things on each release: the
+    cases, 145 helper-script tests and, since 2026-11-25, the share app's node tests, and finally *builds* three things on each release: the
     base home-manager generation; the same module with every option on, which is the only thing
     that builds what sits behind an off-by-default flag (claude-mode, the six opt-in MCP
     servers); and the system guard's claude-guard script, reached by building the
@@ -184,7 +184,7 @@ features:
     paths:
       - /home/leon-new/Projects/claude-env/flake.nix
       - /home/leon-new/Projects/claude-env/modules/system/guard.nix
-      - /home/leon-new/Projects/claude-env/modules/system/guard.sh
+      - /home/leon-new/Projects/claude-env/modules/system/claude-code/guard.sh
       - /home/leon-new/Projects/claude-env/docs/guide.md
   - id: friend-guide
     name: The guide for friends
@@ -202,17 +202,17 @@ features:
       - /home/leon-new/Projects/claude-env/docs/enrolment.md
   - id: jira-calendar
     name: Jira on the shared board, wired to Google Calendar
-    status: planned
+    status: done
     note: >-
-      The crew shares one Jira board for the websites, but there is no Jira MCP server installed
-      at any scope, and Jira is not yet feeding Léon's calendar.
+      The crew shares one Jira board for the websites, reached through the Atlassian MCP server
+      at base tier, and its due dates feed Léon's Google Calendar.
     remaining: >-
-      The MCP half landed 2026-11-20: atlassian is base tier in mcp.nix, with its nine write
-      operations behind the managed `ask` rule. Two things are left and both are Léon's. The
-      shared website board does not exist — KAN, named "test", is the only project on the site
-      and holds the only issue — so there is nothing yet for a friend following the guide to
-      look at (mt-jira-board). And the Calendar subscription is a Jira setting, not a connector
-      (mt-jira-calendar).
+      Done 2026-11-24. The MCP half landed 2026-11-20 (atlassian at base tier, nine write
+      operations behind the managed `ask` rule). The WEB project's Kanban board replaced the KAN
+      sandbox (mt-jira-board), and Meetical's free Easy Calendar Integration feeds the saved
+      filter `project = WEB AND duedate IS NOT EMPTY` into Google Calendar from URL
+      (mt-jira-calendar). Status corrected 2026-11-25 from planned: both my_todos were closed on
+      the 24th and this feature was never moved.
   - id: nixos-version-matrix
     name: One module, two NixOS releases
     status: done
@@ -263,8 +263,34 @@ features:
       pricing pages), four by Claude here (context-budget measured, memory schema proposed, SRS
       and trading data). Nothing reopened a settled decision; two things moved: CLM is parked,
       and the claude-mode layout engine is Kitty-only and must be opt-in.
+      .
+      Round two (section E of PROGRESS.md, from Léon's feeds) opened 2026-11-25 and is tracked by
+      mt-research-runbook rather than reopening this feature: share-inbox, oss-swaps and
+      free-llm-router are filed; local-voice and skill-scanner are not yet.
     paths:
       - /home/leon-new/Projects/claude-env/research/PROGRESS.md
+  - id: share-inbox
+    name: Share-to-Claude inbox
+    status: in_progress
+    note: >-
+      Anything seen on a phone or laptop reaches Claude in one or two taps, is judged, and lands
+      in crew-memory's Ideas store. Designed with Léon on 2026-11-25; the VPS receiver was
+      rejected for a Cloudflare Pages web app that files GitHub issues in the private crew-vault
+      repo, drained by a laptop-side /inbox skill.
+    remaining: >-
+      Plan tasks 1 to 4 are built: crew-memory accepts source inbox, crew-vault exists (private),
+      the share app and `just share` are committed with review fixes, and /inbox is declared in
+      skills.nix. Left: Léon's one-off setup from the plan (a fine-grained token for crew-vault
+      issues, wrangler login, installing the app on the Pixel, a rebuild so /inbox lands) and
+      Task 5's acceptance run of four real shares. The iPhone Shortcut is v1.
+    paths:
+      - /home/leon-new/Projects/claude-env/docs/superpowers/specs/2026-11-25-share-inbox-design.md
+      - /home/leon-new/Projects/claude-env/docs/superpowers/plans/2026-11-25-share-inbox-v0.md
+      - /home/leon-new/Projects/claude-env/share-app/index.html
+      - /home/leon-new/Projects/claude-env/modules/home/skills/inbox/SKILL.md
+    refs:
+      - docs/superpowers/plans/2026-11-25-share-inbox-v0.md "What Léon does himself"
+      - Jira WEB-4
   - id: onboarding-test
     name: Prove it on a friend's laptop
     status: planned
@@ -341,10 +367,10 @@ facts:
       mcp.cloudflare.com, which is already the `cloudflare` user-scope server. Indeed still needs
       auth; GoDaddy times out after 30s. Bound to the Claude account, not to this machine.
   - key: claude_skills_installed
-    value: 36
+    value: 40
     source: ls -1 ~/.claude/skills | wc -l
     source_kind: command
-    as_of: 2026-11-13
+    as_of: 2026-11-25
     note: >-
       skills.nix declares about ten by name or source; the rest arrive through enabledPlugins.
   - key: claude_agents_installed
@@ -426,11 +452,14 @@ facts:
       bf16 CLM path needs a 24 GB card; the spare machine is not on the tailnet and is unchecked.
 
   - key: startup_context_tokens
-    value: 28503
+    value: 27344
     source: research/context-budget.md
     source_kind: path
-    as_of: 2026-11-16
+    as_of: 2026-11-20
     note: >-
+      Re-measured 2026-11-20 with the same method: 27,344 with every server, 22,263 with none, an
+      MCP share of 5,081 (context-budget.md finding 14). The figures below are the original
+      2026-11-16 run, 28,503 total.
       Measured with one-shot sessions; 22,857 with no MCP at all. MCP servers cost 5,646 in
       total because tool schemas are deferred; Sentry is the largest at 1,089, most are 60–270.
       Pruning github+filesystem+memory saves ~520 tokens; HyperFrames ~320. Tier on usefulness
@@ -554,7 +583,7 @@ facts:
     value: green
     source: just test
     source_kind: command
-    as_of: 2026-11-16
+    as_of: 2026-11-25
     note: >-
       base + blitsol home configurations and the NixOS guard evaluate on nixpkgs/home-manager
       25.05 and 26.05 from the in-repo test flakes. Recheck: cd ~/Projects/claude-env && just test
@@ -562,19 +591,19 @@ facts:
     value: 65
     source: modules/system/claude-code/guard-test.sh
     source_kind: command
-    as_of: 2026-11-20
+    as_of: 2026-11-25
     note: >-
       All pass. 58 until 2026-11-20, when the force-push rule was scoped to the push command
       itself and seven cases were added around it. Recheck: just test-guard
   - key: helper_script_tests
-    value: 144
+    value: 145
     source: modules/home/scripts/tests.sh
     source_kind: command
-    as_of: 2026-11-21
+    as_of: 2026-11-25
     note: >-
       All pass. 17 on 2026-11-16, then +117 for claude-settings (the version gate), claude-mcp
       (the declarative server block) and claude-plugins-check, then +2 on 2026-11-21 for the two
-      shapes a declared skill arrives in. Recheck: just test-scripts
+      shapes a declared skill arrives in, then +1 by 2026-11-25. Recheck: just test-scripts
 
   - key: switch_applied
     value: "2026-11-21T01:31"
@@ -625,14 +654,14 @@ facts:
       symlinks into ~/Projects/Claude_testing/skills that break on any other laptop. Per-skill
       verdicts and cost: docs/skills-inventory.md
   - key: claude_code_version_installed
-    value: "2.1.278"
+    value: "2.1.329"
     source: claude --version
     source_kind: command
-    as_of: 2026-11-20
+    as_of: 2026-11-25
     note: >-
-      Matters because marketplace pinning by commit SHA needs 2.1.324 or newer. nixpkgs master is
-      at 2.1.328, so the pins start applying after the next flake update — claude-settings.sh
-      decides which overlay to write at activation time, so no repo edit is needed when it does.
+      Matters because marketplace pinning by commit SHA needs 2.1.324 or newer. Crossed on
+      2026-11-23 (2.1.278 before), via nix flake update nixpkgs-unstable in /etc/nixos, and the
+      pins now apply: claude-settings.sh writes the ref overlay at activation time.
   - key: declared_mcp_servers_base
     value: 3
     source: nix eval ... homeConfigurations.base.config.claude-env.mcp.declared
