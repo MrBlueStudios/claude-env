@@ -351,7 +351,7 @@ for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
   > Jira, Obsidian and a Contabo VPS. Skip Cal.com; research/booking-stack-licences.md covers it.
   > Use the deliverable format in research/PROGRESS.md.
 
-- [x] **free-llm-router** — *Léon runs it · Sonnet 5.5 · medium*
+- [x] **free-llm-router** — *Léon runs it · Sonnet 5.5 · medium* · answered in `free-llm-router.md`, second pass in `free-llm-router-2.md`
   Decides: whether a pooled free-model API is safe for non-secret bulk work.
   Found by: an Instagram reel ("7 billion free tokens a month from 600 models").
   > Run the researcher agent, then doc-writer to file it as research/free-llm-router.md. A reel
