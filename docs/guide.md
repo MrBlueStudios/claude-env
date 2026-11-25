@@ -325,6 +325,15 @@ managed policy. If the managed policy is missing, the NixOS module is not import
 **2. Ask it something about your own code.** Anything real. Watch where it looks: it should reach
 for `rg` and the file tools, not for a server.
 
+When the question spans more than one repo, give the session all of them at start. This is the
+local version of picking several repos in Claude Code on the web:
+
+**Run in: the repo you are mainly working in**
+
+```bash
+claude --add-dir ~/Projects/other-repo ~/Projects/third-repo
+```
+
 **3. Prove a hook fires.** Edit a file through Claude in a project that has a `.prettierrc`. The
 file comes back formatted, and the edit appears in your artifact index:
 

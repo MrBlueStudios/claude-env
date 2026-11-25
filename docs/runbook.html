@@ -1,0 +1,363 @@
+<title>Research Runbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  /* One column of prompt cards, same token set as the claude-env boards so the pages read as one family. */
+  :root {
+    --ground: #f5f5f9;
+    --surface: #ffffff;
+    --surface-sunk: #ecebf2;
+    --ink: #272736;
+    --ink-soft: #55556e;
+    --muted: #70708c;
+    --line: #e0dfea;
+    --line-strong: #cbc9db;
+    --accent: #6f3fd4;
+    --accent-soft: #ece4fc;
+    --ok: #2d8550;
+    --ok-soft: #dff0e4;
+    --warn: #a86a05;
+    --warn-soft: #f8ecd6;
+    --go: #2259bd;
+    --go-soft: #dfe8fa;
+
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #15151d; --surface: #1d1d27; --surface-sunk: #232330;
+      --ink: #d9d9e8; --ink-soft: #aaaac4; --muted: #8b8ba6;
+      --line: #2d2d3c; --line-strong: #3d3d50;
+      --accent: #b495f7; --accent-soft: #2a2340;
+      --ok: #84cf92; --ok-soft: #1d2e22;
+      --warn: #e2b461; --warn-soft: #302718;
+      --go: #83abf2; --go-soft: #1c2437;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #15151d; --surface: #1d1d27; --surface-sunk: #232330;
+    --ink: #d9d9e8; --ink-soft: #aaaac4; --muted: #8b8ba6;
+    --line: #2d2d3c; --line-strong: #3d3d50;
+    --accent: #b495f7; --accent-soft: #2a2340;
+    --ok: #84cf92; --ok-soft: #1d2e22;
+    --warn: #e2b461; --warn-soft: #302718;
+    --go: #83abf2; --go-soft: #1c2437;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 72px; display: flex; flex-direction: column; gap: 36px; }
+  h1, h2, h3 { font-family: var(--cond); text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.87em; background: var(--surface-sunk); padding: 1px 5px; border-radius: 2px; word-break: break-word; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  header h1 { font-size: clamp(32px, 6vw, 42px); line-height: 1.08; font-weight: 700; letter-spacing: -0.015em; }
+  header .lede { font-size: 16.5px; color: var(--ink-soft); max-width: 62ch; }
+
+  .how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+  .how div { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .how b { font-family: var(--cond); font-size: 16px; }
+  .how span { font-size: 13.5px; color: var(--ink-soft); }
+
+  .plan { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 14px 18px; border-radius: 0 3px 3px 0; display: flex; flex-direction: column; gap: 8px; }
+  .plan ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 14.5px; color: var(--ink-soft); }
+  .plan li b { color: var(--ink); }
+
+  section { display: flex; flex-direction: column; gap: 18px; }
+  section > h2 { font-size: 13px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 0 0 3px 3px; padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .card.live { border-top-color: var(--warn); }
+  .card-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+  .rank { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--muted); }
+  .card-head h3 { font-size: 22px; font-weight: 600; line-height: 1.25; }
+  .decides { font-size: 14.5px; color: var(--ink-soft); max-width: 68ch; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; gap: 6px; align-items: baseline; font-family: var(--mono); font-size: 12px; padding: 4px 9px; border-radius: 2px; border: 1px solid var(--line-strong); background: var(--surface-sunk); color: var(--ink); }
+  .chip i { font-style: normal; color: var(--muted); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .chip.opus { border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: var(--accent-soft); }
+  .chip.sonnet { border-color: color-mix(in srgb, var(--go) 40%, transparent); background: var(--go-soft); }
+  .chip.high { border-color: color-mix(in srgb, var(--warn) 40%, transparent); background: var(--warn-soft); }
+  .chip.medium { border-color: color-mix(in srgb, var(--ok) 35%, transparent); background: var(--ok-soft); }
+
+  .step { display: flex; flex-direction: column; gap: 7px; }
+  .step-label { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .step-label span { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+  .copy {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+    border-radius: 2px; padding: 4px 12px; cursor: pointer; flex: none; min-width: 74px;
+  }
+  .copy:hover { background: var(--accent-soft); }
+  .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .copy.done { color: var(--ok); border-color: var(--ok); }
+
+  pre { margin: 0; background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 3px; padding: 13px 15px; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--ink); }
+  pre.cmd { overflow-x: auto; white-space: pre; }
+  pre.prompt { white-space: pre-wrap; word-break: break-word; max-height: 360px; overflow-y: auto; }
+
+  .after { font-size: 13.5px; color: var(--ink-soft); padding-left: 11px; border-left: 2px solid var(--ok); max-width: 70ch; }
+  .after b { color: var(--ok); }
+
+  .rows { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+  .row { background: var(--surface); padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .row-top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+  .row-top b { font-weight: 500; }
+  .row p { font-size: 13.5px; color: var(--ink-soft); max-width: 72ch; }
+  .pill { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
+  .pill.done { color: var(--ok); background: var(--ok-soft); }
+  .pill.next { color: var(--go); background: var(--go-soft); }
+  .pill.park { color: var(--muted); background: var(--surface-sunk); }
+
+  footer { border-top: 1px solid var(--line); padding-top: 20px; display: flex; flex-direction: column; gap: 6px; }
+  footer p { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">claude-env · research round two · 25 Nov 2026</p>
+    <h1>Research Runbook</h1>
+    <p class="lede">Five research prompts from your reels, shorts and notes, each with the model, effort level and folder it runs in. Copy the launch command, paste the prompt, and come back to me when it's done.</p>
+  </header>
+
+  <div class="how">
+    <div><b>1 · Open a terminal</b><span>Any terminal. Every launch command below starts with the <code>cd</code> it needs, so you never have to think about the folder.</span></div>
+    <div><b>2 · Copy, paste, enter</b><span>Copy the launch command and run it. When Claude Code opens, copy the prompt and paste it as your first message.</span></div>
+    <div><b>3 · Tell me it's done</b><span>Each result lands in <code>research/</code> in claude-env. Tell me which one finished and I'll put it on the board.</span></div>
+  </div>
+
+  <div class="plan">
+    <p class="eyebrow" style="color:var(--accent)">The order that wastes the least time</p>
+    <ol>
+      <li><b>Start 3 and 4 first, in two separate terminals.</b> They're broad searches that run on their own, so they can work while you do the rest.</li>
+      <li><b>Then sit down for 1.</b> It's the only conversation. It asks you questions and takes about an hour.</li>
+      <li><b>Run 2 whenever you like.</b> It doesn't depend on anything.</li>
+      <li><b>Run 5 only after 1.</b> It reuses what 1 decides about transcription.</li>
+    </ol>
+  </div>
+
+  <section>
+    <h2>The five prompts</h2>
+
+    <!-- 1 -->
+    <article class="card live">
+      <div class="card-head"><span class="rank">1 of 5 · with you</span><h3>The share-to-Claude inbox</h3></div>
+      <p class="decides">How anything you see on your phone or laptop reaches Claude in one or two taps, gets checked for safety and usefulness, and lands in memory and your todos. It covers your Pixel and Almar's iPhone. This is a design conversation: it will ask you things, so stay at the keyboard.</p>
+      <div class="chips">
+        <span class="chip opus"><i>Model</i>Opus 5.5</span>
+        <span class="chip high"><i>Effort</i>high</span>
+        <span class="chip"><i>Folder</i>~/Projects/claude-env</span>
+        <span class="chip"><i>Also sees</i>crew-memory, project-brain</span>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Launch command</span><button class="copy" type="button" data-copy="c1" id="b-c1">Copy</button></div>
+        <pre class="cmd" id="c1">cd ~/Projects/claude-env &amp;&amp; claude --model opus --effort high --add-dir ~/Projects/crew-memory ~/project-brain</pre>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Prompt, as your first message</span><button class="copy" type="button" data-copy="p1" id="b-p1">Copy</button></div>
+        <pre class="prompt" id="p1">Design a share-to-Claude inbox. When I see a reel, TikTok, post, repo or website on my phone or laptop, I send it in one or two taps. Claude fetches it, checks whether it's safe and useful, scores it, and if it's worth it, files it in crew-memory's Ideas store and adds a todo. It has to work on Android (my Pixel 10) and iPhone (Almar's), and when my laptop is off.
+
+Starting position, which you should challenge rather than accept: a small share receiver on our Contabo VPS (FastAPI + SQLite behind Caddy). Android gets an installable web app that appears in the share sheet; iPhone gets a built-in Shortcut in the share sheet; each person has their own key so what they share is recorded as theirs. A laptop-side /inbox skill fetches, judges and files.
+
+Reference picture: the 8 slides in ~/Downloads/social-media-downloads/tiktok-post-by-@chase_ai_/. Map what we already have (Laya as the router, crew-memory, project-brain, the schedule skill) before proposing anything new.
+
+While you read crew-memory, have the researcher agent answer two questions in parallel, each filed by doc-writer in the deliverable format from research/PROGRESS.md:
+1. research/reel-transcription.md: how a public Instagram or TikTok video's audio becomes text on this machine for free, using yt-dlp and faster-whisper on CPU. Is each in nixpkgs, is it fast enough on an Intel Arc laptop, and does yt-dlp need my login for Instagram?
+2. research/agent-reach.md: how Agent Reach reads X, Reddit and LinkedIn without APIs. Whose cookies, which terms it breaks, the account-ban risk. Clone it to a scratch dir and run `just vet` on it; don't install it.
+
+Then give me the design: capture → fetch → judge → file, one component per step, plus the smallest v0 I could use this week. Ask me about anything you'd otherwise guess. Don't build yet.</pre>
+      </div>
+      <p class="after"><b>Done when</b> you have a design you agree with, and <code>research/reel-transcription.md</code> and <code>research/agent-reach.md</code> exist. Nothing gets built in this session.</p>
+    </article>
+
+    <!-- 2 -->
+    <article class="card">
+      <div class="card-head"><span class="rank">2 of 5 · anytime</span><h3>NVIDIA's skill scanner vs our vetting check</h3></div>
+      <p class="decides">Whether <code>just vet</code>, the check every plugin and skill has to pass before any of you installs it, is missing something a published scanner catches. It's a security judgement, so it gets the stronger model.</p>
+      <div class="chips">
+        <span class="chip opus"><i>Model</i>Opus 5.5</span>
+        <span class="chip high"><i>Effort</i>high</span>
+        <span class="chip"><i>Folder</i>~/Projects/claude-env</span>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Launch command</span><button class="copy" type="button" data-copy="c2" id="b-c2">Copy</button></div>
+        <pre class="cmd" id="c2">cd ~/Projects/claude-env &amp;&amp; claude --model opus --effort high</pre>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Prompt, as your first message</span><button class="copy" type="button" data-copy="p2" id="b-p2">Copy</button></div>
+        <pre class="prompt" id="p2">A reel says NVIDIA released a skill scanner ("Skill Specter", the name may be garbled) and found that one in four agent skills had a security hole. Find the real repo and the study. Clone it to a scratch dir; don't install or run it. Compare what it detects against our gate (modules/home/scripts/claude-vet.sh and docs/vet-exemptions.md), and run `just vet` on its own tree. Tell me which of its checks we lack, which are worth porting, and whether the 1-in-4 figure holds up. Have doc-writer file it as research/skill-scanner.md in the deliverable format from research/PROGRESS.md.</pre>
+      </div>
+      <p class="after"><b>Done when</b> <code>research/skill-scanner.md</code> exists. If it says a check is worth porting, that becomes work for me; you don't have to do anything with it.</p>
+    </article>
+
+    <!-- 3 -->
+    <article class="card">
+      <div class="card-head"><span class="rank">3 of 5 · start first</span><h3>The open-source swaps</h3></div>
+      <p class="decides">Which of the free, self-hostable tools from the reel are worth anything to the four of you. It's search-and-compare, so the cheaper model handles it fine. Cal.com is left out because we already know it went closed source in April. OpenWhispr moved to prompt 5.</p>
+      <div class="chips">
+        <span class="chip sonnet"><i>Model</i>Sonnet 5.5</span>
+        <span class="chip medium"><i>Effort</i>medium</span>
+        <span class="chip"><i>Folder</i>~/Projects/claude-env</span>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Launch command</span><button class="copy" type="button" data-copy="c3" id="b-c3">Copy</button></div>
+        <pre class="cmd" id="c3">cd ~/Projects/claude-env &amp;&amp; claude --model sonnet --effort medium</pre>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Prompt, as your first message</span><button class="copy" type="button" data-copy="p3" id="b-p3">Copy</button></div>
+        <pre class="prompt" id="p3">Run the researcher agent, then doc-writer to file it as research/oss-swaps.md. For Chatwoot, Cap (Loom alternative), AppFlowy, OpenProject, VoiceStudio (ElevenLabs alternative) and OpenHiggsField: licence today (Cal.com went closed source in April 2026, so assume nothing), Linux support and whether it's in nixpkgs, real cost for four people self-hosted vs hosted, and who maintains it. One line each on whether it fits a four-person web studio already on Jira, Obsidian and a Contabo VPS. Skip Cal.com; research/booking-stack-licences.md covers it. Use the deliverable format in research/PROGRESS.md.</pre>
+      </div>
+      <p class="after"><b>Done when</b> <code>research/oss-swaps.md</code> exists. You can close the terminal after that.</p>
+    </article>
+
+    <!-- 4 -->
+    <article class="card">
+      <div class="card-head"><span class="rank">4 of 5 · start first</span><h3>The "7 billion free tokens" API</h3></div>
+      <p class="decides">Whether a free API that pools 600 models is safe for bulk work with nothing secret in it, such as summarising video transcripts. The real question is what the providers behind it do with your prompts.</p>
+      <div class="chips">
+        <span class="chip sonnet"><i>Model</i>Sonnet 5.5</span>
+        <span class="chip medium"><i>Effort</i>medium</span>
+        <span class="chip"><i>Folder</i>~/Projects/claude-env</span>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Launch command</span><button class="copy" type="button" data-copy="c4" id="b-c4">Copy</button></div>
+        <pre class="cmd" id="c4">cd ~/Projects/claude-env &amp;&amp; claude --model sonnet --effort medium</pre>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Prompt, as your first message</span><button class="copy" type="button" data-copy="p4" id="b-p4">Copy</button></div>
+        <pre class="prompt" id="p4">Run the researcher agent, then doc-writer to file it as research/free-llm-router.md. A reel claims a GitHub project gives 7 billion free tokens a month across 600 models, failing over between them. Find it. Which providers' free tiers does it pool, does pooling break their terms, and what does each provider do with prompts (training, retention)? Is it safe for non-secret bulk work like summarising video transcripts? Use the deliverable format in research/PROGRESS.md.</pre>
+      </div>
+      <p class="after"><b>Done when</b> <code>research/free-llm-router.md</code> exists.</p>
+    </article>
+
+    <!-- 5 -->
+    <article class="card">
+      <div class="card-head"><span class="rank">5 of 5 · after prompt 1</span><h3>Talking to Claude, locally</h3></div>
+      <p class="decides">Whether you can speak to Claude Code and hear it answer, free and fully on your laptop, like the TikTok slideshow's voice mode. Run it after prompt 1, because it reuses what 1 decides about transcription.</p>
+      <div class="chips">
+        <span class="chip sonnet"><i>Model</i>Sonnet 5.5</span>
+        <span class="chip medium"><i>Effort</i>medium</span>
+        <span class="chip"><i>Folder</i>~/Projects/claude-env</span>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Launch command</span><button class="copy" type="button" data-copy="c5" id="b-c5">Copy</button></div>
+        <pre class="cmd" id="c5">cd ~/Projects/claude-env &amp;&amp; claude --model sonnet --effort medium</pre>
+      </div>
+      <div class="step">
+        <div class="step-label"><span>Prompt, as your first message</span><button class="copy" type="button" data-copy="p5" id="b-p5">Copy</button></div>
+        <pre class="prompt" id="p5">Find out whether I can talk to Claude Code and hear it answer, fully local and free, on this NixOS laptop (Intel Arc iGPU, no NVIDIA). Run the researcher agent on: faster-whisper, whisper-cpp and OpenWhispr for speech in, kokoro-onnx for speech out. For each: in nixpkgs on 25.05 and 26.05, CPU speed for a ten-second clip, licence, model download size. Clone kokoro-onnx to a scratch dir and run `just vet` on it; don't install anything. Reuse whatever the share-inbox work chose for transcription (research/reel-transcription.md). Then propose the smallest way to talk to a Claude Code session and hear the reply. Have doc-writer file it as research/local-voice.md in the deliverable format from research/PROGRESS.md. Don't build yet.</pre>
+      </div>
+      <p class="after"><b>Done when</b> <code>research/local-voice.md</code> exists. Nothing gets built yet.</p>
+    </article>
+  </section>
+
+  <section>
+    <h2>Why these models and efforts</h2>
+    <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="chip opus"><i>Model</i>Opus 5.5</span><span class="chip high"><i>Effort</i>high</span></div>
+        <p>For judgement calls: a design (1) and "is this safe?" (2). These are the answers you can't check at a glance, so they get the strongest reasoning.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="chip sonnet"><i>Model</i>Sonnet 5.5</span><span class="chip medium"><i>Effort</i>medium</span></div>
+        <p>For search-and-compare (3, 4, 5). The <code>researcher</code> agent that does the searching is set to Sonnet anyway, so a pricier session around it would only add cost.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><b>Never xhigh or max</b></div>
+        <p>Nothing here is hard enough to need them. They use up your weekly allowance faster and don't make a search more thorough.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Mine, so you don't need to run these</h2>
+    <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="pill done">Done</span><b>Repos in one session</b></div>
+        <p>Claude Code already does it with <code>claude --add-dir ~/Projects/a ~/Projects/b</code>, the local version of picking repos on the web. Now in the guide under "The first hour". Prompt 1 uses it.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><b>The "In Your Own Words" skill</b></div>
+        <p>A small skill you call after a brain dump. It repeats back your goal, your limits, what you didn't ask for, and its open questions, then waits for your yes. It only runs when you ask, so it costs nothing otherwise.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><b>The performance checklist</b></div>
+        <p>I compare the reel's 30 items with our <code>performance-optimization</code> skill and add the ones that are missing and fit SvelteKit, FastAPI and SQLite.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Parked, and why</h2>
+    <div class="rows">
+      <div class="row"><div class="row-top"><span class="pill park">Already answered</span><b>Ponytail</b></div><p>Removed on 19 Nov. It was installed but never enabled, so the "45% fewer tokens" claim never applied here, and it was one setting away from leaking your prompts.</p></div>
+      <div class="row"><div class="row-top"><span class="pill park">Already answered</span><b>Cal.com</b></div><p>Closed source since April 2026. The reel is out of date; <code>research/booking-stack-licences.md</code> has the details.</p></div>
+      <div class="row"><div class="row-top"><span class="pill park">Parked</span><b>Terminal Phone</b></div><p>Needs an iPhone plus a Mac for the simulator. All four of you are on NixOS, and nobody builds iPhone apps.</p></div>
+      <div class="row"><div class="row-top"><span class="pill park">Parked</span><b>The 66-film-styles tool</b></div><p>Overlaps the HyperFrames style-sampling skill. Worth a look again if you start making videos.</p></div>
+      <div class="row"><div class="row-top"><span class="pill park">Parked</span><b>Codex / GPT-6 as a second brain</b></div><p>It would mean a second paid subscription, which breaks the free rule.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>prompts · the same text is in ~/Projects/claude-env/research/PROGRESS.md, section E</p>
+    <p>results · each lands in ~/Projects/claude-env/research/&lt;name&gt;.md</p>
+    <p>if the guard blocks something · tell me rather than working around it</p>
+  </footer>
+
+  <p class="sr" aria-live="polite" id="announce"></p>
+</div>
+
+<script>
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-copy]');
+    if (!btn) return;
+    const src = document.getElementById(btn.dataset.copy);
+    const text = src.textContent;
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { ok = document.execCommand('copy'); } catch (_) {}
+      ta.remove();
+    }
+    if (!ok) {
+      const range = document.createRange();
+      range.selectNodeContents(src);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    btn.textContent = ok ? 'Copied' : 'Press Ctrl+C';
+    btn.classList.toggle('done', ok);
+    document.getElementById('announce').textContent = ok ? 'Copied to clipboard' : 'Text selected, press Ctrl+C to copy';
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1800);
+  });
+</script>

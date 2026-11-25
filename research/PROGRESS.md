@@ -284,3 +284,91 @@ folder does not accumulate items nobody can account for.
   right, read out of `claude-mem` (Apache-2.0) without installing it, which is what the 40-repo
   plan's Phase 4 asked for. Picks `SessionEnd` over `Stop` and is the reason `crew-memory` spools
   a pointer rather than writing a note inside the hook.
+
+## E. Round two — what Léon found in his feeds (25 Nov)
+
+Four Instagram reels, a YouTube short, a TikTok slideshow and two of Léon's own notes, ranked on
+24–25 Nov. Two claims checked out as already answered before any research ran: Cal.com went
+closed source in April 2026 (see booking-stack-licences), and Ponytail never ran on this machine
+and was removed on 19 Nov. That is the case for item 1's vetting step. Parked, with reasons on the
+todo board: Terminal Phone (iOS only, and needs macOS), the 66-film-styles tool, and the
+Codex/GPT-6 second brain (a second subscription). Not research: `--add-dir` (done, guide §7), the
+"In Your Own Words" skill and the performance-checklist diff (both in Claude's queue).
+
+Every prompt below is also on the copy-paste runbook, with the model, effort and launch command
+for each: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
+
+- [ ] **share-inbox** — *Léon with Claude, live · Opus 5.5 · high*
+  Decides: how anything seen on a phone or laptop reaches Claude in one or two taps, and where it lands.
+  Found by: Léon's own note, plus the TikTok "Claude Agentic OS" slideshow as a reference picture.
+  Sub-results: `reel-transcription.md`, `agent-reach.md`.
+  > Design a share-to-Claude inbox. When I see a reel, TikTok, post, repo or website on my phone
+  > or laptop, I send it in one or two taps. Claude fetches it, checks whether it's safe and
+  > useful, scores it, and if it's worth it, files it in crew-memory's Ideas store and adds a
+  > todo. It has to work on Android (my Pixel 10) and iPhone (Almar's), and when my laptop is off.
+  >
+  > Starting position, which you should challenge rather than accept: a small share receiver on
+  > our Contabo VPS (FastAPI + SQLite behind Caddy). Android gets an installable web app that
+  > appears in the share sheet; iPhone gets a built-in Shortcut in the share sheet; each person
+  > has their own key so what they share is recorded as theirs. A laptop-side /inbox skill
+  > fetches, judges and files.
+  >
+  > Reference picture: the 8 slides in ~/Downloads/social-media-downloads/tiktok-post-by-@chase_ai_/.
+  > Map what we already have (Laya as the router, crew-memory, project-brain, the schedule skill)
+  > before proposing anything new.
+  >
+  > While you read crew-memory, have the researcher agent answer two questions in parallel, each
+  > filed by doc-writer in the deliverable format from research/PROGRESS.md:
+  > 1. research/reel-transcription.md: how a public Instagram or TikTok video's audio becomes
+  >    text on this machine for free, using yt-dlp and faster-whisper on CPU. Is each in nixpkgs,
+  >    is it fast enough on an Intel Arc laptop, and does yt-dlp need my login for Instagram?
+  > 2. research/agent-reach.md: how Agent Reach reads X, Reddit and LinkedIn without APIs. Whose
+  >    cookies, which terms it breaks, the account-ban risk. Clone it to a scratch dir and run
+  >    `just vet` on it; don't install it.
+  >
+  > Then give me the design: capture → fetch → judge → file, one component per step, plus the
+  > smallest v0 I could use this week. Ask me about anything you'd otherwise guess. Don't build yet.
+
+- [ ] **skill-scanner** — *Léon runs it · Opus 5.5 · high*
+  Decides: whether our `just vet` gate is missing checks that a published scanner has.
+  Found by: an Instagram reel ("NVIDIA's Skill Specter", name possibly garbled).
+  > A reel says NVIDIA released a skill scanner ("Skill Specter", the name may be garbled) and
+  > found that one in four agent skills had a security hole. Find the real repo and the study.
+  > Clone it to a scratch dir; don't install or run it. Compare what it detects against our gate
+  > (modules/home/scripts/claude-vet.sh and docs/vet-exemptions.md), and run `just vet` on its own
+  > tree. Tell me which of its checks we lack, which are worth porting, and whether the 1-in-4
+  > figure holds up. Have doc-writer file it as research/skill-scanner.md in the deliverable
+  > format from research/PROGRESS.md.
+
+- [ ] **oss-swaps** — *Léon runs it · Sonnet 5.5 · medium*
+  Decides: which self-hostable tools are worth anything to a four-person web studio.
+  Found by: an Instagram reel listing eight swaps. Cal.com is already answered; OpenWhispr moved to local-voice.
+  > Run the researcher agent, then doc-writer to file it as research/oss-swaps.md. For Chatwoot,
+  > Cap (Loom alternative), AppFlowy, OpenProject, VoiceStudio (ElevenLabs alternative) and
+  > OpenHiggsField: licence today (Cal.com went closed source in April 2026, so assume nothing),
+  > Linux support and whether it's in nixpkgs, real cost for four people self-hosted vs hosted,
+  > and who maintains it. One line each on whether it fits a four-person web studio already on
+  > Jira, Obsidian and a Contabo VPS. Skip Cal.com; research/booking-stack-licences.md covers it.
+  > Use the deliverable format in research/PROGRESS.md.
+
+- [ ] **free-llm-router** — *Léon runs it · Sonnet 5.5 · medium*
+  Decides: whether a pooled free-model API is safe for non-secret bulk work.
+  Found by: an Instagram reel ("7 billion free tokens a month from 600 models").
+  > Run the researcher agent, then doc-writer to file it as research/free-llm-router.md. A reel
+  > claims a GitHub project gives 7 billion free tokens a month across 600 models, failing over
+  > between them. Find it. Which providers' free tiers does it pool, does pooling break their
+  > terms, and what does each provider do with prompts (training, retention)? Is it safe for
+  > non-secret bulk work like summarising video transcripts? Use the deliverable format in
+  > research/PROGRESS.md.
+
+- [ ] **local-voice** — *Léon runs it, after share-inbox · Sonnet 5.5 · medium*
+  Decides: whether talking to Claude, and hearing it answer, can run free and local on our laptops.
+  Found by: the TikTok slideshow (faster-whisper + kokoro-onnx) and the OpenWhispr swap.
+  > Find out whether I can talk to Claude Code and hear it answer, fully local and free, on this
+  > NixOS laptop (Intel Arc iGPU, no NVIDIA). Run the researcher agent on: faster-whisper,
+  > whisper-cpp and OpenWhispr for speech in, kokoro-onnx for speech out. For each: in nixpkgs on
+  > 25.05 and 26.05, CPU speed for a ten-second clip, licence, model download size. Clone
+  > kokoro-onnx to a scratch dir and run `just vet` on it; don't install anything. Reuse whatever
+  > the share-inbox work chose for transcription (research/reel-transcription.md). Then propose
+  > the smallest way to talk to a Claude Code session and hear the reply. Have doc-writer file it
+  > as research/local-voice.md in the deliverable format from research/PROGRESS.md. Don't build yet.

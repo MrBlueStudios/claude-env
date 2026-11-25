@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-24T09:10"
+updated: "2026-11-25T11:30"
 suite:
   command: just test
   result: green
@@ -42,6 +42,7 @@ suite:
 artifacts:
   status: https://claude.ai/code/artifact/71c33b0d-0713-44c6-a94c-bf3312635352
   todo: https://claude.ai/code/artifact/e3563a45-ca0e-44d9-b157-56b3b202b2f6
+  runbook: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
 features:
   - id: mcp-consolidate
     name: Consolidate the 36 scattered MCP servers
@@ -1123,6 +1124,49 @@ claude_todos:
       guard comes from /etc/claude-code/managed-settings.json. Until then the false positive is
       still live, and the honest workaround is to use the file-editing tools rather than a bash
       heredoc containing the example text.
+  - id: ct-add-dir-guide
+    text: >-
+      Tell the crew how to give one Claude Code session several repos, the local version of
+      picking repos on the web
+    status: done
+    closed: 2026-11-25
+    done_when: >-
+      docs/guide.md section 7 shows `claude --add-dir` with the directory it runs in
+    paths:
+      - docs/guide.md
+    note: >-
+      Léon's note asked for multi-repo context like the web version. No research or build was
+      needed: `claude --add-dir <dirs...>` already exists (checked against `claude --help` on
+      2026-11-25). Runbook prompt 1 uses it to give the inbox session crew-memory and
+      project-brain.
+  - id: ct-own-words-skill
+    text: >-
+      Write an on-demand "own words" skill that restates Léon's intent after a brain dump and
+      waits for his yes before doing anything
+    status: next
+    done_when: >-
+      The skill is declared in the flake, its description says it only runs when asked so it
+      never auto-triggers, and `just test` is green
+    paths:
+      - modules/home/skills/
+      - modules/home/skills.nix
+    note: >-
+      From an Instagram reel, ranked 2026-11-25. Restates goal, constraints, what was NOT asked
+      for, and open questions, then stops. Costs about 64 tokens of description per session
+      (context-budget finding 10).
+  - id: ct-perf-checklist
+    text: >-
+      Compare a 30-item app-performance checklist from a reel against the performance-optimization
+      skill and add what is missing and fits the stack
+    status: next
+    done_when: >-
+      Every checklist item is marked covered, added, or not applicable to SvelteKit 5 / FastAPI /
+      SQLite WAL / Caddy / Cloudflare, and only the missing applicable ones were added
+    paths:
+      - modules/home/skills/performance-optimization/
+    note: >-
+      From an Instagram reel, ranked 2026-11-25. No research needed; the list is in the reel's
+      transcript, which Léon pasted into the 2026-11-25 session.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
@@ -1466,9 +1510,17 @@ my_todos:
     owner: leon
     why_yours: a repo-access decision only you can make, on your own private repo
     guide: claude-env-web-stack-access
-    status: open
+    status: done
     added: 2026-11-24
+    closed: 2026-11-24
     note: >-
+      Closed 2026-11-24 on evidence from outside Léon's machine, which the guide said is the only
+      check that counts: on Almar's laptop (host head), `nix flake metadata
+      github:MrBlueStudios/claude-env --no-write-lock-file` fetched claude-web-stack over git+ssh
+      and locked it at 19130c1e, against claude-env 5ec7e19a. Ryan's and Kish's access was not
+      checked from their machines; if either hits Permission denied (publickey), their GitHub
+      invite is still pending.
+      .
       Verified 2026-11-24 with gh repo view: claude-env is PUBLIC, claude-web-stack is PRIVATE,
       and flake.nix uses it unconditionally in homeManagerModules.default as a git+ssh input with
       flake = false. Nix resolves inputs at lock time, before any build, so Almar, Ryan and Kish
@@ -1525,6 +1577,37 @@ my_todos:
       none for eleven months. Cost is three branch bumps (nixpkgs, home-manager, stylix) plus a
       dry run; the dry-run command is in research/nixos-version-matrix.md and is the only step
       before anything in /etc/nixos is touched.
+
+  - id: mt-share-inbox-session
+    text: >-
+      Sit with Claude for the share-to-Claude inbox design, prompt 1 on the research runbook
+    owner: both
+    why_yours: a live design session where your answers decide the shape
+    guide: claude-env-share-inbox-session
+    status: open
+    added: 2026-11-25
+    note: >-
+      Ranked first of the round-two items on 2026-11-25: it is the system that makes every future
+      reel cheap to judge, and two of the reels' claims (Cal.com open source, Ponytail's token
+      saving) were already known to be wrong, which is the case for a vetting step. Must work on
+      Léon's Pixel 10 and Almar's iPhone, and with the laptop off. Starting position to challenge:
+      a share receiver on the Contabo VPS, Android share-target web app plus an iPhone Shortcut,
+      per-person keys. Jira issue tracks it. Opus 5.5, high, in ~/Projects/claude-env with
+      --add-dir for crew-memory and project-brain.
+  - id: mt-research-runbook
+    text: >-
+      Launch prompts 2 to 5 on the research runbook, 3 and 4 first in two terminals, 5 only after
+      the inbox session
+    owner: leon
+    why_yours: you asked to run these yourself, and they spend your session allowance
+    guide: claude-env-research-runbook
+    status: open
+    added: 2026-11-25
+    note: >-
+      Runbook: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47 (docs/runbook.html).
+      Same prompts in research/PROGRESS.md section E. Opus 5.5 high for the skill scanner,
+      Sonnet 5.5 medium for oss-swaps, free-llm-router and local-voice. Each result lands in
+      research/<name>.md; tell Claude which finished.
 questions:
   - id: q-mcp-philosophy
     question: >-

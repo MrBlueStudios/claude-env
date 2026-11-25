@@ -334,71 +334,53 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">claude-env · queue · 24 Nov 2026 · Almar · Ryan · Kish · Léon</p>
+    <p class="eyebrow">claude-env · queue · 25 Nov 2026 · Almar · Ryan · Kish · Léon</p>
     <h1>What's on you, what's on me</h1>
 
     <div class="vitals">
       <div class="vital mine">
-        <span class="figure">6</span>
-        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 14 closed</span>
+        <span class="figure">7</span>
+        <span class="sub">yours — each one a numbered guide below · 1 paused to 8 Dec · 15 closed</span>
       </div>
       <div class="vital">
-        <span class="figure">14</span>
-        <span class="sub">mine — done · 2 in progress, both waiting on you · 3 next · 1 parked</span>
+        <span class="figure">15</span>
+        <span class="sub">mine — done · 2 in progress, both waiting on you · 5 next · 1 parked</span>
       </div>
       <div class="vital">
         <span class="figure">0</span>
-        <span class="sub">open questions — you answered the last five tonight, so nothing of mine is gated on a decision</span>
+        <span class="sub">open questions — nothing of mine is waiting on a decision of yours</span>
       </div>
     </div>
 
     <div class="next-up">
       <p class="eyebrow">Where you are</p>
-      <p><strong>Your five answers closed the last open questions and opened three new cards.</strong> Beads dropped, the superpowers pin agreed, vies-vat becomes a CLI, the personal-skills split settled with your "make sure the crew has everything they'll need" added to it as real work, and the compressors going to a measurement rather than a guess. Three of those answers need something only you can do, so the queue went from three cards to six.</p>
-      <p><strong>Card 1 is new and it is urgent in a way the others are not: it blocks all three of your friends tomorrow morning.</strong> <code>claude-env</code> is public, but it pulls in your private <code>claude-web-stack</code>, so the first command on the crew page fails for Almar, Ryan and Kish with an SSH error that looks like their fault. Five minutes in a browser fixes it. Do it before you send them anything.</p>
-      <p>The crew page is updated and republished at the same link, with a six-step install walkthrough, Almar's hardware filled in, AdministratieX instead of Moneybird, and the Jira paid-plan question answered. It also now says in plain words that <strong>answering the questionnaire needs nothing installed</strong> — which was the thing you asked about, and the questionnaire itself said the opposite until tonight.</p>
+      <p><strong>The friends can install now: Almar's laptop fetched the private repo, so that card is closed.</strong> His <code>nix flake metadata</code> pulled <code>claude-web-stack</code> over SSH, which is the outside check that counts. Ryan and Kish weren't checked from their own machines; if either sees <code>Permission denied (publickey)</code>, their GitHub invite is still pending.</p>
+      <p><strong>Two new cards came out of your reels and notes.</strong> Card 6 is the inbox design session with me, and card 7 is launching the other research prompts. Both use the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">research runbook</a>: every prompt has a Copy button, its model, its effort level and the folder it runs in. The inbox is also <code>WEB-4</code> on Jira.</p>
+      <p><strong>Cheapest next step: card 7's first half.</strong> Start runbook prompts 3 and 4 in two terminals. They need nothing from you and run while you do anything else on this list.</p>
     </div>
   </header>
 
   <section>
-    <h2>Your queue <span class="tally">— 6 to do, 1 paused · 14 closed</span></h2>
+    <h2>Your queue <span class="tally">— 7 to do, 1 paused · 15 closed</span></h2>
 
     <div class="order">
-      <h3>The order, by what blocks whom</h3>
+      <h3>The order</h3>
       <ol>
-        <li><b>Grant access to claude-web-stack</b> — 5 min, browser. <span class="after">blocks all three friends tomorrow</span></li>
         <li><b>Send the questionnaire and the crew page</b> — one message, then it waits on them. <span class="after">gates my crew-memory work</span></li>
-        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 4</span></li>
-        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 3</span></li>
+        <li><b>Moneybird → AdministratieX</b> — 30 min, browser. <span class="after">must come before card 3</span></li>
+        <li><b>Send the four invites</b> — 20 min, four billing accounts. <span class="after">needs card 2</span></li>
         <li><b>Upgrade to NixOS 26.05</b> — an hour, your own laptop. <span class="after">eleven months without security updates</span></li>
-        <li><b>Sit with the superpowers pin</b> — 20 min, with me. <span class="after">the only card I cannot do alone</span></li>
+        <li><b>Sit with the superpowers pin</b> — 20 min, with me. <span class="after">needs me at the keyboard</span></li>
+        <li><b>The inbox design session</b> — about an hour, with me. <span class="after">runbook prompt 1 · WEB-4</span></li>
+        <li><b>Launch the other runbook prompts</b> — 2 min each to start. <span class="after">start 3 and 4 first</span></li>
       </ol>
-      <p class="rationale" style="margin-top:10px">One first because it is five minutes and three other people are behind it. Two next because it is a message: send it and their clocks start while you do the rest. Five and six are yours alone and have no deadline — five is a security update, six needs us both at the keyboard.</p>
+      <p class="rationale" style="margin-top:10px">One first because it is a message and their clocks start when you send it. Two before three because the invites need the bookkeeping tool to exist. Seven can start any time: its first two prompts run on their own in the background.</p>
     </div>
 
     <!-- 1 -->
     <article class="task">
       <div class="task-head">
-        <h3>1 · Let the friends read claude-web-stack</h3>
-        <span class="why">5 minutes · blocks three people, not you</span>
-      </div>
-      <p class="where"><b>Where:</b> <span class="loc">browser · github.com/MrBlueStudios/claude-web-stack/settings/access</span></p>
-      <p class="rationale">I checked this with <code>gh repo view</code> rather than assuming: <code>claude-env</code> is <b>public</b>, <code>claude-web-stack</code> is <b>private</b>, and <code>flake.nix</code> takes the private one as its only input, unconditionally, for the web-design playbook. Nix resolves inputs at <em>lock</em> time, before it builds anything, so all three of them fail at step 2 of the walkthrough with a permission error on <code>git@github.com</code> — an error that names SSH and not the playbook, so they will each spend an hour regenerating keys that were never the problem.</p>
-      <ol class="steps">
-        <li><span class="loc">browser</span> Open <a href="https://github.com/MrBlueStudios/claude-web-stack/settings/access">the repo's Access settings</a>, <em>Add people</em>, and add <code>AlmarvDiessen</code>, <code>luameister</code> and <code>KKP24</code> with the <b>Read</b> role.
-          <span class="done-when"><b>Done when</b> all three appear as Read collaborators. Watch for "pending invite" — they each have to accept the GitHub email, and a pending invite fails exactly like no invite at all.</span></li>
-        <li><span class="loc">chat</span> Tell them to accept the GitHub invite before they try the install.
-          <span class="done-when"><b>Done when</b> the page shows no pending invites.</span></li>
-        <li><span class="loc">one friend's laptop, any directory</span> Have one of them run <code>nix flake metadata github:MrBlueStudios/claude-env</code>.
-          <span class="done-when"><b>Done when</b> it prints metadata instead of <code>Permission denied (publickey)</code>. This is the only check that proves it — your own laptop always succeeds, because you own the repo.</span></li>
-      </ol>
-      <p class="trap"><b>Two other ways out, if read access is not what you want:</b> make the repo public (only after reading it — a client-work playbook may name clients), or tell me to vendor the playbook into <code>claude-env</code> and delete the input, which removes this failure mode permanently. Both change what the crew page should say, and the third is work for me, so tell me which you picked.</p>
-    </article>
-
-    <!-- 2 -->
-    <article class="task">
-      <div class="task-head">
-        <h3>2 · Send the questionnaire and the crew page</h3>
+        <h3>1 · Send the questionnaire and the crew page</h3>
         <span class="why">10 minutes to send · 15 minutes each to answer</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">editor · ~/Projects/crew-memory/docs/questionnaire.md</span> then <span class="loc">wherever you three talk</span></p>
@@ -417,10 +399,10 @@
       <p class="trap"><b>One rule about other people's words, so nobody has to trust me on it:</b> I tighten grammar, never meaning, and never upgrade a hedge into a commitment — "I might do X" becomes an idea with <code>status: raw</code>, not <code>doing</code>. A client name under NDA or a credential gets stored as a shape, not a value. Worth saying that when you send it.</p>
     </article>
 
-    <!-- 3 -->
+    <!-- 2 -->
     <article class="task">
       <div class="task-head">
-        <h3>3 · Set up AdministratieX (and skip the Moneybird export)</h3>
+        <h3>2 · Set up AdministratieX (and skip the Moneybird export)</h3>
         <span class="why">20 minutes · € 0 · holds the crew's financial data</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · administratiex.nl/register</span></p>
@@ -452,10 +434,10 @@
       <p class="trap"><b>Why I still say use it:</b> the exposure is not money, it is your books living at a four-month-old company. That exposure is almost entirely cancelled by one habit — the quarterly XAF export in step 4. XAF is the Dutch standard audit file, so every accountant and every competitor can import it. Free, 2 named users, no revenue limit, NL hosting, monthly cancellable, 30 days' notice on material changes, and your data leaves in an open format. If they disappear, you lose the tool and not the records, and quarterly VAT can always be filed on the Belastingdienst's own portal for nothing. <b>What I would not do</b> is buy a paid plan, the € 199 filing service, or the administrateur module from a company this young — those are the ones where you would be out real money if it folded.</p>
     </article>
 
-    <!-- 4 -->
+    <!-- 3 -->
     <article class="task">
       <div class="task-head">
-        <h3>4 · Send the four invites</h3>
+        <h3>3 · Send the four invites</h3>
         <span class="why">20 minutes · four billing accounts · needs card 2</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">browser · HubSpot</span> <span class="loc">browser · Cloudflare</span> <span class="loc">browser · Stripe</span> <span class="loc">browser · AdministratieX</span></p>
@@ -477,10 +459,10 @@
       <p class="trap"><b>Looks like success, is not:</b> an invite can sit Pending for days unnoticed, because Claude Code reports a connector as needing authentication either way. Ask for the <code>claude mcp list</code> line as proof rather than asking whether it worked.</p>
     </article>
 
-    <!-- 5 -->
+    <!-- 4 -->
     <article class="task">
       <div class="task-head">
-        <h3>5 · Upgrade this laptop to NixOS 26.05</h3>
+        <h3>4 · Upgrade this laptop to NixOS 26.05</h3>
         <span class="why">an hour, on a day you have an hour · no security updates for eleven months</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">terminal · /etc/nixos</span></p>
@@ -501,10 +483,10 @@
       <p class="trap"><b>If anything is wrong:</b> <code>sudo nixos-rebuild switch --rollback</code> in <code>/etc/nixos</code>, or pick the previous generation from the boot menu if you cannot get a session at all. Then send me what broke. There is no hurry and the old generation still works.</p>
     </article>
 
-    <!-- 6 -->
+    <!-- 5 -->
     <article class="task">
       <div class="task-head">
-        <h3>6 · Sit with me for the superpowers pin</h3>
+        <h3>5 · Sit with me for the superpowers pin</h3>
         <span class="why">20 minutes, with me present · the only card I cannot do alone</span>
       </div>
       <p class="where"><b>Where:</b> <span class="loc">terminal · ~/Projects/claude-env</span> for the edit, then <span class="loc">terminal · /etc/nixos</span> for the switch</p>
@@ -515,7 +497,7 @@
         <p class="rationale" style="margin-bottom:9px">Start it in <b><code>~/Projects/claude-env</code></b>, not <code>/etc/nixos</code>. The edit is to this repo's <code>modules/home/settings.nix</code> — <code>/etc/nixos</code> only consumes it as a flake input, so a session started there is looking at the wrong tree. The one command, in any directory:</p>
         <p class="rationale" style="margin-bottom:9px"><code>cd ~/Projects/claude-env &amp;&amp; claude --model opus --effort high</code></p>
         <ol>
-          <li><b>Model: Opus 5.</b> <span class="after">--model opus</span></li>
+          <li><b>Model: Opus 5.5.</b> <span class="after">--model opus</span></li>
           <li><b>Effort: high.</b> <span class="after">--effort high — not xhigh or max</span></li>
           <li><b>Fast mode: off.</b> <span class="after">leave /fast alone for this one</span></li>
         </ol>
@@ -544,6 +526,47 @@
       <p class="trap"><b>This needs no particular Claude Code version</b> — the 2.1.324 floor is on marketplace pins, not on pinning a plugin's own bytes. And if any step fails: <code>sudo nixos-rebuild switch --rollback</code> immediately, then tell me what it said. Do not debug it live.</p>
     </article>
 
+    <!-- 6 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>6 · Sit with me for the share-to-Claude inbox design</h3>
+        <span class="why both">about an hour, with me · WEB-4</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">terminal · ~/Projects/claude-env</span> using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook card 1</a></p>
+      <p class="rationale">Your note asked for a way to send Claude anything you see, from your phone or laptop, so it gets judged and filed instead of forgotten. It's ranked first of everything from your feeds, because it makes every later reel cheap to check. Two of those reels' claims were already known to be wrong (Cal.com is no longer open source; Ponytail never saved a token here), which is the case for building a vetting step into it. It has to work on your Pixel and Almar's iPhone, and with your laptop off. It's a conversation, and your answers decide the shape, so it needs you there.</p>
+      <ol class="steps">
+        <li><span class="loc">browser</span> Open the <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">research runbook</a> at card 1 and block out an hour.
+          <span class="done-when"><b>Done when</b> the page is open and the time is free.</span></li>
+        <li><span class="loc">any terminal</span> Copy card 1's launch command and run it. It opens Claude Code in <code>~/Projects/claude-env</code> on Opus 5.5, high effort, with crew-memory and project-brain added.
+          <span class="done-when"><b>Done when</b> <code>/status</code> in that session shows Opus.</span></li>
+        <li><span class="loc">that session</span> Paste card 1's prompt as the first message, then answer its questions as they come.
+          <span class="done-when"><b>Done when</b> you have a capture → fetch → judge → file design you agree with, plus a v0 you could use this week.</span></li>
+        <li><span class="loc">~/Projects/claude-env/research</span> Check that <code>reel-transcription.md</code> and <code>agent-reach.md</code> landed.
+          <span class="done-when"><b>Done when</b> both exist. If Agent Reach needs your logged-in cookies, the design should leave it out.</span></li>
+      </ol>
+      <p class="trap"><b>Push back on taps:</b> if any step of the design means more taps than sharing to WhatsApp, say so in the session. Easy sharing is the whole requirement.</p>
+    </article>
+
+    <!-- 7 -->
+    <article class="task">
+      <div class="task-head">
+        <h3>7 · Launch the other four research prompts</h3>
+        <span class="why">2 minutes each to start · they run on their own</span>
+      </div>
+      <p class="where"><b>Where:</b> <span class="loc">any terminal</span>, using <a href="https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47">runbook cards 2–5</a></p>
+      <p class="rationale">You asked to run these yourself. Each card on the runbook has a Copy button for the launch command and the prompt, plus its model, effort level and folder, so there's nothing to work out. They also spend some of your weekly allowance, which is why you pick when they run.</p>
+      <ol class="steps">
+        <li><span class="loc">two terminals</span> Start cards 3 and 4 (open-source swaps, free LLM API), one per terminal. Sonnet 5.5, medium.
+          <span class="done-when"><b>Done when</b> both say they launched the researcher agent. You can walk away after that.</span></li>
+        <li><span class="loc">a third terminal, anytime</span> Card 2, the skill scanner. Opus 5.5, high. It clones a repo into a scratch folder and never installs it.
+          <span class="done-when"><b>Done when</b> <code>research/skill-scanner.md</code> exists. If the guard blocks a step, stop and tell me.</span></li>
+        <li><span class="loc">after card 6</span> Card 5, local voice. It reuses what the inbox session decides about transcription.
+          <span class="done-when"><b>Done when</b> <code>research/local-voice.md</code> exists.</span></li>
+        <li><span class="loc">here</span> Tell me which ones finished.
+          <span class="done-when"><b>Done when</b> they show as done on this board.</span></li>
+      </ol>
+    </article>
+
     <p class="subhead">Paused by you</p>
 
     <article class="task" style="border-top-color: var(--line-strong);">
@@ -557,8 +580,20 @@
   </section>
 
   <section>
-    <h2>My queue <span class="tally">— 14 done, 2 in progress and both waiting on you, 3 next, 1 parked</span></h2>
+    <h2>My queue <span class="tally">— 15 done, 2 in progress and both waiting on you, 5 next, 1 parked</span></h2>
     <div class="rows">
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">An on-demand "own words" skill</span></div>
+        <p class="dw">From one of your reels. After a brain dump you call it, and it repeats back your goal, your limits, what you <em>didn't</em> ask for, and its open questions, then waits for your yes. It only runs when you ask, so it never fires on its own. <b>Done when</b> it's declared in the flake and <code>just test</code> is green.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill next">Next</span><span class="txt">Check the reel's 30-item performance checklist against our skill</span></div>
+        <p class="dw">We already have <code>performance-optimization</code>. I mark each of the reel's items as covered, missing, or not applicable to SvelteKit, FastAPI and SQLite, and add only the missing ones that apply. <b>Done when</b> every item has a verdict.</p>
+      </div>
+      <div class="row">
+        <div class="row-top"><span class="pill settled">Done 25 Nov</span><span class="txt">Several repos in one session: already built in, now in the guide</span></div>
+        <p class="dw">Your note asked for this, like picking repos on the web. It needed no research: <code>claude --add-dir ~/Projects/a ~/Projects/b</code> already does it, checked against <code>claude --help</code>. It's now in the guide under "The first hour", and runbook card 1 uses it.</p>
+      </div>
       <div class="row">
         <div class="row-top"><span class="pill next">In progress</span><span class="txt">Laya at user scope — one line of yours away</span></div>
         <p class="dw">The mechanism landed 20 Nov: <code>claude-env.mcp.layaPath</code> registers the Laya server with absolute paths, so it appears in every project folder instead of only in <code>Laya_And_CLM-MCPs</code>. CLM is deliberately not registrable, because a server whose backend is parked is a tool that always fails. <b>Done when</b> you set <code>claude-env.mcp.layaPath = "/home/leon-new/Projects/Laya_And_CLM-MCPs";</code> and <code>claude mcp list</code> from another directory shows Laya connected.</p>
@@ -673,8 +708,12 @@
   </section>
 
   <section>
-    <h2>Settled <span class="tally">— 14 of yours closed, 6 decisions, 1 audit</span></h2>
+    <h2>Settled <span class="tally">— 15 of yours closed, 6 decisions, 1 audit</span></h2>
     <div class="rows">
+      <div class="row is-done">
+        <div class="row-top"><span class="pill settled">Closed 24 Nov</span><span class="txt">The friends can read <code>claude-web-stack</code></span></div>
+        <p class="dw">Proved from outside your machine, the only check that counts: on Almar's laptop, <code>nix flake metadata github:MrBlueStudios/claude-env</code> fetched the private repo over SSH and locked it at <code>19130c1e</code>. Ryan's and Kish's weren't checked from their machines; a <code>Permission denied (publickey)</code> there means their invite is still pending.</p>
+      </div>
       <div class="row is-done">
         <div class="row-top"><span class="pill settled">Closed 24 Nov</span><span class="txt">Jira → Google Calendar is live</span></div>
         <p class="dw">Saved the filter <code>project = WEB AND duedate IS NOT EMPTY</code>, installed <b>Easy Calendar Integration for Jira</b> by <b>Meetical</b> (Forge-based, Cloud Fortified, free under 10 licensed users — confirmed from the install page itself, "After trial: Plan Standard, Subtotal USD 0.00 per month," not just a 30-day grace period), created a personal subscription named <code>Blitsol — WEB due dates</code>, and added it to Google Calendar via <b>From URL</b> rather than Import. Both <code>WEB-2</code> and <code>WEB-3</code> now show up on the calendar.</p>
@@ -754,7 +793,7 @@
       <h3>What you decided</h3>
       <ol>
         <li><b>Beads</b> — dropped. <span class="after">the vetting gate stands, no exemption written</span></li>
-        <li><b>The superpowers pin</b> — inline marketplace, plugin sha pinned. <span class="after">card 6, with me</span></li>
+        <li><b>The superpowers pin</b> — inline marketplace, plugin sha pinned. <span class="after">card 5, with me</span></li>
         <li><b>Personal skills</b> — migrate the crew's, declare the rest personal. <span class="after">plus your completeness check, now real work</span></li>
         <li><b>vies-vat</b> — replaced by a <code>vat-check</code> CLI, server dropped. <span class="after">mine, next</span></li>
         <li><b>The compressors</b> — measure command output first, then decide. <span class="after">your instinct was to package both; the premise did not hold up</span></li>
@@ -810,7 +849,7 @@
       </ul>
       <p class="rec-why"><b>My recommendation: the second, but not unsupervised.</b> An inline <code>settings</code> source keeps the plugin id (<code>superpowers@superpowers-marketplace</code>), so no skill prefix changes, and its catalog entry can carry the plugin's own <code>sha</code> — the only way to pin the bytes. It also needs no 2.1.324, because the version floor applies to marketplace pins and not plugin ones. The cost is that it changes how the plugin resolves: the next session re-fetches it, and if that goes wrong, the one plugin you actually use stops loading. Worth one supervised switch rather than a surprise during a working session.</p>
       <p class="rationale">Where it stands today: the marketplace itself is pinned, and only the plugin's own bytes float. Your machine is on 7.0.0 against 7.0.2 upstream, so the floating is real rather than theoretical. Option three works too and costs a repo to maintain forever.</p>
-      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> option two, the inline marketplace pinning the plugin's own sha. It is card 6 above rather than something I do headlessly, because a bad fetch means superpowers stops loading entirely.</p>
+      <p class="blocks" style="color: var(--ok);"><b>Answered 24 Nov:</b> option two, the inline marketplace pinning the plugin's own sha. It is card 5 above rather than something I do headlessly, because a bad fetch means superpowers stops loading entirely.</p>
     </article>
 
     <article class="q">
@@ -848,7 +887,8 @@
     <p>input · github:MrBlueStudios/claude-env · the lock SHA your laptop is on is what <code>nix flake metadata</code> prints in /etc/nixos; main carries tonight's doc changes</p>
     <p>suite · just test green, re-run tonight · evaluated <em>and</em> built on 25.05 and 26.05: base, every option on, and the system guard · 65 guard cases · 144 script tests · 8 scripts shellchecked</p>
     <p>state · ~/Projects/claude-env/docs/project-state.yaml — 11 questions, none open</p>
-    <p>vault · 13 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
+    <p>runbook · research round two, five prompts with copy buttons · https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47</p>
+    <p>vault · 15 guides written to project-brain/Guides/claude-env-*.md, none of yours overwritten</p>
     <p>research · ~/Projects/claude-env/research/ — 16 of 16 answered; Kish's nine carry a review block at the top</p>
     <p>crew-memory · the collision check, the session-end spool and the questionnaire landed 20 Nov · 52 tests · committed locally and not pushed — the repo is yours to create, and so is sending the questions</p>
     <p>todos · checkboxes under ## claude-env in My Todos.md; none ticked by me, their state is yours</p>
