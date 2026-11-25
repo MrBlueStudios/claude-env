@@ -231,6 +231,11 @@
   }
   .meta-row .v { color: var(--ink-soft); max-width: 68ch; }
   .meta-row.gate .v { color: var(--stop); }
+  .feat.out { border-left-color: var(--muted); }
+  .feat.owed { border-left-color: var(--warn); }
+  .meta-row.owe .k, .meta-row.owe .v { color: var(--warn); }
+  .meta-row.clear .v { color: var(--ok); }
+  .out-intro { color: var(--ink-soft); font-size: 14.5px; max-width: 72ch; }
 
   /* ---- facts ---- */
   .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); }
@@ -316,7 +321,7 @@
 
     <div class="next-up">
       <p class="eyebrow">Next</p>
-      <p><strong>Finish the share inbox's v0.</strong> The code is built and on <code>main</code>; what's left is Léon's one-off setup from the plan (a fine-grained token for <code>crew-vault</code> issues, <code>wrangler login</code>, installing the app on the Pixel, a rebuild so <code>/inbox</code> lands) and then four real shares through it as the acceptance run.</p>
+      <p><strong>Finish the share inbox's v0: Guide A, then Guide B, both in the share-inbox session.</strong> The code is built and on <code>main</code>. Guide A is confirming the two <code>/etc/nixos</code> edits, <code>wrangler login</code>, and the <code>crew-vault</code> token. Guide B is installing the app on the Pixel, the rebuild, and four real shares as the acceptance run. The step-by-step is on the <a href="https://claude.ai/code/artifact/e3563a45-ca0e-44d9-b157-56b3b202b2f6">todo board</a>.</p>
       <p class="eyebrow" style="margin-top:10px">What changed since 21 Nov</p>
       <p><strong>The share-to-Claude inbox went from a note to built code in one day.</strong> Designed with Léon on 25 Nov, and the VPS receiver from the starting position was rejected: a Cloudflare Pages web app files GitHub issues in the private <code>crew-vault</code> repo, and a laptop-side <code>/inbox</code> skill judges them and files the good ones into crew-memory. Plan tasks 1–4 are done. <strong>Jira is finished:</strong> the <code>WEB</code> board replaced the <code>KAN</code> sandbox, and its due dates reach Google Calendar through Meetical's free integration. <strong>All five questions from 24 Nov are answered</strong>, and round two of the research queue is three-fifths filed. The free-LLM-API answer is Groq called directly, not a pooled free-tier router. <strong>The plugin pins apply now</strong>, because Claude Code crossed 2.1.324 on 23 Nov.</p>
       <p class="eyebrow" style="margin-top:10px">20–21 Nov, for the record</p>
@@ -606,6 +611,215 @@
         <div class="meta">
           <div class="meta-row"><span class="k">Remaining</span><span class="v">One friend adds the flake input, rebuilds, and works through the guide unaided while every place he gets stuck is recorded. It also settles two things nothing else can: that the module is genuinely desktop-neutral on KDE, and that the guide answers its own questions.</span></div>
           <div class="meta-row gate"><span class="k">Waiting on</span><span class="v">a friend's laptop and an hour of their time. The access half is proven: on 24 Nov Almar's laptop fetched the private <code>claude-web-stack</code> input over SSH</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Left out, and why</h2>
+    <p class="out-intro">Everything we decided not to do, so nothing is missing by accident. Each card says why it's out, what we give up, and what happens instead. An amber <b>Still to do</b> line means something is still owed. A green one means it's settled and nothing more is needed. The first group is the one to read, since those are the only exclusions with work still attached.</p>
+
+    <div class="group">
+      <div class="group-head"><h3>Left out, with something still owed</h3><span class="count">6</span></div>
+
+      <article class="feat owed">
+        <div class="feat-top"><h4>Inbox v0 cuts: iPhone, the other three people, the cloud routine</h4><span class="id">share-inbox</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Out</span><span class="v">The iPhone Shortcut; the free GitHub org and Kish, Almar and Ryan; the hourly cloud routine; TikTok photo slideshows; dedicated Reddit and LinkedIn handling; reading on-screen text from video frames.</span></div>
+          <div class="meta-row"><span class="k">Why</span><span class="v">To get one working inbox for you this week instead of a full one next month. Each cut is v1, in a written order.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">For now only you can share, only from Android or the laptop, and a share is only processed when you run <code>/inbox</code> on the laptop. Shares made while it's off just wait in the queue.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Your Pixel and <code>just share</code> feed the same private <code>crew-vault</code> queue, and nothing is lost while it waits.</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">Yes. v1, after Guide B's test passes: org and people, then the iPhone Shortcut, then the cloud routine, then a fetch script, then a two-week review.</span></div>
+        </div>
+      </article>
+
+      <article class="feat owed">
+        <div class="feat-top"><h4>The vies-vat MCP server</h4><span class="id">q-vies-vat</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">The whole server is one SOAP call to an EU endpoint. A server costs its tool descriptions in every session on four laptops, and a CLI costs nothing until it's run.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Until the replacement exists, there's no VAT-number check from inside a session. The server is already off: your 21 Nov switch removed it.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">A small <code>vat-check</code> CLI in <code>tools.nix</code> that calls the VIES REST API, with a real self-check, because a wrong answer is an invoice error.</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">Yes, mine: <code>ct-vat-cli</code>, next in my queue.</span></div>
+        </div>
+      </article>
+
+      <article class="feat owed">
+        <div class="feat-top"><h4>Token compressors: RTK and Headroom</h4><span class="id">q-compressors</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">Neither is in nixpkgs, so using one means an installer outside Nix. And nobody has measured how many tokens command output actually costs here, which is the only thing they compress.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Possible savings mid-session, by an amount nobody knows yet.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Measure first, from the session transcripts already on disk.</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">Yes, mine: <code>ct-measure-command-output</code>. Then <code>q-compressors</code> gets re-answered against the number.</span></div>
+        </div>
+      </article>
+
+      <article class="feat owed">
+        <div class="feat-top"><h4>Your personal skills stay on your laptop</h4><span class="id">q-personal-skills</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Out</span><span class="v"><code>project-status</code>, <code>my-todo</code>, <code>prompt-optimizer</code> and the nine HyperFrames video skills.</span></div>
+          <div class="meta-row"><span class="k">Why</span><span class="v">They're how <em>you</em> report, or they drive accounts only you have. Seven of them link into the private <code>claude-lab</code> repo, which would make the public flake unbuildable for a friend.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">The friends don't get your status and todo boards, or the video toolchain.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">The four that are crew skills get vendored into the flake: <code>legal-audit</code>, <code>security-audit</code>, <code>design-review</code>, and <code>site-analytics</code> with its domains moved into an option.</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">Yes, mine: <code>ct-crew-skill-coverage</code>, your condition that the crew has everything they need for all six of their jobs.</span></div>
+        </div>
+      </article>
+
+      <article class="feat owed">
+        <div class="feat-top"><h4>Moneybird</h4><span class="id">mt-bookkeeping-switch</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">It turned out to be trial-then-paid. AdministratieX is free with two named users, permanently, and in writing.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">A track record. AdministratieX was registered in July 2026, and I found no independent reviews of it.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Two named seats, never a shared login, and a quarterly XAF export, so that if the company folds you lose the tool and not the books.</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">Yes, yours: card 2 on the todo board, then the invites in card 3.</span></div>
+        </div>
+      </article>
+
+      <article class="feat owed">
+        <div class="feat-top"><h4>Building the booking system and the legal-document generator</h4><span class="id">non-goal</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">Both are real gaps the coverage audit found, but they're products, not environment. They belong in their own repos rather than in a flake every laptop installs.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Nothing is being built for them in this project.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v"><code>research/booking-stack-licences.md</code> already settles the licence question for booking (Cal.com went closed source in April).</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">Yes, but not here: each needs its own repo when you want it. Neither has one yet.</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="group">
+      <div class="group-head"><h3>Parked, with a date</h3><span class="count">1</span></div>
+      <article class="feat out">
+        <div class="feat-top"><h4>CLM, the 8B ranking model</h4><span class="id">laya-clm-userscope</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">Its bf16 path needs a GPU with at least 16 GB, and the biggest card in the crew has 6 GB.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Its contrastive ranking for spotting colliding ideas.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v"><code>bge-small</code> on the CPU at about 101 ms per idea, with Laya dropping the confident non-matches and you deciding the rest.</span></div>
+          <div class="meta-row owe"><span class="k">Still to do</span><span class="v">A revisit around 8 December, together with the paused GPU check on the spare machines.</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="group">
+      <div class="group-head"><h3>Left out, and settled</h3><span class="count">11 — nothing more to do for these</span></div>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>The pooled free-LLM router, and four free tiers</h4><span class="id">q-free-llm-router</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Out</span><span class="v">FreeLLMAPI, plus the free tiers of Google AI Studio, OpenRouter, NVIDIA and Cerebras.</span></div>
+          <div class="meta-row"><span class="k">Why</span><span class="v">"7 billion tokens" is a sum of allowances that per-minute caps never let you reach. Rotating keys breaks OpenRouter's terms. Google's free tier trains on prompts, and its terms require paid plans for users in the EEA. Cerebras is no longer free.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">A large quota that exists on paper.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">One Groq account called directly, with Cloudflare Workers AI as a fallback, for public material only. Neither trains on prompts.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing, unless the inbox shows that summarising eats too much of your Claude allowance. Then it's a Groq key, not a build.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>Agent Reach, and any logged-in social fetching</h4><span class="id">research/agent-reach.md</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">It reads X, Reddit and LinkedIn by driving your real logged-in session in an anti-detect browser. That breaks all three platforms' terms and puts your account at risk, for a job logged-out fetchers do.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Posts behind login walls. Some Instagram reels will come back as "couldn't fetch".</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Only public, no-login routes: X oEmbed or fxtwitter, Jina Reader, logged-out page fetches, and four fallback levels for Instagram. A share always ends with a verdict, even if that verdict is "judged on the caption".</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing now. The v1 two-week review counts the Instagram failures; if more than one in five fail, you decide about a throwaway account.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>A share receiver on the Contabo VPS</h4><span class="id">share-inbox</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">That box is Kōro's production host, with untested headroom, and its Caddy config has dropped sites before. The inbox shouldn't be able to take a client site down.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Our own endpoint, and data on our own box.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">A free Cloudflare Pages app that files GitHub issues in the private <code>crew-vault</code> repo. No server of ours runs, and the production box is untouched.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>23 of the 39 MCP registrations, including github, filesystem and memory</h4><span class="id">mcp-consolidate</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">CLI-first. <code>gh --json --jq</code> is cheaper and already logged in, the filesystem server couldn't even see <code>~/Projects</code>, and we keep one memory system rather than two.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Nothing in daily use. GitHub work becomes <code>gh</code> commands instead of tool calls.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Four declared servers, six opt-in modules, and every removal saved to <code>~/.claude/removed-mcp-servers.json</code>, so any of them can come back.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>Rovo, and Beads</h4><span class="id">jira-calendar · q-beads-exemption</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">You chose not to use Rovo, Atlassian's built-in AI, so its extra usage never bills. Beads wants hooks that run at the start of every session and on every prompt, which fails <code>just vet</code>.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Rovo's own AI search across Atlassian, and a work graph the agents could merge in git.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">The Atlassian MCP server at base tier, free, and the real <code>WEB</code> Jira board for all four of you.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>Big skill and plugin packs: wshobson/agents, Ponytail, pstack, defuddle</h4><span class="id">ct-tool-trials</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">wshobson/agents is 185 skills, about 11,840 always-on tokens, roughly 44% of session start. Ponytail and pstack were never enabled, and Ponytail was one setting away from leaking prompts. defuddle isn't in nixpkgs.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Breadth nobody was using. Ponytail's "45% fewer tokens" never applied here.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Four hand-picked skills at 256 tokens in total, and Ponytail's ruleset kept as <code>rules/lazy-senior/</code>.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>A nicer voice now: Kokoro, OpenWhispr, the built-in /voice</h4><span class="id">research/local-voice.md</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">kokoro-onnx isn't in nixpkgs on either release. OpenWhispr is a heavy Electron app that isn't packaged, for what a ten-line script does. Claude Code's <code>/voice</code> sends your audio to Anthropic, so it isn't local.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">A natural-sounding voice in v0. espeak-ng sounds robotic.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Push-to-talk into <code>whisper-ctranslate2</code> and <code>wtype</code>, and a Stop hook into <code>espeak-ng</code>, all packaged, with Kokoro as the upgrade.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing is owed. It's researched and not built; building it is your call whenever you want voice.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>The six open-source swaps from the reel</h4><span class="id">research/oss-swaps.md</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">Only OpenProject (GPL-3.0) and Cap (AGPL-3.0) are genuinely free at four people, and only AppFlowy is in nixpkgs. Chatwoot's <code>enterprise/</code> folder needs a paid licence, AppFlowy's self-host is now one seat, and VoiceStudio and OpenHiggsField aren't team services.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Nothing in use today. My reading: OpenProject would duplicate the Jira board you just set up.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">Jira and Obsidian stay as they are.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing. Cap is the one worth a second look if screen recordings for clients become a regular need.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>Off by default rather than gone: claude-mode, sentry, six opt-in modules</h4><span class="id">tiers · desktop-neutral</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">claude-mode's layouts depend on Kitty's remote control and would break on the two KDE laptops. sentry alone costs 1,089 tokens a session, more than every other server together.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Nothing is removed. They just aren't on until someone turns them on.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">One option each: <code>claude-env.modes.enable</code> (on for you), and an opt-in flag per module.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>frontend-design can't be pinned</h4><span class="id">ct-plugin-channel</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">It comes from Anthropic's built-in marketplace, whose reserved name refuses a commit pin by design.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">A guarantee that its version doesn't move under you.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v"><code>claude-plugins-check</code> reports it as unpinnable, so the drift is at least visible.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing we can do. superpowers <em>can</em> be pinned, and that's card 5 on the todo board.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>Parked from your feeds: Terminal Phone, the 66-film-styles tool, Codex as a second brain</h4><span class="id">research/PROGRESS.md §E</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">Terminal Phone needs an iPhone plus a Mac, and all four of you are on NixOS. The film-styles tool overlaps the HyperFrames style-sampling skill. Codex would be a second paid subscription, which breaks the free rule.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Nothing you'd use today.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">The film-styles idea is already covered by what's installed.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">Nothing. The film-styles tool is worth another look if you start making videos.</span></div>
+        </div>
+      </article>
+
+      <article class="feat out">
+        <div class="feat-top"><h4>Not this project: your nix-config, copy-pasted credentials, building crew-memory</h4><span class="id">non-goals</span></div>
+        <div class="meta">
+          <div class="meta-row"><span class="k">Why</span><span class="v">Your hardware, backups and host secrets aren't the crew's business. Credentials go through real account invites, not copy-paste. crew-memory is its own project.</span></div>
+          <div class="meta-row"><span class="k">We lose</span><span class="v">Nothing. These are boundaries rather than features.</span></div>
+          <div class="meta-row"><span class="k">Instead</span><span class="v">The flake ships modules only. Blitsol access is real invites and agenix. crew-memory lives at <code>~/Projects/crew-memory</code>.</span></div>
+          <div class="meta-row clear"><span class="k">Still to do</span><span class="v">One thing at the edge: packaging the crew-memory CLI through the flake once it's its own repo. That's already a card in my queue.</span></div>
         </div>
       </article>
     </div>
