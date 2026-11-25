@@ -162,4 +162,8 @@
   home.file.".claude/skills/domain-modeling".source = ./skills/domain-modeling;
   home.file.".claude/skills/grilling".source = ./skills/grilling;
   home.file.".claude/skills/performance-optimization".source = ./skills/performance-optimization;
+
+  # /inbox processes the crew share inbox (docs/superpowers/specs/2026-11-25-share-inbox-design.md).
+  # User-invoked only, so it adds nothing to anyone's always-on context.
+  home.file.".claude/skills/inbox".source = ./skills/inbox;
 }

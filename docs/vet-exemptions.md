@@ -27,6 +27,9 @@ is granted to a behaviour, not to a maintainer.
   which carries one MIT LICENSE at its repo root; the per-plugin copy Claude Code caches does
   not include it. Verified 2026-11-19 at
   `~/.claude/plugins/marketplaces/svelte/LICENSE`. Withdraw if the upstream repo relicenses.
+- `inbox` LICENSE — first-party: written in this repo on 2026-11-25 for the share inbox
+  (`docs/superpowers/specs/2026-11-25-share-inbox-design.md`), nothing in it is vendored, so
+  there is no upstream licence to carry. Withdraw the moment any third-party text is copied in.
 
 ## Refused
 
