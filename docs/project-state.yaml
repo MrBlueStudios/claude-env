@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-25T11:20"
+updated: "2026-11-26T13:30"
 suite:
   command: just test
   result: green
@@ -42,6 +42,7 @@ suite:
 artifacts:
   status: https://claude.ai/code/artifact/71c33b0d-0713-44c6-a94c-bf3312635352
   todo: https://claude.ai/code/artifact/e3563a45-ca0e-44d9-b157-56b3b202b2f6
+  inbox_todo: https://claude.ai/code/artifact/ebdbc3fd-7ab9-4d40-bff2-82a5c7a7b32f
   runbook: https://claude.ai/code/artifact/72fca279-c025-4a30-896b-b23fefbc4c47
 features:
   - id: mcp-consolidate
@@ -1228,6 +1229,71 @@ claude_todos:
       port list in finding 11 is taken as decided; finding 12 (LLM stage, AST/taint, YARA, OSV)
       stays out. Do this before ct-pin-obsidian-mcp, whose vet verdict is weaker while the gate
       cannot read markdown.
+  - id: ct-inbox-acceptance-check
+    text: >-
+      Check the share inbox acceptance run: the six issues, the vault commit and which Instagram
+      fetch level worked
+    status: blocked
+    done_when: >-
+      every issue from the run has a verdict comment and a src: label, the crew-vault commit holds
+      the filed Ideas and lints clean, and the Instagram reel's fetch line names its level (L1 to
+      L4); I tell Léon which shares failed to fetch and why
+    note: >-
+      Gated on mt-inbox-acceptance (Léon shares the four test links, then runs /inbox). Task 5 of
+      docs/superpowers/plans/2026-11-25-share-inbox-v0.md.
+    paths:
+      - /home/leon-new/Projects/claude-env/docs/superpowers/plans/2026-11-25-share-inbox-v0.md
+      - /home/leon-new/Projects/claude-env/modules/home/skills/inbox/SKILL.md
+  - id: ct-inbox-files-live-check
+    text: >-
+      Prove a picture and an audio recording reach crew-vault from the real phone and that
+      /inbox files both
+    status: blocked
+    done_when: >-
+      a shared photo and a voice note each exist under inbox-files/ in crew-vault with an issue
+      pointing at them, /inbox described the picture and transcribed the audio, and both show as
+      Filed or Judged on the page; the test files are then deleted from the repo
+    note: >-
+      Built and browser-tested on 2026-11-26 against a mocked GitHub only. Gated on
+      mt-inbox-token-contents (the token cannot store files until Contents is granted) and
+      mt-inbox-update-phone (the phone has to pick up the new share target).
+    paths:
+      - /home/leon-new/Projects/claude-env/share-app/files.js
+      - /home/leon-new/Projects/claude-env/share-app/sw.js
+  - id: ct-inbox-asian-fetch
+    text: >-
+      Measure logged-out fetching for Xiaohongshu, Douyin, Weibo, WeChat, Zhihu and Bilibili and
+      replace the UNVERIFIED notes in the fetch recipes with what was measured
+    status: blocked
+    done_when: >-
+      fetch.md names, per platform, which path worked (oEmbed, meta tags, Jina, share text only)
+      and how much text it returned, from real shares and not from guesses
+    note: >-
+      Léon reports that LinkedIn, Douyin and Weibo shares reach the page and are filed under the
+      right category; whether /inbox can read their content is unmeasured. Gated on
+      mt-inbox-acceptance, which is the first real /inbox run.
+  - id: ct-inbox-wrapup
+    text: >-
+      Wrap up the share inbox build: list the rulings I made, delete the workspace, finish the
+      branch
+    status: blocked
+    done_when: >-
+      .superpowers/sdd/2026-11-25-share-inbox-v0 is gone, the rulings and deferred minors are
+      listed for Léon, and docs/project-state.yaml share-inbox remaining reflects v1 only
+    note: >-
+      Gated on ct-inbox-acceptance-check. Also refresh the share-inbox feature's remaining text,
+      which still describes the pre-field-test state (project-status owns that field).
+  - id: ct-inbox-v1
+    text: >-
+      Share inbox v1: iPhone Shortcut for Almar and Ryan, a cloud routine so the laptop can be
+      off, TikTok slideshows via gallery-dl, and video files from the phone
+    status: later
+    done_when: >-
+      each item is either built and tested or has a written reason it was dropped
+    note: >-
+      Deliberately deferred. Needs mt-inbox-org first (tokens for the other three). Video files
+      exceed the 20 MB cap of the contents API, so they need the git data API or a different
+      store; decide when someone actually wants to send one.
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
@@ -1699,6 +1765,75 @@ my_todos:
       on 23 Nov (mt-personal-servers). obsidian is already live in ~/.claude.json with exactly
       that config, so keeping the edit changes nothing at the switch. Its unpinned npx package is
       a fair flag, and it is ct-pin-obsidian-mcp rather than a reason to hold the inbox.
+      .
+      Done in practice on 2026-11-25 (wrangler logged in, token made, app installed and field-tested
+      on the Pixel): tick the box in My Todos.
+  - id: mt-inbox-nh-switch
+    text: >-
+      Run nh os switch /etc/nixos so /inbox learns the new file recipes and platform arguments
+    owner: leon
+    why_yours: >-
+      a switch needs your sudo password, and it is an action on your own machine
+    guide: claude-env-inbox-nh-switch
+    status: open
+    added: 2026-11-26
+    note: >-
+      Already built (nh os build, 2026-11-26), so the switch is quick. Without it /inbox still
+      runs the 25 Nov skill: no file recipes, no /inbox weibo style filter, no src: labels.
+  - id: mt-inbox-token-contents
+    text: >-
+      Give your crew-vault token Contents read and write permission, so pictures and audio can be
+      uploaded
+    owner: leon
+    why_yours: >-
+      a credential in your GitHub account that no session should hold
+    guide: claude-env-inbox-token-contents
+    status: open
+    added: 2026-11-26
+    note: >-
+      Editing the permission keeps the same token string, so nothing is pasted again on the
+      phone. Until this is done, a picture or audio upload answers 403 and tells you why.
+  - id: mt-inbox-update-phone
+    text: >-
+      Update the Crew inbox app on the Pixel, then test the paste box, a RedNote link, a picture
+      and a voice recording
+    owner: leon
+    why_yours: >-
+      it happens on your phone, which only you can touch
+    guide: claude-env-inbox-update-phone
+    status: open
+    added: 2026-11-26
+    note: >-
+      The page updates itself on the next open; the share menu entry for pictures and audio only
+      appears once Android refreshes the installed app (up to a day), so the guide includes the
+      reinstall that forces it.
+  - id: mt-inbox-acceptance
+    text: >-
+      Run the share inbox acceptance test: share a TikTok, a repo, a website twice and an
+      Instagram reel, then run /inbox
+    owner: both
+    why_yours: >-
+      the shares come from your phone and /inbox is a command you start in your own session
+    guide: claude-env-inbox-acceptance
+    status: open
+    added: 2026-11-26
+    note: >-
+      Task 5 of the v0 plan. Also try /inbox weibo and a RedNote link. After it, tell Claude and
+      ct-inbox-acceptance-check runs.
+  - id: mt-inbox-org
+    text: >-
+      Create a free GitHub organization for the crew and move crew-vault into it, when the other
+      three want in
+    owner: leon
+    why_yours: >-
+      creating an organization and choosing who is invited is an account-level decision of yours
+    guide: claude-env-inbox-org
+    status: open
+    added: 2026-11-26
+    note: >-
+      v1, not needed for your own use. Fine-grained tokens for Kish, Almar and Ryan need the
+      repository to live in an organization they belong to. Moving the repo changes the REPO
+      constant in share-app/app.js, which Claude updates.
 questions:
   - id: q-mcp-philosophy
     question: >-
