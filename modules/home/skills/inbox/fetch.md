@@ -132,6 +132,10 @@ there is to judge. Then try, in order, and stop at the first that returns conten
 2. For Naver and Kakao video links, and Weibo, Douyin and Kuaishou videos: the TikTok video
    commands (yt-dlp). UNVERIFIED for these platforms: they change often and some demand a login,
    which this inbox never uses.
+   **Measured 2026-11-26, Weibo** (`video.weibo.com/show?fid=…`): page meta redirects to Sina's
+   visitor login wall and returns nothing, Jina returns page chrome with no caption, and yt-dlp
+   works logged out (its own anonymous guest session, no account cookies) and returns caption,
+   uploader, duration and view count. For Weibo, start with yt-dlp.
 
 `fetch: <platform> share text only | <platform> meta | <platform> yt-dlp+whisper`. Judge Chinese,
 Japanese and Korean text as it stands, and write the verdict comment in English.
