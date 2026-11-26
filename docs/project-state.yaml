@@ -17,15 +17,15 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-26T14:40"
+updated: "2026-11-26T15:30"
 suite:
   command: just test
   result: green
-  as_of: 2026-11-25
+  as_of: 2026-11-26
   note: >-
     Evaluates the home-manager module (base and blitsol) and the NixOS guard on nixpkgs 25.05 and
     26.05 (tests/eval-*), runs shellcheck over the eight packaged scripts, then the 65 guard
-    cases, 145 helper-script tests and, since 2026-11-25, the share app's node tests, and finally *builds* three things on each release: the
+    cases, 164 helper-script tests and, since 2026-11-25, the share app's node tests, and finally *builds* three things on each release: the
     base home-manager generation; the same module with every option on, which is the only thing
     that builds what sits behind an off-by-default flag (claude-mode, the six opt-in MCP
     servers); and the system guard's claude-guard script, reached by building the
@@ -276,19 +276,31 @@ features:
     note: >-
       Anything seen on a phone or laptop reaches Claude in one or two taps, is judged, and lands
       in crew-memory's Ideas store. Designed with Léon on 2026-11-25; the VPS receiver was
-      rejected for a Cloudflare Pages web app that files GitHub issues in the private crew-vault
-      repo, drained by a laptop-side /inbox skill.
+      rejected for a Cloudflare Pages web app (crew-share.pages.dev) that files GitHub issues in
+      the private crew-vault repo, drained by a laptop-side /inbox skill. Built and in daily use
+      since 2026-11-25: a page with a paste box, a history grouped by platform with time and
+      status per share, pictures and audio from the file picker or the phone's share menu, and
+      /inbox arguments such as /inbox weibo.
     remaining: >-
-      Plan tasks 1 to 4 are built: crew-memory accepts source inbox, crew-vault exists (private),
-      the share app and `just share` are committed with review fixes, and /inbox is declared in
-      skills.nix. Left: Léon's one-off setup from the plan (a fine-grained token for crew-vault
-      issues, wrangler login, installing the app on the Pixel, a rebuild so /inbox lands) and
-      Task 5's acceptance run of four real shares. The iPhone Shortcut is v1.
+      v0 is done and was run for real on 2026-11-26: 18 issues judged, 3 filed as Ideas. Open: three
+      shares (two RedNote, one Douyin) wait on a caption from Léon because those sites need a login,
+      and the question of whether /inbox may fetch their public share pages (q-inbox-login-wall-fetch)
+      is unanswered. Léon still has to run one more nh os switch for the login-wall rule, and to
+      confirm the phone's share menu offers pictures and audio. v1, deliberately later: iPhone
+      Shortcut, a GitHub organization so Kish, Almar and Ryan get tokens, the cloud routine, TikTok
+      slideshows, and video files from the phone (the upload method caps at 20 MB; decided on
+      2026-11-26 to wait until someone is blocked).
     paths:
       - /home/leon-new/Projects/claude-env/docs/superpowers/specs/2026-11-25-share-inbox-design.md
       - /home/leon-new/Projects/claude-env/docs/superpowers/plans/2026-11-25-share-inbox-v0.md
       - /home/leon-new/Projects/claude-env/share-app/index.html
+      - /home/leon-new/Projects/claude-env/share-app/ui.js
+      - /home/leon-new/Projects/claude-env/share-app/app.js
+      - /home/leon-new/Projects/claude-env/share-app/history.js
+      - /home/leon-new/Projects/claude-env/share-app/files.js
+      - /home/leon-new/Projects/claude-env/share-app/sw.js
       - /home/leon-new/Projects/claude-env/modules/home/skills/inbox/SKILL.md
+      - /home/leon-new/Projects/claude-env/modules/home/skills/inbox/fetch.md
     refs:
       - docs/superpowers/plans/2026-11-25-share-inbox-v0.md "What Léon does himself"
       - Jira WEB-4
@@ -592,19 +604,19 @@ facts:
     value: 65
     source: modules/system/claude-code/guard-test.sh
     source_kind: command
-    as_of: 2026-11-25
+    as_of: 2026-11-26
     note: >-
       All pass. 58 until 2026-11-20, when the force-push rule was scoped to the push command
       itself and seven cases were added around it. Recheck: just test-guard
   - key: helper_script_tests
-    value: 145
+    value: 164
     source: modules/home/scripts/tests.sh
     source_kind: command
-    as_of: 2026-11-25
+    as_of: 2026-11-26
     note: >-
       All pass. 17 on 2026-11-16, then +117 for claude-settings (the version gate), claude-mcp
       (the declarative server block) and claude-plugins-check, then +2 on 2026-11-21 for the two
-      shapes a declared skill arrives in, then +1 by 2026-11-25. Recheck: just test-scripts
+      shapes a declared skill arrives in, then +1 by 2026-11-25, then +19 by 2026-11-26 (vet ports from another session). Recheck: just test-scripts
 
   - key: switch_applied
     value: "2026-11-21T01:31"
@@ -714,6 +726,33 @@ facts:
     note: >-
       ~/Projects is itself a git checkout, so Nix treats claude-env as an untracked subtree:
       relative flake paths fail and `path:` URLs are needed until claude-env is its own repo.
+  - key: share_app_tests
+    value: 128
+    source: share-app/app.test.mjs
+    source_kind: command
+    as_of: 2026-11-26
+    note: >-
+      All pass: classify, buildIssue, sendShare, history, files and the caption comment, run by
+      just test. Recheck: node --test share-app/*.test.mjs 2>&1 | rg '^# pass'
+  - key: inbox_instagram_l1_success
+    value: 3 of 3
+    source: modules/home/skills/inbox/fetch.md
+    source_kind: measured
+    as_of: 2026-11-26
+    note: >-
+      Measured once, in the first full /inbox run: yt-dlp logged out read two reels (with
+      transcripts) and one carousel (caption). Means no throwaway account is needed yet; a bigger
+      sample could differ.
+  - key: inbox_login_walled_platforms
+    value: RedNote, Douyin, LinkedIn
+    source: modules/home/skills/inbox/fetch.md
+    source_kind: measured
+    as_of: 2026-11-26
+    note: >-
+      Measured once, logged out: RedNote redirects to a login page, Douyin answers 403 and wants
+      fresh cookies, LinkedIn shows an auth wall. Weibo reads fine through yt-dlp. These shares now
+      get needs-you and a caption box on the share page.
+
 claude_todos:
   - id: ct-coverage
     text: >-
@@ -1255,15 +1294,16 @@ claude_todos:
     text: >-
       Prove a picture and an audio recording reach crew-vault from the real phone and that
       /inbox files both
-    status: next
+    status: done
+    closed: 2026-11-26
     done_when: >-
       a shared photo and a voice note each exist under inbox-files/ in crew-vault with an issue
       pointing at them, /inbox described the picture and transcribed the audio, and both show as
       Filed or Judged on the page; the test files are then deleted from the repo
     note: >-
       Worked on 2026-11-26: Léon's photo (#36) and voice note (#37) reached inbox-files/ from the Pixel
-      and /inbox viewed the picture and transcribed the audio. Left: ask Léon whether to delete the two
-      test files from crew-vault (the photo shows a person). Earlier: built and browser-tested on 2026-11-26 against a mocked GitHub only. Gated on
+      and /inbox viewed the picture and transcribed the audio. Léon agreed on 2026-11-26 and both test files were
+      deleted from crew-vault (the photo stays in git history). Earlier: built and browser-tested on 2026-11-26 against a mocked GitHub only. Gated on
       mt-inbox-token-contents (the token cannot store files until Contents is granted) and
       mt-inbox-update-phone (the phone has to pick up the new share target).
     paths:
@@ -1279,7 +1319,8 @@ claude_todos:
       and how much text it returned, from real shares and not from guesses
     note: >-
       Measured 2026-11-26: Weibo works via yt-dlp; Xiaohongshu, Douyin and LinkedIn are login-walled
-      logged out (recorded in fetch.md). Left: Weibo-style check for WeChat, Zhihu, Bilibili, Kuaishou,
+      logged out (recorded in fetch.md). Login-walled shares now get needs-you plus a caption box on the page. Left: the open
+      question q-inbox-login-wall-fetch, then a Weibo-style check for WeChat, Zhihu, Bilibili, Kuaishou,
       Kakao, Naver when someone shares them, and decide whether a login-walled share should get
       needs-you instead of skipped. Earlier: Léon reports that LinkedIn, Douyin and Weibo shares reach the page and are filed under the
       right category; whether /inbox can read their content is unmeasured. Gated on
@@ -1288,7 +1329,7 @@ claude_todos:
     text: >-
       Wrap up the share inbox build: list the rulings I made, delete the workspace, finish the
       branch
-    status: blocked
+    status: next
     done_when: >-
       .superpowers/sdd/2026-11-25-share-inbox-v0 is gone, the rulings and deferred minors are
       listed for Léon, and docs/project-state.yaml share-inbox remaining reflects v1 only
@@ -1306,6 +1347,30 @@ claude_todos:
       Deliberately deferred. Needs mt-inbox-org first (tokens for the other three). Video files
       exceed the 20 MB cap of the contents API, so they need the git data API or a different
       store; decide when someone actually wants to send one.
+
+  - id: ct-inbox-caption-box
+    text: >-
+      Let a needs-you card on the share page take the caption directly
+    status: done
+    closed: 2026-11-26
+    done_when: >-
+      a needs-you card shows a box, Send posts the caption as an issue comment, and the card says it
+      was sent; tested in a real browser with a mocked GitHub and in 3 unit tests
+    paths:
+      - /home/leon-new/Projects/claude-env/share-app/history.js
+      - /home/leon-new/Projects/claude-env/share-app/ui.js
+  - id: ct-inbox-reprocess-walled
+    text: >-
+      Judge the three login-walled shares (#31, #33, #35) once their captions arrive or the fetch
+      question is answered
+    status: blocked
+    done_when: >-
+      each of the three has a verdict comment and either a filed Idea or skipped, and none is
+      left waiting on needs-you
+    note: >-
+      Gated on mt-inbox-answer-needs-you (Léon pastes captions) or q-inbox-login-wall-fetch
+      (Léon allows fetching the public share pages). They expire by themselves after 7 days.
+
 my_todos:
   - id: mt-mcp-philosophy
     text: >-
@@ -1790,7 +1855,8 @@ my_todos:
     status: open
     added: 2026-11-26
     note: >-
-      Already built (nh os build, 2026-11-26), so the switch is quick. Without it /inbox still
+      The first switch already ran (the /inbox weibo filter worked on 2026-11-26). Another is
+      needed for the login-wall rule pushed the same day; it is pre-built. Earlier: already built (nh os build, 2026-11-26), so the switch is quick. Without it /inbox still
       runs the 25 Nov skill: no file recipes, no /inbox weibo style filter, no src: labels.
   - id: mt-inbox-token-contents
     text: >-
@@ -1803,7 +1869,8 @@ my_todos:
     status: open
     added: 2026-11-26
     note: >-
-      Editing the permission keeps the same token string, so nothing is pasted again on the
+      Done in practice on 2026-11-26: a photo and a voice note uploaded from the phone. Tick the
+      box. Earlier: editing the permission keeps the same token string, so nothing is pasted again on the
       phone. Until this is done, a picture or audio upload answers 403 and tells you why.
   - id: mt-inbox-update-phone
     text: >-
@@ -1816,7 +1883,8 @@ my_todos:
     status: open
     added: 2026-11-26
     note: >-
-      The page updates itself on the next open; the share menu entry for pictures and audio only
+      Mostly done on 2026-11-26: the paste box and file uploads worked from the phone. Still to
+      confirm: that Crew inbox appears in the gallery's share list for pictures. Earlier: the page updates itself on the next open; the share menu entry for pictures and audio only
       appears once Android refreshes the installed app (up to a day), so the guide includes the
       reinstall that forces it.
   - id: mt-inbox-acceptance
@@ -1830,7 +1898,8 @@ my_todos:
     status: open
     added: 2026-11-26
     note: >-
-      Task 5 of the v0 plan. Also try /inbox weibo and a RedNote link. After it, tell Claude and
+      Done in practice on 2026-11-26: /inbox weibo and then /inbox ran on 18 real shares. Tick the
+      box. Earlier: Task 5 of the v0 plan. Also try /inbox weibo and a RedNote link. After it, tell Claude and
       ct-inbox-acceptance-check runs.
   - id: mt-inbox-org
     text: >-
@@ -1846,6 +1915,20 @@ my_todos:
       v1, not needed for your own use. Fine-grained tokens for Kish, Almar and Ryan need the
       repository to live in an organization they belong to. Moving the repo changes the REPO
       constant in share-app/app.js, which Claude updates.
+
+  - id: mt-inbox-answer-needs-you
+    text: >-
+      Paste captions for the three shares waiting on you (two RedNote, one Douyin), or leave them to expire
+    owner: leon
+    why_yours: >-
+      only you know what those three posts were about
+    guide: claude-env-inbox-needs-you
+    status: open
+    added: 2026-11-26
+    note: >-
+      Issues #31, #33 and #35. They close themselves after 7 days with no reply. The page now has a
+      box for this on each needs-you card, so it takes under a minute each.
+
 questions:
   - id: q-mcp-philosophy
     question: >-
@@ -2172,3 +2255,22 @@ questions:
       OpenRouter :free, NVIDIA or Cerebras. Public, non-secret material only; anything private or
       client-related stays off free tiers, since none of them offers a DPA. If Groq is not
       enough, a small paid Groq or Cloudflare plan is a deliberate purchase, not more free tiers.
+  - id: q-inbox-login-wall-fetch
+    question: >-
+      May /inbox fetch the public share page that a Douyin or RedNote link redirects to, logged out and with no cookies, to read the caption without asking you?
+    options:
+      - >-
+        No: keep needs-you and the caption box. Always works, costs the sharer one paste per share.
+      - >-
+        Yes for the page the link itself redirects to, with a plain curl and no cookies, trying Douyin's iesdouyin.com share page first. Zero effort for the sharer if it works; unmeasured, and the platform may still refuse.
+      - >-
+        Yes, and also use a mobile browser identity for it. Not recommended: it presents the request as something it is not.
+    recommendation: >-
+      Option 2, tried once on one Douyin link and kept only if it returns the caption. It is the page the
+      share link opens for any phone, and it needs no login. The permission system blocked my first attempt
+      because I sent an iPhone browser identity, so this needs your explicit yes and an honest user agent.
+    blocks: [ct-inbox-reprocess-walled, ct-inbox-asian-fetch]
+    blocks_note: >-
+      The two RedNote shares and the Douyin share cannot be judged without a caption, and the Asian
+      platform measurements stop at the login walls until this is decided.
+    answer: null
