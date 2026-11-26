@@ -172,3 +172,30 @@ test("fetchHistory: a token problem, a server problem and no network are told ap
   assert.equal(off.status, "error");
   assert.match(off.reason, /phone/);
 });
+
+// --- pasting a caption onto a share that needs one -------------------------------------------------------
+import { addComment } from "./history.js";
+test("addComment: one POST to the issue's comments with the text", async () => {
+  let seen;
+  const r = await addComment(async (url, init) => { seen = { url, init }; return { status: 201, json: async () => ({}) }; }, "tok", 31, "  the caption  ");
+  assert.equal(r.status, "sent");
+  assert.equal(seen.url, "https://api.github.com/repos/MrBlueStudios/crew-vault/issues/31/comments");
+  assert.equal(seen.init.method, "POST");
+  assert.deepEqual(JSON.parse(seen.init.body), { body: "the caption" });
+});
+test("addComment: an empty caption is refused before any request", async () => {
+  let n = 0;
+  const r = await addComment(async () => { n++; return { status: 201 }; }, "t", 1, "   ");
+  assert.equal(r.status, "error");
+  assert.equal(n, 0);
+});
+test("addComment: token, server and network problems are told apart", async () => {
+  const code = (status) => async () => ({ status, json: async () => ({}) });
+  assert.equal((await addComment(code(401), "t", 1, "x")).status, "auth");
+  assert.equal((await addComment(code(403), "t", 1, "x")).status, "auth");
+  assert.equal((await addComment(code(502), "t", 1, "x")).status, "retry");
+  assert.equal((await addComment(code(422), "t", 1, "x")).status, "error");
+  const off = await addComment(async () => { throw new TypeError("Failed to fetch"); }, "t", 1, "x");
+  assert.equal(off.status, "retry");
+  assert.match(off.reason, /phone/);
+});

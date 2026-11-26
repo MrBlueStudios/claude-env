@@ -98,7 +98,8 @@ Pick the recipe for the link's type from [fetch.md](fetch.md). Every recipe ends
 holding the URL, the title and description from the page's meta tags, whatever text, transcript
 or images it got, and one `fetch:` line naming the path that worked and what is missing. A thin
 bundle is still judged. A recipe can also end the issue's turn in this run: Instagram's L3/L4
-set a waiting label, and the issue goes on to step 5's summary.
+set a waiting label, and so does a login wall on any platform (`needs-you`, see fetch.md); the
+issue then goes on to step 5's summary.
 
 ## 4. Judge
 

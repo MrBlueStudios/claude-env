@@ -139,8 +139,12 @@ there is to judge. Then try, in order, and stop at the first that returns conten
    **Measured 2026-11-26, the others, logged out:** Xiaohongshu (`xhslink.cn`) redirects to a
    rednote.com login page, so meta and Jina return nothing. Douyin returns only page chrome and
    yt-dlp answers 403 "fresh cookies needed". LinkedIn profiles hit an auth wall (HTTP 999). For
-   these, judge the sharer's own text; with none, the issue is skipped and the comment asks for
-   the caption to be re-shared.
+   these, judge the sharer's own text if it carries a caption.
+   **A login wall is not a verdict.** With no caption in the share, set `needs-you` (remove
+   `inbox` and `retry`) and post exactly: `<Platform> needs a login to show this one. Paste the
+   caption or a description if you want it judged.` (the share page shows a box for it), and
+   write `fetch: <platform> login wall, needs-you`. Do not wait 24 hours first: a login wall does
+   not clear by itself.
 
 `fetch: <platform> share text only | <platform> meta | <platform> yt-dlp+whisper`. Judge Chinese,
 Japanese and Korean text as it stands, and write the verdict comment in English.

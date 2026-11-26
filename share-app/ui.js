@@ -1,7 +1,7 @@
 // The Crew inbox screen: a paste box, the shares by category, and how far each one got.
 import { buildIssue, sendShare, readToken, writeToken, savePending, loadPending, clearPending } from "./app.js";
 import { prepareFile, sendFile } from "./files.js";
-import { fetchHistory, groupShares, mergeLocal, entryFromIssue, ago, typeLabel, categoryLabel, categoryColor } from "./history.js";
+import { fetchHistory, addComment, groupShares, mergeLocal, entryFromIssue, ago, typeLabel, categoryLabel, categoryColor } from "./history.js";
 
 const $ = (id) => document.getElementById(id);
 function el(tag, cls, text) {
@@ -45,9 +45,40 @@ const clock = (iso) => {
 };
 const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; } };
 
+// Shares that got a caption from this phone, so the box doesn't come back before /inbox has read it.
+const CAP_KEY = "crewShareCaptioned";
+const captioned = () => { try { return JSON.parse(store.getItem(CAP_KEY)) || []; } catch { return []; } };
+
+function captionBox(e) {
+  const box = el("form", "caption");
+  if (captioned().includes(e.number)) { box.append(el("p", "note", "Caption sent ✓ Claude reads it on the next /inbox run.")); return box; }
+  const ta = el("textarea");
+  ta.id = `caption-${e.number}`;
+  ta.rows = 3;
+  ta.placeholder = "Paste the caption or a short description";
+  const label = el("label", null, "This one needs its caption, because the site asks for a login.");
+  label.htmlFor = ta.id;
+  const send = el("button", "primary", "Send caption");
+  send.type = "submit";
+  const msg = el("p", "note");
+  box.append(label, ta, send, msg);
+  box.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const r = await addComment(fetch, readToken(), e.number, ta.value);
+    if (r.status === "sent") {
+      try { store.setItem(CAP_KEY, JSON.stringify([...captioned(), e.number])); } catch {}
+      return render();
+    }
+    if (r.status === "auth") { writeToken(""); return showToken("GitHub refused the token. Paste a new one."); }
+    msg.textContent = r.reason;
+  });
+  return box;
+}
+
 function card(e, showAuthor) {
-  const node = e.href ? el("a", "card item") : el("div", "card item");
-  if (e.href) { node.href = e.href; node.target = "_blank"; node.rel = "noopener"; }
+  const needs = e.status.key === "needs-you";
+  const node = e.href && !needs ? el("a", "card item") : el("div", "card item");
+  if (e.href && !needs) { node.href = e.href; node.target = "_blank"; node.rel = "noopener"; }
   node.style.setProperty("--dot", categoryColor(e.platform));
   node.append(el("p", "title", e.title));
   if (e.url) node.append(el("p", "host", host(e.url)));
@@ -57,6 +88,7 @@ function card(e, showAuthor) {
   meta.append(el("span", `pill tone-${e.status.tone}`, e.status.label));
   if (showAuthor && e.author) meta.append(el("span", "who", e.author));
   node.append(meta);
+  if (needs) node.append(captionBox(e));
   return node;
 }
 

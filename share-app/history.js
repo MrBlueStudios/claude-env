@@ -95,3 +95,23 @@ export async function fetchHistory(fetchFn, token) {
   if (res.status !== 200) return { status: "error", reason: explain(res.status) };
   return { status: "ok", shares: (await res.json()).filter((i) => !i.pull_request).map(parseIssue) };
 }
+
+// A share that needs its caption (the site was behind a login) gets it as a comment, which /inbox reads.
+export async function addComment(fetchFn, token, number, text) {
+  const body = String(text ?? "").trim();
+  if (!body) return { status: "error", reason: "Type or paste the caption first." };
+  let res;
+  try {
+    res = await fetchFn(`https://api.github.com/repos/${REPO}/issues/${number}/comments`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+      body: JSON.stringify({ body }),
+    });
+  } catch (err) {
+    return { status: "retry", reason: `${explain("network")} (${err.message})` };
+  }
+  if (res.status === 201) return { status: "sent" };
+  if ([401, 403, 404].includes(res.status)) return { status: "auth" };
+  if (res.status === 429 || res.status >= 500) return { status: "retry", reason: explain(res.status) };
+  return { status: "error", reason: explain(res.status) };
+}
