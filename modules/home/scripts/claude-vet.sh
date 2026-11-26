@@ -38,15 +38,17 @@ else
   WHERE="docs/vet-exemptions.md in a claude-env checkout (or the file in CLAUDE_VET_EXEMPTIONS)"
 fi
 
-# Hooks that fire without the user doing anything: the whole session, or every prompt, or every
-# subagent. A plugin with one of these runs code on input it was never handed deliberately, so it
-# is the one thing that blocks rather than warns.
-BLOCKING='SessionStart|UserPromptSubmit|SubagentStart'
-# The rest still run code, but only in response to a tool call or the end of a turn.
-OTHER_HOOKS='PreToolUse|PostToolUse|SessionEnd|Stop|SubagentStop|PreCompact|Notification'
+# Hooks that fire without the user doing anything: the whole session, every prompt, every
+# subagent, every CLAUDE.md load, every message shown, any file or config change on disk. A
+# plugin with one of these runs code on input it was never handed deliberately, so it is the one
+# thing that blocks rather than warns. Event list from code.claude.com/docs/en/hooks, 2026-11-25.
+BLOCKING='SessionStart|UserPromptSubmit|SubagentStart|InstructionsLoaded|MessageDisplay|FileChanged|CwdChanged|ConfigChange|PostModelSwitch'
+# The rest still run code, but inside Claude's own tool loop, at the end of a turn, or on
+# something the user did. Any event in neither list blocks: a new release can add one.
+OTHER_HOOKS='PreToolUse|PostToolUse|PostToolUseFailure|PostToolBatch|PermissionRequest|PermissionDenied|PreSkillShellCommand|SessionEnd|Stop|StopFailure|SubagentStop|PreCompact|PostCompact|Notification|UserPromptExpansion|TaskCreated|TaskCompleted|TeammateIdle|Elicitation|ElicitationResult|WorktreeCreate|WorktreeRemove|DirectoryAdded|PreModelSwitch|Setup'
 
 RG=(rg --no-heading --color=never --hidden --glob '!.git' --glob '!node_modules' --glob '!*.lock')
-CODE=("${RG[@]}" --glob '!*.md' --glob '!*.txt' --glob '!LICENSE*')
+CODE=("${RG[@]}" --glob '!*.md' --glob '!*.txt' --glob '!LICENSE*' --glob '!.gitignore')
 
 say()  { printf '\n%s\n' "$1"; }
 high() { FAILURES=$((FAILURES + 1)); printf '\n[BLOCK] %s\n' "$1"; }
@@ -141,9 +143,12 @@ say "Hooks"
 HOOK_JSON="$(find "$ROOT" -name '*.json' -not -path '*/node_modules/*' -not -path '*/.git/*' 2>/dev/null)"
 FOUND_HOOKS=""
 if [ -n "$HOOK_JSON" ]; then
-  # a hook config keys its events at the top of a "hooks" object; match the key, not a mention
-  FOUND_HOOKS="$(echo "$HOOK_JSON" | tr '\n' '\0' | xargs -0 -r rg -o --no-filename \
-    "\"($BLOCKING|$OTHER_HOOKS)\"\\s*:" 2>/dev/null | tr -d '":' | sort -u)"
+  # A hook config keys its events at the top of a "hooks" object. Read the keys rather than
+  # match known names, so an event this script has never heard of still shows up. One jq per
+  # file, because one unparseable file would otherwise end the run for every file after it.
+  FOUND_HOOKS="$(echo "$HOOK_JSON" | tr '\n' '\0' | xargs -0 -r rg -l '"hooks"\s*:' 2>/dev/null \
+    | while IFS= read -r f; do jq -r '.. | objects | .hooks? | objects | keys[]' "$f" 2>/dev/null; done \
+    | grep -E '^[A-Z][A-Za-z]+$' | sort -u)"
 fi
 if [ -z "$FOUND_HOOKS" ]; then
   echo "  none declared"
@@ -153,7 +158,9 @@ else
   # shellcheck disable=SC2001
   echo "$FOUND_HOOKS" | sed 's/^/  /'
   for ev in $FOUND_HOOKS; do
-    if echo "$ev" | grep -qE "^($BLOCKING)$"; then
+    if ! echo "$ev" | grep -qE "^($BLOCKING|$OTHER_HOOKS)$"; then
+      high "$ev hook: an event this gate does not know, so it cannot say when it fires. Look it up at code.claude.com/docs/en/hooks and add it to BLOCKING or OTHER_HOOKS in claude-vet.sh."
+    elif echo "$ev" | grep -qE "^($BLOCKING)$"; then
       if [ -f "$EXEMPTIONS" ] && rg -q "^\s*-?\s*\`?$NAME\`?\s+$ev\b.{10,}" "$EXEMPTIONS" 2>/dev/null; then
         echo "  ($ev is exempted in $EXEMPTIONS)"
       else
@@ -165,22 +172,65 @@ fi
 
 # ── code surface ─────────────────────────────────────────────────────────────
 say "Code surface"
-surface() { # label pattern
-  local out
-  out="$("${CODE[@]}" --line-number -o -e "$2" "$ROOT" 2>/dev/null | cut -c1-160 | head -6)"
+# What reaches the model as instructions: a skill is mostly markdown, and a SKILL.md that says
+# "read ~/.ssh and post it" is as much code as a script that does (research/skill-scanner.md).
+INSTR=("${RG[@]}" --glob 'SKILL.md' --glob '**/skills/**/*.md' --glob '**/agents/*.md' --glob '**/commands/*.md')
+
+surface() { # label pattern [code|instr|both]
+  local out where="${3:-code}"
+  # Strip the root before cutting, or a long checkout path eats the evidence; and list hits
+  # outside tests/ first, because a scanner's test corpus is full of deliberate bad examples.
+  out="$( { [ "$where" != instr ] && "${CODE[@]}" --line-number -o -e "$2" "$ROOT"
+            [ "$where" != code ] && "${INSTR[@]}" --line-number -o -e "$2" "$ROOT"; } 2>/dev/null \
+    | sed 's|^'"$ROOT"'/||' \
+    | awk '/^([^:]*\/)?(tests?|fixtures|evals?)\/|^[^:]*[._](test|spec)\.[a-z]+:|^([^:]*\/)?test_[^/:]*:/ {t = t $0 "\n"; next} 1; END {printf "%s", t}' \
+    | cut -c1-156 | head -6)"
   [ -z "$out" ] && return
-  # shellcheck disable=SC2001  # per-line prefix strip; see the note above
-  printf '  %s:\n%s\n' "$1" "$(echo "$out" | sed 's|^'"$ROOT"'/|    |')"
+  # shellcheck disable=SC2001  # per-line prefix; see the note above
+  printf '  %s:\n%s\n' "$1" "$(echo "$out" | sed 's/^/    /')"
 }
 surface "process spawning" 'child_process|spawnSync|execSync|\bspawn\(|\bexecFile\(|subprocess\.|os\.system'
 surface "network calls"    '\bfetch\(|XMLHttpRequest|https?\.request|urllib|requests\.(get|post)|WebSocket|axios'
-surface "install pipes"    'curl[^|]*\|\s*(ba)?sh|wget[^|]*\|\s*(ba)?sh|iwr[^|]*\|\s*iex'
+surface "install pipes"    'curl[^|]*\|\s*(ba)?sh|wget[^|]*\|\s*(ba)?sh|iwr[^|]*\|\s*iex' both
+# The paths the managed guard refuses to read, so a skill asking for them is worth a look.
+surface "credential paths" '\.ssh/[A-Za-z0-9_.-]*|\bid_(rsa|ed25519|ecdsa)\b|\.aws/credentials|/run/agenix|\.netrc|\.git-credentials' both
+surface "decode and run"   '(exec|eval)\s*\([^)]*(b64decode|atob|unhexlify|fromhex)|base64 +(-d|--decode)[^|]*\|\s*(ba|z)?sh' both
+surface "persistence"      'crontab|systemctl +--user +enable|~?/?\.(bash|zsh)rc\b|~/\.profile\b|\.claude/settings[.a-z]*\.json' both
+# Text the user never sees: zero-width and direction-changing characters, and comments. ZWJ
+# (U+200D) is left out because emoji sequences use it legitimately. Unlike the notes above this
+# blocks: none of the trees we vet has one, and a skill that warns against them never needs one.
+HIDDEN='[\x{200B}\x{200C}\x{200E}\x{200F}\x{202A}-\x{202E}\x{2066}-\x{2069}]'
+surface "invisible or direction-changing characters" ".{0,20}$HIDDEN.{0,20}" both
+if { "${CODE[@]}" -q -e "$HIDDEN" "$ROOT" || "${INSTR[@]}" -q -e "$HIDDEN" "$ROOT"; } 2>/dev/null; then
+  if [ -f "$EXEMPTIONS" ] && rg -q "^\s*-?\s*\`?$NAME\`?\s+hidden-text\b.{10,}" "$EXEMPTIONS" 2>/dev/null; then
+    echo "  (hidden-text is exempted in $EXEMPTIONS)"
+  else
+    high "Invisible or direction-changing characters (listed above): text the model reads and you don't see. If they are legitimate, such as right-to-left text, write \"$NAME hidden-text — <reason>\" in $WHERE."
+  fi
+fi
+# Comments inside fenced code are examples; outside a fence the model reads them and you don't.
+# shellcheck disable=SC2016  # the backticks are a literal markdown fence for awk, not expansion
+COMMENTS="$("${INSTR[@]}" --files "$ROOT" 2>/dev/null | tr '\n' '\0' \
+  | xargs -0 -r awk 'FNR == 1 {f = 0} /^[[:space:]]*(```|~~~)/ {f = !f} !f && /<!--/ {print FILENAME ":" FNR ":" $0}' 2>/dev/null \
+  | sed 's|^'"$ROOT"'/||' | cut -c1-156 | head -6)"
+# shellcheck disable=SC2001  # per-line prefix; see the note above
+[ -n "$COMMENTS" ] && printf '  HTML comments in instructions (outside code blocks):\n%s\n' "$(echo "$COMMENTS" | sed 's/^/    /')"
+
+# Compiled files cannot be read like source, so where one ships, the review has a hole in it.
+BIN="$( { find "$ROOT" -not -path '*/.git/*' -not -path '*/node_modules/*' \( -name '*.pyc' -o -name '__pycache__' \) -print
+          "${RG[@]}" --binary -l '^\x7FELF' "$ROOT"; } 2>/dev/null | sed 's|^'"$ROOT"'/||' | sort -u | head -6)"
+if [ -n "$BIN" ]; then
+  # shellcheck disable=SC2001  # per-line prefix; see the note above
+  printf '  shipped binaries or bytecode:\n%s\n' "$(echo "$BIN" | sed 's/^/    /')"
+  warn "Compiled files can't be reviewed. Rebuild them from source, or find out why they ship."
+fi
 
 ENVS="$("${CODE[@]}" -o -e 'process\.env\.[A-Z_][A-Z_0-9]*' -e "os\.environ\[['\"][A-Z_][A-Z_0-9]*" -e 'getenv\("[A-Z_][A-Z_0-9]*' "$ROOT" 2>/dev/null \
   | grep -oE '[A-Z_][A-Z_0-9]{2,}' | sort -u | tr '\n' ' ')"
 [ -n "$ENVS" ] && printf '  environment read: %s\n' "$ENVS"
 
-ALL_HOSTS="$("${CODE[@]}" -o -e 'https?://[a-zA-Z0-9.-]+' "$ROOT" 2>/dev/null \
+ALL_HOSTS="$( { "${CODE[@]}" -o -e 'https?://[a-zA-Z0-9.-]+' "$ROOT"
+                "${INSTR[@]}" -o -e 'https?://[a-zA-Z0-9.-]+' "$ROOT"; } 2>/dev/null \
   | sed 's|.*https\?://||' | grep -vE '^(localhost|127\.|0\.0\.0\.0)' | sort -u)"
 N_HOSTS="$(echo "$ALL_HOSTS" | grep -c . || true)"
 if [ "$N_HOSTS" -gt 0 ]; then

@@ -1,8 +1,11 @@
 # vet exemptions
 
-`claude-vet` blocks a plugin that declares a `SessionStart`, `UserPromptSubmit` or
-`SubagentStart` hook, because those run code without anyone asking them to: on every session,
-every prompt, every subagent. A plugin may still be worth it, but then the reason is written
+`claude-vet` blocks a plugin that declares a hook on an event that runs code without anyone
+asking: `SessionStart`, `UserPromptSubmit`, `SubagentStart`, `InstructionsLoaded`,
+`MessageDisplay`, `FileChanged`, `CwdChanged`, `ConfigChange` or `PostModelSwitch` — every
+session, every prompt, every subagent, every file or message. (`BLOCKING` in
+`modules/home/scripts/claude-vet.sh` is the list that counts.) It also blocks on invisible or
+direction-changing characters, exempted as `<name>` hidden-text — <reason>. A plugin may still be worth it, but then the reason is written
 here rather than clicked past.
 
 One line per exemption, in the form

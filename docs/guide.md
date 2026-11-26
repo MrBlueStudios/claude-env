@@ -286,7 +286,11 @@ request, not a local exception.
 `claude-vet` looks at a plugin or skill tree before any of its code runs. It reports who wrote
 it, under what licence, which hooks it declares and on which events, every place it spawns a
 process or reaches the network, every environment variable it reads, and the tokens it would
-cost in every session from then on.
+cost in every session from then on. It also reads the skill, agent and command markdown,
+because that is what the model follows: credential paths, install pipes, addresses,
+persistence, hidden characters and HTML comments there are listed too, as are shipped binaries
+and `.pyc` files. These are notes to read, not blocks, and many are a skill warning *against*
+the thing (research/skill-scanner.md).
 
 **Run in: anywhere**
 
@@ -295,9 +299,12 @@ git clone --depth 1 https://github.com/someone/their-plugin /tmp/vet-me
 claude-vet /tmp/vet-me
 ```
 
-It exits non-zero on a hook bound to `SessionStart`, `UserPromptSubmit` or `SubagentStart` —
-the three that run without you asking — unless there is a written exemption with a reason in
-`docs/vet-exemptions.md`. Two things worth knowing about the output:
+It exits non-zero on a hook bound to an event that runs without you asking (`SessionStart`,
+`UserPromptSubmit`, `SubagentStart`, `InstructionsLoaded`, `MessageDisplay`, `FileChanged`,
+`CwdChanged`, `ConfigChange`, `PostModelSwitch`) unless there is a written exemption with a
+reason in `docs/vet-exemptions.md`, and on any event it does not recognise at all. It also
+blocks on invisible or direction-changing characters (zero-width spaces, bidi overrides),
+exemptable the same way as `<name> hidden-text — <reason>`. Two things worth knowing about the output:
 
 - **The star count is not evidence.** Several of the most-starred Claude Code repos have
   fork-to-star ratios well below what organic projects show, and AI tooling is the largest

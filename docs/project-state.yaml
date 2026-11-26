@@ -1215,7 +1215,7 @@ claude_todos:
     text: >-
       Port the skill-scanner findings into just vet: read markdown, list every hook event, fix
       the surface truncation, plus checks 11a to 11e
-    status: next
+    status: done
     done_when: >-
       The fixture from research/skill-scanner.md finding 8 (a SKILL.md naming ~/.ssh/id_ed25519,
       a URL, an HTML comment and a zero-width space) makes `just vet` block, a hook under an
@@ -1228,7 +1228,11 @@ claude_todos:
       From runbook card 2, filed 2026-11-25. Léon said to go with the recommendations, so the
       port list in finding 11 is taken as decided; finding 12 (LLM stage, AST/taint, YARA, OSV)
       stays out. Do this before ct-pin-obsidian-mcp, whose vet verdict is weaker while the gate
-      cannot read markdown.
+      cannot read markdown. Done 2026-11-26: the fixture blocks on its zero-width space, which is
+      now a block (hidden-text, exemptable). Credential paths, install pipes, URLs and comments in
+      markdown stay notes, because on brag and the inbox skill every hit is a warning against the
+      thing; blocking on them would have failed both. Hook events are read from the config, and
+      an unknown event blocks.
   - id: ct-inbox-acceptance-check
     text: >-
       Check the share inbox acceptance run: the six issues, the vault commit and which Instagram
