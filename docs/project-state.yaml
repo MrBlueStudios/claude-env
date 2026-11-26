@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-26T13:30"
+updated: "2026-11-26T14:40"
 suite:
   command: just test
   result: green
@@ -1237,13 +1237,16 @@ claude_todos:
     text: >-
       Check the share inbox acceptance run: the six issues, the vault commit and which Instagram
       fetch level worked
-    status: blocked
+    status: done
+    closed: 2026-11-26
     done_when: >-
       every issue from the run has a verdict comment and a src: label, the crew-vault commit holds
       the filed Ideas and lints clean, and the Instagram reel's fetch line names its level (L1 to
       L4); I tell Léon which shares failed to fetch and why
     note: >-
-      Gated on mt-inbox-acceptance (Léon shares the four test links, then runs /inbox). Task 5 of
+      Done 2026-11-26: Léon ran /inbox weibo and then /inbox; 18 issues judged, 3 filed as Ideas
+      (awesome-selfhosted, Artifacts install-as-app, Cloudflare Code Mode), Instagram L1 worked 3 of 3,
+      no throwaway account needed. Was gated on mt-inbox-acceptance (Léon shares the four test links, then runs /inbox). Task 5 of
       docs/superpowers/plans/2026-11-25-share-inbox-v0.md.
     paths:
       - /home/leon-new/Projects/claude-env/docs/superpowers/plans/2026-11-25-share-inbox-v0.md
@@ -1252,13 +1255,15 @@ claude_todos:
     text: >-
       Prove a picture and an audio recording reach crew-vault from the real phone and that
       /inbox files both
-    status: blocked
+    status: next
     done_when: >-
       a shared photo and a voice note each exist under inbox-files/ in crew-vault with an issue
       pointing at them, /inbox described the picture and transcribed the audio, and both show as
       Filed or Judged on the page; the test files are then deleted from the repo
     note: >-
-      Built and browser-tested on 2026-11-26 against a mocked GitHub only. Gated on
+      Worked on 2026-11-26: Léon's photo (#36) and voice note (#37) reached inbox-files/ from the Pixel
+      and /inbox viewed the picture and transcribed the audio. Left: ask Léon whether to delete the two
+      test files from crew-vault (the photo shows a person). Earlier: built and browser-tested on 2026-11-26 against a mocked GitHub only. Gated on
       mt-inbox-token-contents (the token cannot store files until Contents is granted) and
       mt-inbox-update-phone (the phone has to pick up the new share target).
     paths:
@@ -1268,12 +1273,15 @@ claude_todos:
     text: >-
       Measure logged-out fetching for Xiaohongshu, Douyin, Weibo, WeChat, Zhihu and Bilibili and
       replace the UNVERIFIED notes in the fetch recipes with what was measured
-    status: blocked
+    status: next
     done_when: >-
       fetch.md names, per platform, which path worked (oEmbed, meta tags, Jina, share text only)
       and how much text it returned, from real shares and not from guesses
     note: >-
-      Léon reports that LinkedIn, Douyin and Weibo shares reach the page and are filed under the
+      Measured 2026-11-26: Weibo works via yt-dlp; Xiaohongshu, Douyin and LinkedIn are login-walled
+      logged out (recorded in fetch.md). Left: Weibo-style check for WeChat, Zhihu, Bilibili, Kuaishou,
+      Kakao, Naver when someone shares them, and decide whether a login-walled share should get
+      needs-you instead of skipped. Earlier: Léon reports that LinkedIn, Douyin and Weibo shares reach the page and are filed under the
       right category; whether /inbox can read their content is unmeasured. Gated on
       mt-inbox-acceptance, which is the first real /inbox run.
   - id: ct-inbox-wrapup

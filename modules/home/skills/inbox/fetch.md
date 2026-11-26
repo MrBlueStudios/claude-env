@@ -136,6 +136,11 @@ there is to judge. Then try, in order, and stop at the first that returns conten
    visitor login wall and returns nothing, Jina returns page chrome with no caption, and yt-dlp
    works logged out (its own anonymous guest session, no account cookies) and returns caption,
    uploader, duration and view count. For Weibo, start with yt-dlp.
+   **Measured 2026-11-26, the others, logged out:** Xiaohongshu (`xhslink.cn`) redirects to a
+   rednote.com login page, so meta and Jina return nothing. Douyin returns only page chrome and
+   yt-dlp answers 403 "fresh cookies needed". LinkedIn profiles hit an auth wall (HTTP 999). For
+   these, judge the sharer's own text; with none, the issue is skipped and the comment asks for
+   the caption to be re-shared.
 
 `fetch: <platform> share text only | <platform> meta | <platform> yt-dlp+whisper`. Judge Chinese,
 Japanese and Korean text as it stands, and write the verdict comment in English.
@@ -145,6 +150,8 @@ Japanese and Korean text as it stands, and write the verdict comment in English.
 Climb the levels in order, stopping at the first that gives content. Record the level in the
 `fetch:` line, because these counts decide whether a throwaway account is ever worth it.
 
+- **Measured 2026-11-26:** L1 worked on 3 of 3 distinct links (two reels with transcripts, one
+  carousel caption), so no throwaway account is needed yet.
 - **L1. yt-dlp, logged out.** The TikTok commands with the Instagram URL. Add
   `--ignore-no-formats-error` (image carousels). `fetch: instagram L1 yt-dlp+whisper`
 - **L2. The public page, logged out.** Read the caption from the reel page's `og:description`,
