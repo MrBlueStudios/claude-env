@@ -55,7 +55,25 @@
    - Maintainer: an individual (Anil-matcha). The last push was 2026-11-24, with about 36k stars and 542 commits ([API](https://api.github.com/repos/Anil-matcha/Open-Higgsfield-AI)). The owner's other activity and funding are UNVERIFIED.
    - Fit: a front end for paid image and video APIs, which breaks the "pay only for Claude, domain, VPS" rule unless the crew uses local models on a GPU.
 
+## Blitsol's paid stack, checked against awesome-selfhosted (2026-11-27)
+
+Candidate list: [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) (inbox idea `awesome-selfhosted-candidate-list`). Sentry, Temporal Cloud, Langfuse, Metabase and WorkOS/Clerk are only *planned* in the Social-Media-automations ADRs (all Proposed), so a swap changes a plan, not a bill. Litestream already backs up to Cloudflare R2 (blitsol-prod-config `cc44adb`). The VPS has 8 GB and is shared.
+
+| Paid tool | Swap | Licence | NixOS module (laptop's 25.05) | Verdict |
+|---|---|---|---|---|
+| Sentry | GlitchTip | MIT | `services.glitchtip` exists | **Swap now**: 256-512 MB, Sentry SDKs work, only the DSN changes ([europeanpurpose](https://europeanpurpose.com/tool/glitchtip)) |
+| R2 for Litestream | Garage v2.x | AGPL-3.0 | `services.garage` exists | Only on a second machine: a backup on blitsol-prod is not a backup. v1.x is end-of-life ([release](https://garagehq.deuxfleurs.fr/blog/2026-11-webadmin-release/)) |
+| WorkOS/Clerk | Zitadel | AGPL-3.0 since v3, APIs Apache-2.0 | `services.zitadel` exists | Swap later, when auth is needed ([licence](https://zitadel.com/blog/apache-to-agpl)). Authentik has no module, only a community flake |
+| Metabase Cloud | Metabase | AGPL-3.0 | `services.metabase` exists | Swap later; JVM, about 1 GB (UNVERIFIED) |
+| Temporal Cloud | Temporal | MIT | absent in 25.05 (reportedly 25.11) | Keep paid: production route is Kubernetes, sized for 4 vCPU / 8 GB ([selfhostatlas](https://selfhostatlas.com/self-host/temporal)) |
+| Langfuse Cloud | Langfuse | MIT | absent | Keep paid: ClickHouse, Redis, web and worker want about 16 GiB ([scaling](https://langfuse.com/self-hosting/configuration/scaling)) |
+| Resend | Postal | MIT | absent | Keep paid: Contabo port 25 and shared-IP reputation are a real deliverability risk; sources disagree on the block ([mailtester](https://mailtester.com/blog/contabo-vps-port-25-email-reputation-problems/)) |
+| any S3 | MinIO | AGPL-3.0 | n/a | **Do not use**: community edition archived in 2026 ([glukhov](https://www.glukhov.org/data-infrastructure/object-storage/minio-dead/)) |
+
+Open for Léon: where Litestream backs up (stay on R2, or Garage on a second machine).
+
 ## Not checked
+- The Blitsol table's RAM figures for Metabase, Zitadel, Authentik and Postal, and the module list on 26.05 (only 25.05's `module-list.nix` was read).
 - nixpkgs was checked with `nix search` by name only, so a package under a different name would be missed. The OpenProject module may exist in a pending PR; the wiki's 26.11 date is unconfirmed.
 - The contents of Chatwoot's `enterprise/` folder, and which Chatwoot self-host features need the paid licence.
 - AppFlowy's self-host paid plan prices and the full text of its commercial licence.

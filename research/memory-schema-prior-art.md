@@ -24,6 +24,8 @@
 
 6. **Team knowledge-base write-ups** (e.g. the claude-code-ultimate-guide) converge on: a versioned markdown vault, a root index the agent always reads, ADRs under `engineering/adr/`, and git underneath. None has attempts or dead ends as a type; AgentsRoom has "pitfalls" as a category. [team-knowledge-base](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ecosystem/team-knowledge-base.md)
 
+7. **Karpathy's llm-wiki gist** (2026-04-04) — three layers: raw sources, an LLM-maintained wiki, and a schema file. Ingest updates an index and an append-only log; a periodic lint looks for contradictions, orphans and stale claims. The `outputs/` folder and the "RAG" label come from promoters, not from Karpathy. Reported failures: wrong pages that compound, index drift near 300 pages, ingest cost ([HN](https://news.ycombinator.com/item?id=47899844), [mpt.solutions](https://www.mpt.solutions/karpathys-llm-wiki-works-heres-what-broke-when-i-ran-it-at-real-scale/)). crew-memory maps on: four stores = wiki; inbox-files and `status: raw` = raw; INDEX = index; session-end spool = log; the dead-link warning in `lint` = the deterministic part of lint (no orphan check: store notes stand alone by design). [gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+
 **Does anything contradict the four-store split?** No. Prior art splits by *kind* (decision, fact, person, project) and ages by `last_reviewed` or `supersedes`; we split by *decay rate* and add explicit outcomes. The two are compatible: our `type` field carries the kind, our store carries the decay rule.
 
 ## Proposed schema
