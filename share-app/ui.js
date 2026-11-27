@@ -55,8 +55,8 @@ function captionBox(e) {
   const ta = el("textarea");
   ta.id = `caption-${e.number}`;
   ta.rows = 3;
-  ta.placeholder = "Paste the caption or a short description";
-  const label = el("label", null, "This one needs its caption, because the site asks for a login. Next time use the app's Share button, not Copy link: it sends the title along.");
+  ta.placeholder = "One sentence on what the post is about";
+  const label = el("label", null, "The site asks for a login, so Claude cannot see this post. Describe it in one sentence. Next time use the app's Share button, not Copy link: it sends the title along.");
   label.htmlFor = ta.id;
   const send = el("button", "primary", "Send caption");
   send.type = "submit";

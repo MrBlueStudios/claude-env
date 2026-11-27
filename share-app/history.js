@@ -27,7 +27,7 @@ export function statusOf(labels, state) {
   if (has("todo")) return { key: "todo", label: "Filed · idea saved", tone: "good" };
   if (has("skipped")) return { key: "skipped", label: "Judged: not worth it", tone: "muted" };
   if (has("expired")) return { key: "expired", label: "Expired, no reply", tone: "muted" };
-  if (has("needs-you")) return { key: "needs-you", label: "Needs you: paste the caption", tone: "warn" };
+  if (has("needs-you")) return { key: "needs-you", label: "Needs you: describe it", tone: "warn" };
   if (has("retry")) return { key: "retry", label: "Claude is retrying the fetch", tone: "warn" };
   if (state === "closed") return { key: "done", label: "Done", tone: "muted" };
   return { key: "waiting", label: "Sent · waiting for Claude", tone: "info" };
@@ -99,7 +99,7 @@ export async function fetchHistory(fetchFn, token) {
 // A share that needs its caption (the site was behind a login) gets it as a comment, which /inbox reads.
 export async function addComment(fetchFn, token, number, text) {
   const body = String(text ?? "").trim();
-  if (!body) return { status: "error", reason: "Type or paste the caption first." };
+  if (!body) return { status: "error", reason: "Type a sentence about the post first." };
   let res;
   try {
     res = await fetchFn(`https://api.github.com/repos/${REPO}/issues/${number}/comments`, {
