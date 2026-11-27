@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-27T15:00"
+updated: "2026-11-27T17:00"
 suite:
   command: just test
   result: green
@@ -1371,6 +1371,20 @@ claude_todos:
     note: >-
       Léon chose to skip all old test shares on 2026-11-27, so #31, #33 and #35 were closed as
       skipped. Nothing is waiting on needs-you.
+  - id: ct-statusline-cache-countdown
+    text: >-
+      Add a prompt-cache countdown to the status line
+    status: done
+    closed: 2026-11-27
+    done_when: >-
+      the status line shows "cache 58m" after the ctx segment, counts down, and reads "cache cold" once
+      the cache has expired; 3 cases plus a no-transcript case in modules/home/scripts/tests.sh
+    paths:
+      - /home/leon-new/Projects/claude-env/modules/home/scripts/claude-statusline.py
+      - /home/leon-new/Projects/claude-env/modules/home/scripts/tests.sh
+    note: >-
+      From the shared reel in #57 (inbox run of 2026-11-27). The length comes from the transcript's
+      cache_creation buckets, 1 h or 5 min. Reaches the laptop through mt-statusline-switch.
 
 my_todos:
   - id: mt-mcp-philosophy
@@ -1890,7 +1904,8 @@ my_todos:
     added: 2026-11-26
     note: >-
       Mostly done on 2026-11-26: the paste box and file uploads worked from the phone. On
-      2026-11-27 Léon saw the page update with the new wording. Still to confirm: that Crew inbox appears in the gallery's share list for pictures. Earlier: the page updates itself on the next open; the share menu entry for pictures and audio only
+      2026-11-27 Léon saw the page update with the new wording and said sharing now works from the
+      gallery after a reinstall; only the checkbox is left. Still to confirm: that Crew inbox appears in the gallery's share list for pictures. Earlier: the page updates itself on the next open; the share menu entry for pictures and audio only
       appears once Android refreshes the installed app (up to a day), so the guide includes the
       reinstall that forces it.
   - id: mt-inbox-acceptance
@@ -1936,6 +1951,15 @@ my_todos:
     note: >-
       Obsolete: Léon had #31, #33 and #35 closed as skipped on 2026-11-27 (early test shares). Tick
       the box. Future needs-you cards ask for one sentence on what the post is about.
+  - id: mt-statusline-switch
+    text: >-
+      Pick up the prompt-cache countdown in your status line: update the claude-env input and run nh os switch
+    owner: leon
+    why_yours: >-
+      a switch needs your sudo password, and it is an action on your own machine
+    guide: claude-env-statusline-switch
+    status: open
+    added: 2026-11-27
 
 questions:
   - id: q-mcp-philosophy

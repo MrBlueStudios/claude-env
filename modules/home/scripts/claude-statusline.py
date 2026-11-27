@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Claude Code status line.
 
-    ◆ Opus · high │ nix-config@main │ ctx 42% of 1M · 420k │ $1.23 · 512k tok │ today $4.56 · 2.1M tok
+    ◆ Opus · high │ nix-config@main │ ctx 42% of 1M · 420k │ cache 47m │ $1.23 · 512k tok │ today $4.56 · 2.1M tok
 
 Reads the status-line JSON on stdin (https://code.claude.com/docs/en/statusline). A missing field
 hides its segment; nothing here may crash the prompt, so every failure degrades to less output.
@@ -109,6 +109,44 @@ def session_tokens(transcript, sid):
         json.dump(st, fh)
     os.replace(tmp, state_path)
     return st["tokens"]
+
+
+def cache_left(transcript, now=None):
+    """Seconds until the prompt cache goes cold, or None when the transcript says nothing.
+
+    Every reply refreshes the cache, so the clock starts at the last assistant line. Its length is
+    the bucket the latest cache write landed in (1 h or 5 min); with no write in the tail, 5 min.
+    """
+    if not transcript or not os.path.isfile(transcript):
+        return None
+    with open(transcript, "rb") as fh:
+        start = max(0, os.path.getsize(transcript) - 262144)
+        fh.seek(start)
+        lines = fh.read().splitlines()[1 if start else 0 :]  # a tail read may cut the first line
+    last, ttl = None, 300
+    for line in reversed(lines):
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        msg = entry.get("message") if isinstance(entry, dict) else None
+        usage = msg.get("usage") if isinstance(msg, dict) else None
+        if entry.get("type") != "assistant" or not isinstance(usage, dict):
+            continue
+        if last is None:
+            last = entry.get("timestamp")
+        buckets = usage.get("cache_creation") or {}
+        if buckets.get("ephemeral_1h_input_tokens") or buckets.get("ephemeral_5m_input_tokens"):
+            ttl = 3600 if buckets.get("ephemeral_1h_input_tokens") else 300
+            break
+    if not last:
+        return None
+    try:
+        sent = datetime.datetime.fromisoformat(last.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    now = now or datetime.datetime.now(datetime.timezone.utc)
+    return ttl - (now - sent).total_seconds()
 
 
 def update_ledger(sid, cost, tokens, project):
@@ -225,6 +263,17 @@ def main():
         if in_ctx:
             text += f" {DIM}·{RST} {human(in_ctx)}"
         segments.append(text)
+
+    try:
+        left = cache_left(data.get("transcript_path"))
+    except OSError:
+        left = None
+    if left is not None:
+        if left <= 0:
+            segments.append(f"{DIM}cache cold{RST}")
+        else:
+            colour = GREEN if left >= 600 else AMBER if left >= 60 else RED
+            segments.append(f"{colour}cache {max(1, int(left // 60 + 1))}m{RST}")
 
     if cost is not None or tokens:
         parts = [f"{SKY}${cost:.2f}{RST}"] if cost is not None else []

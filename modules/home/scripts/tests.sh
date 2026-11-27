@@ -562,5 +562,20 @@ for d in "$SKILL_SRC"/*/; do
   fi
 done
 
+# ── statusline: prompt-cache countdown ───────────────────────────────────────
+# The countdown is read from the transcript: the last assistant line's timestamp, and which cache
+# bucket (1 h or 5 min) the latest cache write landed in.
+statusline() {  # $1 = minutes since last reply, $2 = ephemeral_1h tokens, $3 = ephemeral_5m tokens
+  local ts t="$TMP/t.jsonl"
+  ts="$(date -u -d "$1 minutes ago" +%Y-%m-%dT%H:%M:%S.000Z)"
+  printf '{"type":"assistant","timestamp":"%s","message":{"id":"m1","usage":{"input_tokens":1,"output_tokens":1,"cache_creation_input_tokens":5,"cache_creation":{"ephemeral_1h_input_tokens":%s,"ephemeral_5m_input_tokens":%s}}}}\n' "$ts" "$2" "$3" > "$t"
+  printf '{"session_id":"s-%s-%s","transcript_path":"%s"}' "$1" "$2" "$t" \
+    | XDG_STATE_HOME="$TMP/state" python3 "$HERE/claude-statusline.py" 2>&1
+}
+assert_contains "cache: 1h bucket, 10 min ago, 50m left" "cache 50m" "$(statusline 10 5 0)"
+assert_contains "cache: 5m bucket, 2 min ago, 3m left"   "cache 3m"  "$(statusline 2 0 5)"
+assert_contains "cache: 5m bucket, 10 min ago, cold"     "cache cold" "$(statusline 10 0 5)"
+assert_lacks    "cache: no transcript, no segment" "cache" "$(echo '{"session_id":"x"}' | XDG_STATE_HOME="$TMP/state" python3 "$HERE/claude-statusline.py")"
+
 printf 'claude helper script tests: %d passed, %d failed\n' "$pass" "$fail"
 [[ "$fail" -eq 0 ]]
