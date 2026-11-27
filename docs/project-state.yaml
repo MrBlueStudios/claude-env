@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-27T14:00"
+updated: "2026-11-27T15:00"
 suite:
   command: just test
   result: green
@@ -1832,7 +1832,8 @@ my_todos:
     owner: leon
     why_yours: a browser login and a credential, both in your own accounts
     guide: claude-env-inbox-guide-a
-    status: open
+    status: done
+    closed: 2026-11-27
     added: 2026-11-25
     note: >-
       The share-inbox session (Opus 5.5) is idle waiting on this; Guide B (installing the app on
@@ -1870,7 +1871,8 @@ my_todos:
     why_yours: >-
       a credential in your GitHub account that no session should hold
     guide: claude-env-inbox-token-contents
-    status: open
+    status: done
+    closed: 2026-11-27
     added: 2026-11-26
     note: >-
       Done in practice on 2026-11-26: a photo and a voice note uploaded from the phone. Tick the
@@ -1899,7 +1901,8 @@ my_todos:
     why_yours: >-
       the shares come from your phone and /inbox is a command you start in your own session
     guide: claude-env-inbox-acceptance
-    status: open
+    status: done
+    closed: 2026-11-27
     added: 2026-11-26
     note: >-
       Done in practice on 2026-11-26: /inbox weibo and then /inbox ran on 18 real shares. Tick the
