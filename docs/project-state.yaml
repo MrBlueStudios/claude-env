@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-27T10:00"
+updated: "2026-11-27T14:00"
 suite:
   command: just test
   result: green
@@ -1363,13 +1363,14 @@ claude_todos:
     text: >-
       Judge the three login-walled shares (#31, #33, #35) once their captions arrive or the fetch
       question is answered
-    status: blocked
+    status: done
+    closed: 2026-11-27
     done_when: >-
       each of the three has a verdict comment and either a filed Idea or skipped, and none is
       left waiting on needs-you
     note: >-
-      Gated on mt-inbox-answer-needs-you (Léon pastes captions) or q-inbox-login-wall-fetch
-      (Léon allows fetching the public share pages). They expire by themselves after 7 days.
+      Léon chose to skip all old test shares on 2026-11-27, so #31, #33 and #35 were closed as
+      skipped. Nothing is waiting on needs-you.
 
 my_todos:
   - id: mt-mcp-philosophy
@@ -1852,9 +1853,12 @@ my_todos:
     why_yours: >-
       a switch needs your sudo password, and it is an action on your own machine
     guide: claude-env-inbox-nh-switch
-    status: open
+    status: done
     added: 2026-11-26
+    closed: 2026-11-27
     note: >-
+      Léon ran the switch on 2026-11-27, so the login-wall and one-sentence rules are live. Tick
+      the box. Earlier: 
       The first switch already ran (the /inbox weibo filter worked on 2026-11-26). Another is
       needed for the login-wall rule pushed the same day; it is pre-built. Earlier: already built (nh os build, 2026-11-26), so the switch is quick. Without it /inbox still
       runs the 25 Nov skill: no file recipes, no /inbox weibo style filter, no src: labels.
@@ -1883,8 +1887,8 @@ my_todos:
     status: open
     added: 2026-11-26
     note: >-
-      Mostly done on 2026-11-26: the paste box and file uploads worked from the phone. Still to
-      confirm: that Crew inbox appears in the gallery's share list for pictures. Earlier: the page updates itself on the next open; the share menu entry for pictures and audio only
+      Mostly done on 2026-11-26: the paste box and file uploads worked from the phone. On
+      2026-11-27 Léon saw the page update with the new wording. Still to confirm: that Crew inbox appears in the gallery's share list for pictures. Earlier: the page updates itself on the next open; the share menu entry for pictures and audio only
       appears once Android refreshes the installed app (up to a day), so the guide includes the
       reinstall that forces it.
   - id: mt-inbox-acceptance
@@ -1923,11 +1927,12 @@ my_todos:
     why_yours: >-
       only you know what those three posts were about
     guide: claude-env-inbox-needs-you
-    status: open
+    status: done
     added: 2026-11-26
+    closed: 2026-11-27
     note: >-
-      Issues #31, #33 and #35. They close themselves after 7 days with no reply. The page now has a
-      box for this on each needs-you card, so it takes under a minute each.
+      Obsolete: Léon had #31, #33 and #35 closed as skipped on 2026-11-27 (early test shares). Tick
+      the box. Future needs-you cards ask for one sentence on what the post is about.
 
 questions:
   - id: q-mcp-philosophy
