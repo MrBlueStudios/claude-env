@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-26T15:30"
+updated: "2026-11-27T10:00"
 suite:
   command: just test
   result: green
@@ -2269,8 +2269,13 @@ questions:
       Option 2, tried once on one Douyin link and kept only if it returns the caption. It is the page the
       share link opens for any phone, and it needs no login. The permission system blocked my first attempt
       because I sent an iPhone browser identity, so this needs your explicit yes and an honest user agent.
-    blocks: [ct-inbox-reprocess-walled, ct-inbox-asian-fetch]
+    blocks: []
     blocks_note: >-
       The two RedNote shares and the Douyin share cannot be judged without a caption, and the Asian
       platform measurements stop at the login walls until this is decided.
-    answer: null
+    answer: >-
+      Léon chose option 2 on 2026-11-27, then asked for a platform-terms check first. One honest
+      curl on a Douyin link returned only a JavaScript anti-bot challenge, no caption, and
+      RedNote's robots.txt disallows generic crawlers, so neither route is both working and within
+      the platforms' rules. Outcome: keep needs-you and the caption box; no fetching of Douyin or
+      RedNote. Open follow-up: use the title the share sheet already carries as the caption.
