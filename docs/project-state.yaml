@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-28T01:00"
+updated: "2026-11-28T06:00"
 suite:
   command: just test
   result: green
@@ -1169,6 +1169,11 @@ claude_todos:
       security-audit, design-review, site-analytics vendored into modules/home/skills/, with
       site-analytics taking its domains from an option); this is the completeness pass that stops
       a friend's first real job failing on a skill that only exists on this laptop.
+    progress: >-
+      2026-11-28: the migration half is done. legal-audit, security-audit and design-review are
+      vendored and declared (vet clean). site-analytics stays personal: it holds the production
+      host and account ids, which claude-env (public) must not carry. Left: the walk of the six
+      jobs against the declared list.
   - id: ct-guard-refspec
     text: >-
       Fix the force-push rule's false positives: it read the whole command string, so an ordinary
@@ -1212,7 +1217,8 @@ claude_todos:
     text: >-
       Write an on-demand "own words" skill that restates Léon's intent after a brain dump and
       waits for his yes before doing anything
-    status: next
+    status: done
+    closed: 2026-11-28
     done_when: >-
       The skill is declared in the flake, its description says it only runs when asked so it
       never auto-triggers, and `just test` is green
@@ -1227,7 +1233,7 @@ claude_todos:
     text: >-
       Compare a 30-item app-performance checklist from a reel against the performance-optimization
       skill and add what is missing and fits the stack
-    status: next
+    status: blocked
     done_when: >-
       Every checklist item is marked covered, added, or not applicable to SvelteKit 5 / FastAPI /
       SQLite WAL / Caddy / Cloudflare, and only the missing applicable ones were added
@@ -1236,10 +1242,13 @@ claude_todos:
     note: >-
       From an Instagram reel, ranked 2026-11-25. No research needed; the list is in the reel's
       transcript, which Léon pasted into the 2026-11-25 session.
+    waiting_on: >-
+      The reel's checklist text. It is not in any transcript on this machine (searched
+      2026-11-28); Léon re-shares the reel to the crew inbox and /inbox transcribes it.
   - id: ct-pin-obsidian-mcp
     text: >-
       Vet @bitbonsai/mcpvault and pin the obsidian personal server to an exact npm version
-    status: next
+    status: blocked
     done_when: >-
       `just vet` has been run on the package's tarball with its verdict written down, and
       users/leon-new.nix names `@bitbonsai/mcpvault@<exact version>` instead of the bare name, so
@@ -1250,6 +1259,7 @@ claude_todos:
       Flagged by the share-inbox session on 2026-11-25 while it checked /etc/nixos before a
       switch. The server has run unpinned since 23 Nov. It is Léon's personal config, so the edit
       is a proposed diff for him to apply, not one made in /etc/nixos headlessly.
+    waiting_on: Léon applies the one-line pin (mt-pin-obsidian-mcp); vetted 2026-11-28, 0.18.4, MIT, no install scripts, vet clean
   - id: ct-vet-scanner-ports
     text: >-
       Port the skill-scanner findings into just vet: read markdown, list every hook event, fix
@@ -1313,7 +1323,7 @@ claude_todos:
     text: >-
       Measure logged-out fetching for Xiaohongshu, Douyin, Weibo, WeChat, Zhihu and Bilibili and
       replace the UNVERIFIED notes in the fetch recipes with what was measured
-    status: next
+    status: blocked
     done_when: >-
       fetch.md names, per platform, which path worked (oEmbed, meta tags, Jina, share text only)
       and how much text it returned, from real shares and not from guesses
@@ -1325,6 +1335,9 @@ claude_todos:
       needs-you instead of skipped. Earlier: Léon reports that LinkedIn, Douyin and Weibo shares reach the page and are filed under the
       right category; whether /inbox can read their content is unmeasured. Gated on
       mt-inbox-acceptance, which is the first real /inbox run.
+    waiting_on: >-
+      Permission. On 2026-11-28 the auto-mode classifier refused the logged-out Bilibili and
+      Zhihu probes (yt-dlp, curl, Jina) as unauthorized access; Léon decides whether to allow them.
   - id: ct-inbox-wrapup
     text: >-
       Wrap up the share inbox build: list the rulings I made, delete the workspace, finish the
@@ -1977,6 +1990,20 @@ my_todos:
     guide: claude-env-decision-mcps
     status: open
     added: 2026-11-27
+  - id: mt-pin-obsidian-mcp
+    text: Pin the obsidian MCP server to @bitbonsai/mcpvault@0.18.4 in /etc/nixos/users/leon-new.nix
+    owner: leon
+    why_yours: an edit to his own /etc/nixos config
+    guide: claude-env-pin-obsidian-mcp
+    status: open
+    added: 2026-11-28
+  - id: mt-skills-switch
+    text: Pick up four new skills (own-words, legal-audit, security-audit, design-review) and vat-check with one switch
+    owner: leon
+    why_yours: an action on the harness (system switch), plus removing three old symlinks
+    guide: claude-env-skills-switch
+    status: open
+    added: 2026-11-28
 questions:
   - id: q-mcp-philosophy
     question: >-
