@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-27T17:00"
+updated: "2026-11-28T00:30"
 suite:
   command: just test
   result: green
@@ -1900,7 +1900,7 @@ my_todos:
     why_yours: >-
       it happens on your phone, which only you can touch
     guide: claude-env-inbox-update-phone
-    status: open
+    status: done
     added: 2026-11-26
     note: >-
       Mostly done on 2026-11-26: the paste box and file uploads worked from the phone. On
@@ -1908,6 +1908,7 @@ my_todos:
       gallery after a reinstall; only the checkbox is left. Still to confirm: that Crew inbox appears in the gallery's share list for pictures. Earlier: the page updates itself on the next open; the share menu entry for pictures and audio only
       appears once Android refreshes the installed app (up to a day), so the guide includes the
       reinstall that forces it.
+    closed: 2026-11-27
   - id: mt-inbox-acceptance
     text: >-
       Run the share inbox acceptance test: share a TikTok, a repo, a website twice and an
@@ -1958,9 +1959,23 @@ my_todos:
     why_yours: >-
       a switch needs your sudo password, and it is an action on your own machine
     guide: claude-env-statusline-switch
+    status: done
+    added: 2026-11-27
+    closed: 2026-11-27
+  - id: mt-crew-memory-hook
+    text: Decide on crew-memory's own repo and the SessionEnd capture hook, so claude-env can install both
+    owner: leon
+    why_yours: a decision (repo for the crew, a hook on every laptop)
+    guide: claude-env-crew-memory-hook
     status: open
     added: 2026-11-27
-
+  - id: mt-decision-mcps
+    text: After the CLM host decision, decide whether claude-env registers the Laya and CLM decision MCP servers
+    owner: leon
+    why_yours: a decision that changes the harness, gated on the CLM host
+    guide: claude-env-decision-mcps
+    status: open
+    added: 2026-11-27
 questions:
   - id: q-mcp-philosophy
     question: >-
