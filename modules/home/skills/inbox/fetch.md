@@ -140,6 +140,11 @@ there is to judge. Then try, in order, and stop at the first that returns conten
    rednote.com login page, so meta and Jina return nothing. Douyin returns only page chrome and
    yt-dlp answers 403 "fresh cookies needed". LinkedIn profiles hit an auth wall (HTTP 999). For
    these, judge the sharer's own text if it carries a caption.
+   **Measured 2026-11-28:** Bilibili works logged out with yt-dlp (the Video platforms recipe):
+   title, uploader, description and duration; subtitles were absent on the video tried, so expect
+   the whisper path. Zhihu is walled: the page answers 403, Jina lands on a login and CAPTCHA
+   page (`安全验证`), and there is no oEmbed. Treat Zhihu like Xiaohongshu. WeChat is still
+   unmeasured (no public sample link).
    **A login wall is not a verdict.** With no caption in the share, set `needs-you` (remove
    `inbox` and `retry`) and post exactly: `<Platform> needs a login to show this one. Describe it in one
    sentence if you want it judged.` (the share page shows a box for it), and

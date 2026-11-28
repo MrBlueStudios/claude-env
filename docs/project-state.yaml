@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-28T08:00"
+updated: "2026-11-28T10:00"
 suite:
   command: just test
   result: green
@@ -1249,7 +1249,7 @@ claude_todos:
   - id: ct-pin-obsidian-mcp
     text: >-
       Vet @bitbonsai/mcpvault and pin the obsidian personal server to an exact npm version
-    status: blocked
+    status: done
     done_when: >-
       `just vet` has been run on the package's tarball with its verdict written down, and
       users/leon-new.nix names `@bitbonsai/mcpvault@<exact version>` instead of the bare name, so
@@ -1260,7 +1260,10 @@ claude_todos:
       Flagged by the share-inbox session on 2026-11-25 while it checked /etc/nixos before a
       switch. The server has run unpinned since 23 Nov. It is Léon's personal config, so the edit
       is a proposed diff for him to apply, not one made in /etc/nixos headlessly.
-    waiting_on: Léon applies the one-line pin (mt-pin-obsidian-mcp); vetted 2026-11-28, 0.18.4, MIT, no install scripts, vet clean
+    closed: 2026-11-28
+    note2: >-
+      Léon asked Claude to make the edit himself on 2026-11-28; users/leon-new.nix now names
+      @bitbonsai/mcpvault@0.18.4. Live after his next nh os switch.
   - id: ct-vet-scanner-ports
     text: >-
       Port the skill-scanner findings into just vet: read markdown, list every hook event, fix
@@ -1324,7 +1327,7 @@ claude_todos:
     text: >-
       Measure logged-out fetching for Xiaohongshu, Douyin, Weibo, WeChat, Zhihu and Bilibili and
       replace the UNVERIFIED notes in the fetch recipes with what was measured
-    status: blocked
+    status: next
     done_when: >-
       fetch.md names, per platform, which path worked (oEmbed, meta tags, Jina, share text only)
       and how much text it returned, from real shares and not from guesses
@@ -1336,9 +1339,10 @@ claude_todos:
       needs-you instead of skipped. Earlier: Léon reports that LinkedIn, Douyin and Weibo shares reach the page and are filed under the
       right category; whether /inbox can read their content is unmeasured. Gated on
       mt-inbox-acceptance, which is the first real /inbox run.
-    waiting_on: >-
-      Permission. On 2026-11-28 the auto-mode classifier refused the logged-out Bilibili and
-      Zhihu probes (yt-dlp, curl, Jina) as unauthorized access; Léon decides whether to allow them.
+    progress: >-
+      2026-11-28, with Léon's permission: Bilibili works logged out via yt-dlp (title, uploader,
+      description, duration; no subtitles on the video tried); Zhihu is walled (403, Jina lands
+      on a login and CAPTCHA page, no oEmbed). Left: WeChat, which needs a public sample link.
   - id: ct-inbox-wrapup
     text: >-
       Wrap up the share inbox build: list the rulings I made, delete the workspace, finish the
@@ -1984,13 +1988,20 @@ my_todos:
     guide: claude-env-crew-memory-hook
     status: open
     added: 2026-11-27
+    progress: >-
+      2026-11-28: Léon said yes to the repo. github.com/MrBlueStudios/crew-memory is private,
+      history kept by subtree split, and ~/Projects tracks it as a submodule (fb656db). Left:
+      his hook on/off answer, then the claude-env module.
   - id: mt-decision-mcps
     text: After the CLM host decision, decide whether claude-env registers the Laya and CLM decision MCP servers
     owner: leon
     why_yours: a decision that changes the harness, gated on the CLM host
     guide: claude-env-decision-mcps
-    status: open
+    status: paused
     added: 2026-11-27
+    paused_note: >-
+      2026-11-28, Léon: CLM stays parked, there is no hardware to run it. Revisit when the spare
+      machines exist (mt-spare-machines).
   - id: mt-pin-obsidian-mcp
     text: Pin the obsidian MCP server to @bitbonsai/mcpvault@0.18.4 in /etc/nixos/users/leon-new.nix
     owner: leon
