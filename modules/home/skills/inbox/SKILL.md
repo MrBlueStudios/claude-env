@@ -141,10 +141,19 @@ A share already answered names the files that answer it, and scores low on **new
 - the `project` slugs already used in the vault (`CM query --store State`, Ideas, Attempts);
 - the items in `~/Projects/claude-env/research/PROGRESS.md` and
   `~/Projects/claude-env/docs/project-state.yaml`;
-- the notes in `~/project-brain/Projects`.
+- the notes in `~/project-brain/Projects`;
+- every row of `CM projects --root ~/Projects --json` (add more `--root` flags for more trees).
+  A row is `{slug, path, summary}`: one per directory holding `.git` or `.jj`, nested repos
+  included, minus what the root's `.crew-skip` file lists. Its `summary` is the first prose
+  line of the README or CLAUDE.md; when it is `""`, `ls` the path to see what the repo is.
 
-A note's `project` is a slug the vault already uses, or `inbox` when none fits. Invent no new
-slugs.
+Run the scan once per run, not per issue. **Fit is scored against every project**, not the
+first that comes to mind: read all the one-line summaries, then open the full README of only
+the three to five closest. The best match is the note's `project`; every other project at fit
+2 or more goes in `fits`. An unsafe share never gets this far.
+
+A note's `project` is a slug from any of these sources, or `inbox` when none fits. Invent no
+new slugs.
 
 ## 5. File and report
 
@@ -157,7 +166,8 @@ slugs.
    - `created` and `updated` (today);
    - `source: inbox`, `status: raw`;
    - `summary` (at most two sentences, English);
-   - `link` (the shared URL, or the `file:` path) and `issue` (the issue URL).
+   - `link` (the shared URL, or the `file:` path) and `issue` (the issue URL);
+   - `fits: [<slug>, …]`, the other projects at fit 2 or more (left out when there are none).
 
    The body holds the summary, the score line, and where it was already known.
 2. Run `CM lint`, then `CM index`. A lint problem is fixed in the note before going on. The
