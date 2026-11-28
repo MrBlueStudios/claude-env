@@ -24,6 +24,8 @@ let
   statusline = py "claude-statusline" ./scripts/claude-statusline.py;
   artifactHook = py "claude-artifact-hook" ./scripts/claude-artifact-hook.py;
   artifacts = py "claude-artifacts" ./scripts/claude-artifacts.py;
+  # EU VAT validation against VIES; replaces the vies-vat MCP server (q-vies-vat).
+  vatCheck = py "vat-check" ./scripts/vat-check.py;
 
   # Wrap the Python tools so `git` is always found (they shell out to it).
   withGit =
@@ -182,6 +184,7 @@ in
     (withGit artifacts "claude-artifacts")
     artifactsPick
     complianceScan
+    vatCheck
     claudeVet
     pluginsCheck
     playwrightCli

@@ -577,5 +577,16 @@ assert_contains "cache: 5m bucket, 2 min ago, 3m left"   "cache 3m"  "$(statusli
 assert_contains "cache: 5m bucket, 10 min ago, cold"     "cache cold" "$(statusline 10 0 5)"
 assert_lacks    "cache: no transcript, no segment" "cache" "$(echo '{"session_id":"x"}' | XDG_STATE_HOME="$TMP/state" python3 "$HERE/claude-statusline.py")"
 
+# ── vat-check ────────────────────────────────────────────────────────────────
+# A wrong VAT validation is an invoice error, so the parsing and verdict logic carry their own
+# asserts (--self-test, offline). A malformed number must fail before any network call.
+vat() { python3 "$HERE/vat-check.py" "$@" 2>&1; }
+assert_contains "vat-check: self-test passes" "self-test ok" "$(vat --self-test)"
+out="$(vat 'NL12;rm')"; rc=$?
+assert_rc       "vat-check: malformed number exits 2" 2 "$rc"
+assert_contains "vat-check: malformed number says why" "not a VAT number" "$out"
+out="$(vat)"; rc=$?
+assert_rc       "vat-check: no argument exits 2" 2 "$rc"
+
 printf 'claude helper script tests: %d passed, %d failed\n' "$pass" "$fail"
 [[ "$fail" -eq 0 ]]
