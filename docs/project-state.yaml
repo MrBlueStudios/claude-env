@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-28T00:30"
+updated: "2026-11-28T01:00"
 suite:
   command: just test
   result: green
@@ -282,14 +282,12 @@ features:
       status per share, pictures and audio from the file picker or the phone's share menu, and
       /inbox arguments such as /inbox weibo.
     remaining: >-
-      v0 is done and was run for real on 2026-11-26: 18 issues judged, 3 filed as Ideas. Open: three
-      shares (two RedNote, one Douyin) wait on a caption from Léon because those sites need a login,
-      and the question of whether /inbox may fetch their public share pages (q-inbox-login-wall-fetch)
-      is unanswered. Léon still has to run one more nh os switch for the login-wall rule, and to
-      confirm the phone's share menu offers pictures and audio. v1, deliberately later: iPhone
-      Shortcut, a GitHub organization so Kish, Almar and Ryan get tokens, the cloud routine, TikTok
-      slideshows, and video files from the phone (the upload method caps at 20 MB; decided on
-      2026-11-26 to wait until someone is blocked).
+      v0 is done and in daily use: shares from the Pixel land as issues, /inbox judges them, and
+      the two field-test checkboxes were ticked on 2026-11-27. The build's rulings are in
+      docs/superpowers/plans/2026-11-25-share-inbox-rulings.md. Left is v1 only, deliberately
+      later: an iPhone Shortcut, a GitHub organization so Kish, Almar and Ryan get tokens, a
+      cloud routine so the laptop can be off, TikTok slideshows, video files from the phone
+      (the upload caps at 20 MB), and measuring WeChat, Zhihu and Bilibili fetching.
     paths:
       - /home/leon-new/Projects/claude-env/docs/superpowers/specs/2026-11-25-share-inbox-design.md
       - /home/leon-new/Projects/claude-env/docs/superpowers/plans/2026-11-25-share-inbox-v0.md
@@ -1120,7 +1118,8 @@ claude_todos:
     text: >-
       Measure how many tokens command output actually costs across recent sessions, so
       q-compressors is decided on a figure instead of an instinct
-    status: next
+    status: done
+    closed: 2026-11-28
     done_when: >-
       research/context-budget.md carries a finding naming the median and worst-case tokens of
       tool-result content per session, as a share of the whole session, measured from the
@@ -1138,7 +1137,8 @@ claude_todos:
     text: >-
       Replace the vies-vat MCP server with a small vat-check CLI in tools.nix, with an
       assert-based self-check
-    status: next
+    status: done
+    closed: 2026-11-28
     done_when: >-
       vat-check with a known-good VAT number prints valid and the company name, a known-bad one
       prints invalid rather than erroring, and the self-check passes in `just test-scripts`
@@ -1329,7 +1329,8 @@ claude_todos:
     text: >-
       Wrap up the share inbox build: list the rulings I made, delete the workspace, finish the
       branch
-    status: next
+    status: done
+    closed: 2026-11-28
     done_when: >-
       .superpowers/sdd/2026-11-25-share-inbox-v0 is gone, the rulings and deferred minors are
       listed for Léon, and docs/project-state.yaml share-inbox remaining reflects v1 only
@@ -2127,6 +2128,11 @@ questions:
       of which all MCP servers together are 5,081, so a compressor of *command output* is
       fighting for a slice of the small half. Revisit if a measurement ever shows command output
       is where the tokens actually go.
+      Update 2026-11-28: that measurement now exists (research/context-budget.md finding 15) and
+      it cuts against the old premise. Tool results are a median 39 % of a session's content,
+      about 56k tokens, three quarters of it Bash and Read output. The packaging objection still
+      stands, so the recommendation moves to the third option, packaging one in the flake, if
+      either project survives a vet; the first remains the safe default.
     blocks:
       - ct-measure-command-output
     blocks_note: >-

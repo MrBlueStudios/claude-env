@@ -79,7 +79,23 @@
     while the skills total rises by the 256 of finding 13. A move of more than about 10 % either
     way means something unintended landed, and is worth reading the activation output for.
 
+15. **Mid-session, tool output is the biggest single block (28 November).** Across the 33
+    main-session transcripts on this machine from the last 30 days (over 20k characters each),
+    tool results are a median **39 %** of a session's content, 69 % at p90 and 80 % at worst.
+    In tokens (4 characters per token): a median **56k** per session, 230k at p90, and one
+    Claude_testing session at about 1.0M of 1.7M. By tool: Bash 38 %, Read 36 %, other built-ins
+    19 %, MCP 6 %, WebFetch 1 %, Agent 0.5 %; Grep is near zero because `rg` runs through Bash.
+    So a compressor aimed at Bash and Read output targets about three quarters of the block that
+    finding 1's start-up figures never see, and on a median session that is roughly 40k tokens
+    of content, re-read from cache on every later turn. This is the figure q-compressors asked
+    for. Source: local count, script in the session scratchpad (`measure/m.py`), counting
+    `tool_result` content against all message content; images counted at a flat 1.5k tokens.
+
 ## Not checked
+
+- Finding 15 excludes subagent transcripts (`*/subagents/`) and counts content, not billed
+  tokens: a result re-read from cache on later turns costs a cache read each time, which this
+  count does not multiply in.
 
 - Individual cost of each claude.ai connector; they are account-level and cannot be toggled per run.
 - Interactive sessions versus `-p` mode; the start-up context may differ slightly (status line, hooks output). The `/context` command in an interactive session shows the same breakdown and is the easy cross-check.
