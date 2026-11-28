@@ -141,6 +141,27 @@ NOTICE.md the way the four adopted skills landed, and leave the other four where
 is ~64 tokens for the one skill that unblocks a decision already on the board. It is a decision
 rather than a thing I did, because it adds a line to every crew session on four laptops.
 
+## The crew's six jobs against the declared list (28 November)
+
+Léon's condition on the migration was "do make sure the crew has everything they'll need", so
+this walks each job the crew actually does against what `skills.nix`, `modes.nix` and the
+declared plugins ship to every laptop. Nothing below exists only on this laptop unless it says
+personal.
+
+| Job | Declared for the crew | Missing |
+|---|---|---|
+| Websites | `web-design-playbook`, `web-design-guidelines`, `design`, `full-visual`, `deploy`, `ship`, `performance-optimization`, `legal-audit`, `security-audit`; plugins `svelte`, `frontend-design` | nothing |
+| Roblox | `roblox` (mode), `security-audit` §4 (server-trusted values, remote validation) | nothing; Rojo setup lives in the game repo |
+| Trading | `research`, `review`, the two thermo-nuclear reviews, `security-audit` | no trading skill exists on this laptop either, so nothing is left behind; a Vega skill would be new work, not migration |
+| Design and video | `design`, `design-review`, `full-visual`; plugins `frontend-design`, `brag` | the nine HyperFrames skills, **personal**: they drive a renderer and asset accounts only Léon has |
+| Legal | `legal-audit`, plus the `compliance-scan` and `vat-check` tools | nothing |
+| Review | `review`, `thermos`, the two thermo-nuclear reviews, `security-audit`, superpowers' code review | nothing |
+
+Deliberately personal, with the reason: `site-analytics` (it holds the production host and the
+Cloudflare account id, which this public repo must not carry), `project-status` and `my-todo`
+(how Léon reports, writing into one vault on one laptop), `prompt-optimizer` (its value is being
+specific to this machine), and the nine HyperFrames skills (above).
+
 ## What this does not answer
 
 Whether the 678 tokens of HyperFrames descriptions are worth paying on a day of Nix work. That is

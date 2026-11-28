@@ -17,7 +17,7 @@ non_goals:
   - >-
     Building the booking starter or the client legal-document generator — both are real gaps the
     coverage audit found, and both belong in their own repos
-updated: "2026-11-28T06:00"
+updated: "2026-11-28T08:00"
 suite:
   command: just test
   result: green
@@ -1155,7 +1155,8 @@ claude_todos:
     text: >-
       Walk the crew's six jobs against the declared skill list and name anything the flake is
       missing, before closing the skills half of ct-plugin-channel
-    status: next
+    status: done
+    closed: 2026-11-28
     done_when: >-
       Each of websites, Roblox, trading, design and video, legal, and review has its skills
       named and declared in skills.nix or modes.nix, and anything missing is either added or
