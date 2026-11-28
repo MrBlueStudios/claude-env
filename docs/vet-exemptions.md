@@ -33,6 +33,14 @@ is granted to a behaviour, not to a maintainer.
 - `inbox` LICENSE — first-party: written in this repo on 2026-11-25 for the share inbox
   (`docs/superpowers/specs/2026-11-25-share-inbox-design.md`), nothing in it is vendored, so
   there is no upstream licence to carry. Withdraw the moment any third-party text is copied in.
+- `own-words` LICENSE — first-party: written in this repo on 2026-11-28 (ct-own-words-skill),
+  nothing vendored. Withdraw the moment any third-party text is copied in.
+- `legal-audit` LICENSE — first-party: Léon's own skill, copied from `~/Projects/Claude_testing/skills/`
+  on 2026-11-28, nothing in it from a third party. Withdraw if any third-party text is copied in.
+- `security-audit` LICENSE — first-party: Léon's own skill, copied from `~/Projects/Claude_testing/skills/`
+  on 2026-11-28, nothing in it from a third party. Withdraw if any third-party text is copied in.
+- `design-review` LICENSE — first-party: Léon's own skill, copied from `~/Projects/Claude_testing/skills/`
+  on 2026-11-28, nothing in it from a third party. Withdraw if any third-party text is copied in.
 
 ## Refused
 

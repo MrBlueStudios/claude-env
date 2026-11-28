@@ -166,4 +166,15 @@
   # /inbox processes the crew share inbox (docs/superpowers/specs/2026-11-25-share-inbox-design.md).
   # User-invoked only, so it adds nothing to anyone's always-on context.
   home.file.".claude/skills/inbox".source = ./skills/inbox;
+
+  # /own-words restates a brain dump and waits for a yes before any work (ct-own-words-skill).
+  # User-invoked only, so it costs nothing in anyone's always-on context.
+  home.file.".claude/skills/own-words".source = ./skills/own-words;
+
+  # Three of Léon's own skills, vendored from Claude_testing (private claude-lab) on 2026-11-28 so
+  # the crew has them too (q-personal-skills, option one). site-analytics stays personal: it holds
+  # the production host and account ids, which do not belong in this public repo.
+  home.file.".claude/skills/legal-audit".source = ./skills/legal-audit;
+  home.file.".claude/skills/security-audit".source = ./skills/security-audit;
+  home.file.".claude/skills/design-review".source = ./skills/design-review;
 }
